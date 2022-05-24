@@ -1,0 +1,11 @@
+-- DO $$
+--   DECLARE statements CURSOR FOR
+--       SELECT tablename FROM pg_tables
+--       WHERE schemaname = 'public';
+-- BEGIN
+--     FOR stmt IN statements LOOP
+--         IF stmt.tablename != 'schema_migrations' THEN
+--           EXECUTE 'SELECT setval(' || quote_literal(stmt.tablename || '_id_seq') || ', (SELECT MAX(id) FROM ' || stmt.tablename || '));'; 
+--         END IF;
+--     END LOOP;
+-- END$$;

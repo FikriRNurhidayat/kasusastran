@@ -1,0 +1,9 @@
+vendor/
+.env
+.gitconfig
+.netrc
+junit.xml
+coverage.lcov.info
+coverage.xml
+out/
+tmp/
