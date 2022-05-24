@@ -10,6 +10,10 @@ DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:$
 develop:
 	go run main.go
 
+build:
+	mkdir -p out/bin &> /dev/null
+	go build -o out/bin/kasusastran main.go 
+
 init:
 	go mod vendor
 	go install
