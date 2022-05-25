@@ -45,7 +45,7 @@ func TestSeratRepository_CreateSerat(t *testing.T) {
 				iserat: &entity.Serat{
 					Title:             "Lorem Ipsum",
 					Description:       "Lorem Ipsum",
-					Body:              "Lorem Ipsum",
+					Content:           "Lorem Ipsum",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
 				},
@@ -65,7 +65,7 @@ func TestSeratRepository_CreateSerat(t *testing.T) {
 				iserat: &entity.Serat{
 					Title:             "Lorem Ipsum",
 					Description:       "Lorem Ipsum",
-					Body:              "Lorem Ipsum",
+					Content:           "Lorem Ipsum",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
 				},
@@ -454,7 +454,7 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 				userat: &entity.Serat{
 					Title:             "Lorem Ipsum",
 					Description:       "Lorem Ipsum",
-					Body:              "Lorem Ipsum",
+					Content:           "Lorem Ipsum",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
 				},
@@ -474,7 +474,7 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 				userat: &entity.Serat{
 					Title:             "Lorem Ipsum",
 					Description:       "Lorem Ipsum",
-					Body:              "Lorem Ipsum",
+					Content:           "Lorem Ipsum",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
 				},

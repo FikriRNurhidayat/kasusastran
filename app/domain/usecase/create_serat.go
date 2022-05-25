@@ -10,7 +10,7 @@ import (
 type CreateSeratParams struct {
 	Title             string
 	Description       string
-	Body              string
+	Content           string
 	CoverImageUrl     string
 	ThumbnailImageUrl string
 }
@@ -33,7 +33,7 @@ func (u *CreateSeratUseCase) Exec(ctx context.Context, params *CreateSeratParams
 	return u.SeratRepository.CreateSerat(ctx, &entity.Serat{
 		Title:             params.Title,
 		Description:       params.Description,
-		Body:              params.Body,
+		Content:           params.Content,
 		CoverImageUrl:     params.CoverImageUrl,
 		ThumbnailImageUrl: params.ThumbnailImageUrl,
 	})

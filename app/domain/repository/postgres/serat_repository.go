@@ -31,7 +31,7 @@ func (r *SeratRepository) UpdateSerat(ctx context.Context, id uuid.UUID, userat 
 		ID:                id,
 		Title:             userat.Title,
 		Description:       userat.Description,
-		Body:              userat.Body,
+		Content:           userat.Content,
 		CoverImageUrl:     userat.CoverImageUrl,
 		ThumbnailImageUrl: userat.ThumbnailImageUrl,
 	})
@@ -43,7 +43,7 @@ func (r *SeratRepository) UpdateSerat(ctx context.Context, id uuid.UUID, userat 
 	serat = &entity.Serat{
 		ID:                row.ID,
 		Title:             row.Title,
-		Body:              row.Body,
+		Content:           row.Content,
 		Description:       row.Description,
 		CoverImageUrl:     row.CoverImageUrl,
 		ThumbnailImageUrl: row.ThumbnailImageUrl,
@@ -56,7 +56,7 @@ func (r *SeratRepository) CreateSerat(ctx context.Context, iserat *entity.Serat)
 	row, err := r.db.CreateSerat(ctx, &query.CreateSeratParams{
 		Title:             iserat.Title,
 		Description:       iserat.Description,
-		Body:              iserat.Body,
+		Content:           iserat.Content,
 		CoverImageUrl:     iserat.CoverImageUrl,
 		ThumbnailImageUrl: iserat.ThumbnailImageUrl,
 	})
@@ -68,7 +68,7 @@ func (r *SeratRepository) CreateSerat(ctx context.Context, iserat *entity.Serat)
 	serat = &entity.Serat{
 		ID:                row.ID,
 		Title:             row.Title,
-		Body:              row.Body,
+		Content:           row.Content,
 		Description:       row.Description,
 		CoverImageUrl:     row.CoverImageUrl,
 		ThumbnailImageUrl: row.ThumbnailImageUrl,
@@ -87,7 +87,7 @@ func (r *SeratRepository) GetSerat(ctx context.Context, id uuid.UUID) (serat *en
 	serat = &entity.Serat{
 		ID:                row.ID,
 		Title:             row.Title,
-		Body:              row.Body,
+		Content:           row.Content,
 		Description:       row.Description,
 		CoverImageUrl:     row.CoverImageUrl,
 		ThumbnailImageUrl: row.ThumbnailImageUrl,

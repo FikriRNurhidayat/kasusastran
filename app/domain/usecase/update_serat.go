@@ -11,7 +11,7 @@ import (
 type UpdateSeratParams struct {
 	Title             string
 	Description       string
-	Body              string
+	Content           string
 	CoverImageUrl     string
 	ThumbnailImageUrl string
 }
@@ -34,7 +34,7 @@ func (u *UpdateSeratUseCase) Exec(ctx context.Context, id uuid.UUID, params *Upd
 	return u.SeratRepository.UpdateSerat(ctx, id, &entity.Serat{
 		Title:             params.Title,
 		Description:       params.Description,
-		Body:              params.Body,
+		Content:           params.Content,
 		CoverImageUrl:     params.CoverImageUrl,
 		ThumbnailImageUrl: params.ThumbnailImageUrl,
 	})

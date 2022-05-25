@@ -14,7 +14,7 @@ func (s *SeratsService) CreateSerat(ctx context.Context, req *api.CreateSeratReq
 	serat, err := s.CreateSeratUseCase.Exec(ctx, &usecase.CreateSeratParams{
 		Title:             req.GetTitle(),
 		Description:       req.GetDescription(),
-		Body:              req.GetBody(),
+		Content:           req.GetContent(),
 		CoverImageUrl:     req.GetCoverImageUrl(),
 		ThumbnailImageUrl: req.GetThumbnailImageUrl(),
 	})
@@ -27,7 +27,7 @@ func (s *SeratsService) CreateSerat(ctx context.Context, req *api.CreateSeratReq
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,
-		Body:              serat.Body,
+		Content:           serat.Content,
 		CoverImageUrl:     serat.CoverImageUrl,
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
