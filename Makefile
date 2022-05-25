@@ -10,6 +10,15 @@ DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:$
 develop:
 	go run main.go
 
+start: build
+	./out/bin/kasusastran
+
+install: build
+	cp out/bin/kasusastran "${HOME}/.local/bin/kasusastran"
+
+uninstall:
+	rm -rf "${HOME}/.local/bin/kasusastran"
+
 build:
 	mkdir -p out/bin &> /dev/null
 	go build -o out/bin/kasusastran main.go 
