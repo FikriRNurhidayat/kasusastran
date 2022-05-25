@@ -74,7 +74,7 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 				res: &api.Serat{
 					Id:                uuid.New().String(),
 					Title:             "Lorem ipsum",
-					Body:              "Lorem ipsum",
+					Content:           "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
@@ -85,7 +85,7 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 				m.UpdateSeratUseCase.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*usecase.UpdateSeratParams")).Return(&entity.Serat{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
-					Body:              out.res.GetBody(),
+					Content:           out.res.GetContent(),
 					Description:       out.res.GetDescription(),
 					CoverImageUrl:     out.res.GetCoverImageUrl(),
 					ThumbnailImageUrl: out.res.GetThumbnailImageUrl(),

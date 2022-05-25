@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS serats (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title VARCHAR(255) NOT NULL,
   description VARCHAR(255) NOT NULL,
-  body TEXT NOT NULL,
+  content TEXT NOT NULL,
   cover_image_url VARCHAR(255) NOT NULL,
   thumbnail_image_url VARCHAR(255) NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),

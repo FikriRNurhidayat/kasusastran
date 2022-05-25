@@ -14,12 +14,8 @@
       "name": "Serats"
     }
   ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "paths": {
     "/v1/serats": {
       "get": {
@@ -56,9 +52,7 @@
             "format": "int64"
           }
         ],
-        "tags": [
-          "Serats"
-        ]
+        "tags": ["Serats"]
       },
       "post": {
         "summary": "Create Serat",
@@ -88,9 +82,7 @@
             }
           }
         ],
-        "tags": [
-          "Serats"
-        ]
+        "tags": ["Serats"]
       }
     },
     "/v1/serats/{id}": {
@@ -120,9 +112,7 @@
             "type": "string"
           }
         ],
-        "tags": [
-          "Serats"
-        ]
+        "tags": ["Serats"]
       },
       "delete": {
         "summary": "Delete Serat",
@@ -150,9 +140,7 @@
             "type": "string"
           }
         ],
-        "tags": [
-          "Serats"
-        ]
+        "tags": ["Serats"]
       },
       "put": {
         "summary": "Update Serat",
@@ -192,7 +180,7 @@
                 "description": {
                   "type": "string"
                 },
-                "body": {
+                "content": {
                   "type": "string"
                 },
                 "coverImageUrl": {
@@ -205,9 +193,7 @@
             }
           }
         ],
-        "tags": [
-          "Serats"
-        ]
+        "tags": ["Serats"]
       }
     }
   },
@@ -229,7 +215,7 @@
         "description": {
           "type": "string"
         },
-        "body": {
+        "content": {
           "type": "string"
         },
         "coverImageUrl": {
@@ -300,7 +286,7 @@
         "description": {
           "type": "string"
         },
-        "body": {
+        "content": {
           "type": "string"
         },
         "coverImageUrl": {

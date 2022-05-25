@@ -15,7 +15,7 @@ type Serat struct {
 	Title string `json:"title"`
 	// The summary of a Serat.
 	Description string `json:"description"`
-	Body        string `json:"body"`
+	Content     string `json:"content"`
 	// The cover image URL of a Serat, shown on detail page.
 	CoverImageUrl string `json:"cover_image_url"`
 	// The thumbnail image URL of a Serat, shown when retrieved as list.

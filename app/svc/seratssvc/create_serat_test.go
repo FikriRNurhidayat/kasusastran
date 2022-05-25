@@ -59,7 +59,7 @@ func TestSeratService_CreateSerat(t *testing.T) {
 					Id:                uuid.New().String(),
 					Title:             "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",
-					Body:              "Lorem ipsum dolor sit amet",
+					Content:           "Lorem ipsum dolor sit amet",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
 				},
@@ -70,7 +70,7 @@ func TestSeratService_CreateSerat(t *testing.T) {
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
 					Description:       out.res.GetDescription(),
-					Body:              out.res.GetBody(),
+					Content:           out.res.GetContent(),
 					CoverImageUrl:     out.res.GetCoverImageUrl(),
 					ThumbnailImageUrl: out.res.GetThumbnailImageUrl(),
 				}, nil)

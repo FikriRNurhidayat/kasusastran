@@ -22,7 +22,7 @@ func (s *SeratsService) UpdateSerat(ctx context.Context, req *api.UpdateSeratReq
 	serat, err := s.UpdateSeratUseCase.Exec(ctx, id, &usecase.UpdateSeratParams{
 		Title:             req.GetTitle(),
 		Description:       req.GetDescription(),
-		Body:              req.GetBody(),
+		Content:           req.GetContent(),
 		CoverImageUrl:     req.GetCoverImageUrl(),
 		ThumbnailImageUrl: req.GetThumbnailImageUrl(),
 	})
@@ -35,7 +35,7 @@ func (s *SeratsService) UpdateSerat(ctx context.Context, req *api.UpdateSeratReq
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,
-		Body:              serat.Body,
+		Content:           serat.Content,
 		CoverImageUrl:     serat.CoverImageUrl,
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}

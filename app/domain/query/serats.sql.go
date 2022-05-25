@@ -25,7 +25,7 @@ const createSerat = `-- name: CreateSerat :one
 INSERT INTO serats (
   title,
   description,
-  body,
+  content,
   cover_image_url,
   thumbnail_image_url,
   created_at,
@@ -44,7 +44,7 @@ RETURNING
   id,
   title,
   description,
-  body,
+  content,
   cover_image_url,
   thumbnail_image_url,
   created_at,
@@ -54,7 +54,7 @@ RETURNING
 type CreateSeratParams struct {
 	Title             string `json:"title"`
 	Description       string `json:"description"`
-	Body              string `json:"body"`
+	Content           string `json:"content"`
 	CoverImageUrl     string `json:"cover_image_url"`
 	ThumbnailImageUrl string `json:"thumbnail_image_url"`
 }
@@ -63,7 +63,7 @@ type CreateSeratRow struct {
 	ID                uuid.UUID `json:"id"`
 	Title             string    `json:"title"`
 	Description       string    `json:"description"`
-	Body              string    `json:"body"`
+	Content           string    `json:"content"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
 	CreatedAt         time.Time `json:"created_at"`
@@ -74,7 +74,7 @@ func (q *Queries) CreateSerat(ctx context.Context, arg *CreateSeratParams) (Crea
 	row := q.queryRow(ctx, q.createSeratStmt, createSerat,
 		arg.Title,
 		arg.Description,
-		arg.Body,
+		arg.Content,
 		arg.CoverImageUrl,
 		arg.ThumbnailImageUrl,
 	)
@@ -83,7 +83,7 @@ func (q *Queries) CreateSerat(ctx context.Context, arg *CreateSeratParams) (Crea
 		&i.ID,
 		&i.Title,
 		&i.Description,
-		&i.Body,
+		&i.Content,
 		&i.CoverImageUrl,
 		&i.ThumbnailImageUrl,
 		&i.CreatedAt,
@@ -106,7 +106,7 @@ SELECT
   serats.id,
   serats.title,
   serats.description,
-  serats.body,
+  serats.content,
   serats.cover_image_url,
   serats.thumbnail_image_url
 FROM serats
@@ -119,7 +119,7 @@ type GetSeratRow struct {
 	ID                uuid.UUID `json:"id"`
 	Title             string    `json:"title"`
 	Description       string    `json:"description"`
-	Body              string    `json:"body"`
+	Content           string    `json:"content"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
 }
@@ -131,7 +131,7 @@ func (q *Queries) GetSerat(ctx context.Context, id uuid.UUID) (GetSeratRow, erro
 		&i.ID,
 		&i.Title,
 		&i.Description,
-		&i.Body,
+		&i.Content,
 		&i.CoverImageUrl,
 		&i.ThumbnailImageUrl,
 	)
@@ -143,6 +143,7 @@ SELECT
   serats.id,
   serats.title,
   serats.description,
+  serats.content,
   serats.cover_image_url,
   serats.thumbnail_image_url
 FROM serats
@@ -160,6 +161,7 @@ type ListSeratsRow struct {
 	ID                uuid.UUID `json:"id"`
 	Title             string    `json:"title"`
 	Description       string    `json:"description"`
+	Content           string    `json:"content"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
 }
@@ -177,6 +179,7 @@ func (q *Queries) ListSerats(ctx context.Context, arg *ListSeratsParams) ([]List
 			&i.ID,
 			&i.Title,
 			&i.Description,
+			&i.Content,
 			&i.CoverImageUrl,
 			&i.ThumbnailImageUrl,
 		); err != nil {
@@ -198,7 +201,7 @@ UPDATE serats
 SET
   title = $1,
   description = $2,
-  body = $3,
+  content = $3,
   cover_image_url = $4,
   thumbnail_image_url = $5,
   updated_at = NOW()
@@ -206,7 +209,7 @@ WHERE serats.id = $6
 RETURNING
   id,
   title,
-  body,
+  content,
   description,
   cover_image_url,
   thumbnail_image_url,
@@ -217,7 +220,7 @@ RETURNING
 type UpdateSeratParams struct {
 	Title             string    `json:"title"`
 	Description       string    `json:"description"`
-	Body              string    `json:"body"`
+	Content           string    `json:"content"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
 	ID                uuid.UUID `json:"id"`
@@ -226,7 +229,7 @@ type UpdateSeratParams struct {
 type UpdateSeratRow struct {
 	ID                uuid.UUID `json:"id"`
 	Title             string    `json:"title"`
-	Body              string    `json:"body"`
+	Content           string    `json:"content"`
 	Description       string    `json:"description"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
@@ -238,7 +241,7 @@ func (q *Queries) UpdateSerat(ctx context.Context, arg *UpdateSeratParams) (Upda
 	row := q.queryRow(ctx, q.updateSeratStmt, updateSerat,
 		arg.Title,
 		arg.Description,
-		arg.Body,
+		arg.Content,
 		arg.CoverImageUrl,
 		arg.ThumbnailImageUrl,
 		arg.ID,
@@ -247,7 +250,7 @@ func (q *Queries) UpdateSerat(ctx context.Context, arg *UpdateSeratParams) (Upda
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
-		&i.Body,
+		&i.Content,
 		&i.Description,
 		&i.CoverImageUrl,
 		&i.ThumbnailImageUrl,

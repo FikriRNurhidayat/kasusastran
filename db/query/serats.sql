@@ -3,7 +3,7 @@ SELECT
   serats.id,
   serats.title,
   serats.description,
-  serats.body,
+  serats.content,
   serats.cover_image_url,
   serats.thumbnail_image_url
 FROM serats
@@ -16,6 +16,7 @@ SELECT
   serats.id,
   serats.title,
   serats.description,
+  serats.content,
   serats.cover_image_url,
   serats.thumbnail_image_url
 FROM serats
@@ -33,7 +34,7 @@ UPDATE serats SET deleted_at = NOW() WHERE id = $1;
 INSERT INTO serats (
   title,
   description,
-  body,
+  content,
   cover_image_url,
   thumbnail_image_url,
   created_at,
@@ -42,7 +43,7 @@ INSERT INTO serats (
 VALUES (
   @title,
   @description,
-  @body,
+  @content,
   @cover_image_url,
   @thumbnail_image_url,
   NOW(),
@@ -52,7 +53,7 @@ RETURNING
   id,
   title,
   description,
-  body,
+  content,
   cover_image_url,
   thumbnail_image_url,
   created_at,
@@ -63,7 +64,7 @@ UPDATE serats
 SET
   title = @title,
   description = @description,
-  body = @body,
+  content = @content,
   cover_image_url = @cover_image_url,
   thumbnail_image_url = @thumbnail_image_url,
   updated_at = NOW()
@@ -71,7 +72,7 @@ WHERE serats.id = @id
 RETURNING
   id,
   title,
-  body,
+  content,
   description,
   cover_image_url,
   thumbnail_image_url,

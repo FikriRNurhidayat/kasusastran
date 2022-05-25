@@ -8,7 +8,7 @@ type Serat struct {
 	ID                uuid.UUID
 	Title             string
 	Description       string
-	Body              string
+	Content           string
 	CoverImageUrl     string
 	ThumbnailImageUrl string
 }

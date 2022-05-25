@@ -28,7 +28,7 @@ func (s *SeratsService) GetSerat(ctx context.Context, req *api.GetSeratRequest) 
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,
-		Body:              serat.Body,
+		Content:           serat.Content,
 		CoverImageUrl:     serat.CoverImageUrl,
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
