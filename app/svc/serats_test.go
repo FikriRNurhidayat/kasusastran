@@ -1,4 +1,4 @@
-package seratssvc_test
+package svc_test
 
 import mockUseCase "github.com/fikrirnurhidayat/kasusastran/mocks/domain/usecase"
 

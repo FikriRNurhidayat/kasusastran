@@ -1,4 +1,4 @@
-package seratssvc
+package svc
 
 import (
 	"context"
@@ -20,10 +20,10 @@ func (s *SeratsService) ListSerats(ctx context.Context, req *api.ListSeratsReque
 		pagination.PageSize = 10
 	}
 
-	serats, pagination, err := s.ListSeratsUseCase.Exec(ctx, pagination)
+	svc, pagination, err := s.ListSeratsUseCase.Exec(ctx, pagination)
 
 	if err != nil {
-		return res, status.Errorf(codes.Internal, "failed to retrieve list of serats: %v", err)
+		return res, status.Errorf(codes.Internal, "failed to retrieve list of svc: %v", err)
 	}
 
 	res = &api.ListSeratsResponse{
@@ -38,7 +38,7 @@ func (s *SeratsService) ListSerats(ctx context.Context, req *api.ListSeratsReque
 		Serats: []*api.Serat{},
 	}
 
-	for _, serat := range serats {
+	for _, serat := range svc {
 		pack := &api.Serat{
 			Id:                serat.ID.String(),
 			Title:             serat.Title,

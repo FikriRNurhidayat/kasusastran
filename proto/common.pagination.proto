@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package kasusastran;
+
+option go_package = "github.com/fikrirnurhidayat/kasusastran/api;kasusastran";
+
+message RequestPagination {
+  uint32 page = 1;
+  uint32 page_size = 2;
+}
+
+message ResponsePagination {
+  uint32 page = 1;
+  uint32 page_size = 2;
+  uint32 page_count = 3;
+  uint32 total = 4;
+}

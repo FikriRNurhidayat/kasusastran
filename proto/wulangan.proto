@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package kasusastran;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "common.pagination.proto";
+
+option go_package = "github.com/fikrirnurhidayat/kasusastran/api;kasusastran";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Wulangan";
+    version: "1.0";
+    contact: {
+      name: "Fikri Rahmat Nurhidayat";
+      url: "https://github.com/fikrirnurhidayat";
+      email: "fikrirnurhidayat@gmail.com";
+    };
+  };
+};
+
+// Allow users to create and manage Wulangans 
+service Wulangans {
+  rpc ListWulangans(ListWulangansRequest) returns (ListWulangansResponse) {
+    option (google.api.http) = {
+      get : "/v1/wulangans"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "ListWulangans"
+      summary: "List Wulangans"
+      description: "Retrieve list of wulangans"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc GetWulangan(GetWulanganRequest) returns (Wulangan) {
+    option (google.api.http) = {
+      get : "/v1/wulangans/{id}"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "GetWulangan"
+      summary: "Get Wulangan"
+      description: "Retrieve wulangan detail"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc DeleteWulangan(DeleteWulanganRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete : "/v1/wulangans/{id}"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "DeleteWulangan"
+      summary: "Delete Wulangan"
+      description: "Remove existing wulangan by id"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc CreateWulangan(CreateWulanganRequest) returns (Wulangan) {
+    option (google.api.http) = {
+      post : "/v1/wulangans"
+      body : "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "CreateWulangan"
+      summary: "Create Wulangan"
+      description: "Add new wulangan on the database"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc UpdateWulangan(UpdateWulanganRequest) returns (Wulangan) {
+    option (google.api.http) = {
+      put : "/v1/wulangans/{id}"
+      body : "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "UpdateWulangan"
+      summary: "Update Wulangan"
+      description: "Change wulangan information"
+      tags: "Wulangans"
+    };
+  }
+}
+
+message ListWulangansRequest {
+  RequestPagination pagination = 1;
+}
+
+message ListWulangansResponse {
+  message MetaListWulangans {
+    ResponsePagination pagination = 1;
+  }
+
+  MetaListWulangans meta = 1;
+  repeated Wulangan wulangans = 2;
+}
+
+message GetWulanganRequest {
+  string id = 1;
+}
+
+message DeleteWulanganRequest {
+  string id = 1;
+}
+
+message CreateWulanganRequest {
+  string title = 1;
+  string description = 2;
+  string cover_image_url = 3;
+  string thumbnail_image_url = 4;
+}
+
+message UpdateWulanganRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string cover_image_url = 4;
+  string thumbnail_image_url = 5;
+}
+
+message Wulangan {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string cover_image_url = 4;
+  string thumbnail_image_url = 5; 
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}

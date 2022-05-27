@@ -1,4 +1,4 @@
-package seratssvc
+package svc
 
 import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/usecase"
@@ -16,7 +16,7 @@ type SeratsService struct {
 	ListSeratsUseCase  usecase.ListSeratsUseCaser
 }
 
-func New() *SeratsService {
+func NewSeratsService() *SeratsService {
 	return &SeratsService{}
 }
 

@@ -16,7 +16,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/usecase"
-	"github.com/fikrirnurhidayat/kasusastran/app/svc/seratssvc"
+	"github.com/fikrirnurhidayat/kasusastran/app/svc"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -33,17 +33,18 @@ var opts []grpc.DialOption
 var Query query.Querier
 
 // Services
-var SeratsService *seratssvc.SeratsService
+var seratsService *svc.SeratsService
+var wulangansService *svc.WulangansService
 
 // Usecases
-var CreateSeratUseCase usecase.CreateSeratUseCaser
-var UpdateSeratUseCaes usecase.UpdateSeratUseCaser
-var DeleteSeratUseCase usecase.DeleteSeratUseCaser
-var GetSeratUseCase usecase.GetSeratUseCaser
-var ListSeratUseCase usecase.ListSeratsUseCaser
+var createSeratUseCase usecase.CreateSeratUseCaser
+var updateSeratUseCase usecase.UpdateSeratUseCaser
+var deleteSeratUseCase usecase.DeleteSeratUseCaser
+var getSeratUseCase usecase.GetSeratUseCaser
+var listSeratUseCase usecase.ListSeratsUseCaser
 
 // Repositories
-var SeratRepository postgres.SeratRepositorier
+var seratRepository postgres.SeratRepositorier
 
 var (
 	// command-line options:
@@ -84,33 +85,41 @@ func init() {
 	Query = query.New(db)
 
 	// Initialize Repository
-	SeratRepository = postgres.NewSeratRepository(Query)
+	seratRepository = postgres.NewSeratRepository(Query)
 
 	// Initialize Usecase
-	CreateSeratUseCase = usecase.NewCreateSeratUseCase(SeratRepository)
-	UpdateSeratUseCaes = usecase.NewUpdateSeratUseCase(SeratRepository)
-	GetSeratUseCase = usecase.NewGetSeratUseCase(SeratRepository)
-	ListSeratUseCase = usecase.NewListSeratsUseCase(SeratRepository)
-	DeleteSeratUseCase = usecase.NewDeleteSeratUseCase(SeratRepository)
+	createSeratUseCase = usecase.NewCreateSeratUseCase(seratRepository)
+	updateSeratUseCase = usecase.NewUpdateSeratUseCase(seratRepository)
+	getSeratUseCase = usecase.NewGetSeratUseCase(seratRepository)
+	listSeratUseCase = usecase.NewListSeratsUseCase(seratRepository)
+	deleteSeratUseCase = usecase.NewDeleteSeratUseCase(seratRepository)
 
 	// Initialize Service
-	SeratsService = seratssvc.
-		New().
-		SetGetSeratUseCase(GetSeratUseCase).
-		SetListSeratsUseCase(ListSeratUseCase).
-		SetUpdateSeratUseCase(UpdateSeratUseCaes).
-		SetDeleteSeratUseCase(DeleteSeratUseCase).
-		SetCreateSeratUseCase(CreateSeratUseCase)
+	seratsService = svc.
+		NewSeratsService().
+		SetGetSeratUseCase(getSeratUseCase).
+		SetListSeratsUseCase(listSeratUseCase).
+		SetUpdateSeratUseCase(updateSeratUseCase).
+		SetDeleteSeratUseCase(deleteSeratUseCase).
+		SetCreateSeratUseCase(createSeratUseCase)
+
+	wulangansService = svc.NewWulangansService()
 }
 
 func runGRPCServer() error {
-	api.RegisterSeratsServer(server, SeratsService)
+	api.RegisterSeratsServer(server, seratsService)
+	api.RegisterWulangansServer(server, wulangansService)
 
 	return server.Serve(tcp)
 }
 
-func runGatewayServer(ctx context.Context) error {
-	err := api.RegisterSeratsHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+func runGatewayServer(ctx context.Context) (err error) {
+	err = api.RegisterSeratsHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	if err != nil {
+		return err
+	}
+
+	err = api.RegisterWulangansHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
 		return err
 	}

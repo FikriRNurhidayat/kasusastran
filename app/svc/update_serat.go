@@ -1,17 +1,25 @@
-package seratssvc
+package svc
 
 import (
 	"context"
 
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/errors"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/usecase"
+	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	api "github.com/fikrirnurhidayat/kasusastran/api"
 )
 
-func (s *SeratsService) CreateSerat(ctx context.Context, req *api.CreateSeratRequest) (*api.Serat, error) {
-	serat, err := s.CreateSeratUseCase.Exec(ctx, &usecase.CreateSeratParams{
+func (s *SeratsService) UpdateSerat(ctx context.Context, req *api.UpdateSeratRequest) (*api.Serat, error) {
+	id, err := uuid.Parse(req.GetId())
+
+	if err != nil {
+		return nil, errors.ErrInvalidUUID
+	}
+
+	serat, err := s.UpdateSeratUseCase.Exec(ctx, id, &usecase.UpdateSeratParams{
 		Title:             req.GetTitle(),
 		Description:       req.GetDescription(),
 		Content:           req.GetContent(),
@@ -20,7 +28,7 @@ func (s *SeratsService) CreateSerat(ctx context.Context, req *api.CreateSeratReq
 	})
 
 	if err != nil {
-		return nil, status.Errorf(codes.OutOfRange, "s.CreateSeratUseCase.Exec: %v", err.Error())
+		return nil, status.Errorf(codes.OutOfRange, "s.UpdateSeratUseCase.Exec: %v", err.Error())
 	}
 
 	res := &api.Serat{

@@ -1,4 +1,4 @@
-package seratssvc
+package svc
 
 import (
 	"context"

@@ -1,11 +1,11 @@
-package seratssvc_test
+package svc_test
 
 import (
 	"context"
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/svc/seratssvc"
+	"github.com/fikrirnurhidayat/kasusastran/app/svc/svc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -91,7 +91,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := seratssvc.New().SetDeleteSeratUseCase(m.DeleteSeratUseCase)
+			subject := svc.NewSeratsService().SetDeleteSeratUseCase(m.DeleteSeratUseCase)
 			out, err := subject.DeleteSerat(tt.in.ctx, tt.in.req)
 
 			if tt.out.err != nil {

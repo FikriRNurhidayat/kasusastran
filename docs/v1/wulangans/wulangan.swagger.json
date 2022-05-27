@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Serats",
+    "title": "Wulangan",
     "version": "1.0",
     "contact": {
       "name": "Fikri Rahmat Nurhidayat",
@@ -11,7 +11,7 @@
   },
   "tags": [
     {
-      "name": "Serats"
+      "name": "Wulangans"
     }
   ],
   "consumes": [
@@ -21,16 +21,16 @@
     "application/json"
   ],
   "paths": {
-    "/v1/serats": {
+    "/v1/wulangans": {
       "get": {
-        "summary": "List Serats",
-        "description": "Retrieve list of serats",
-        "operationId": "ListSerats",
+        "summary": "List Wulangans",
+        "description": "Retrieve list of wulangans",
+        "operationId": "ListWulangans",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/kasusastranListSeratsResponse"
+              "$ref": "#/definitions/kasusastranListWulangansResponse"
             }
           },
           "default": {
@@ -57,18 +57,18 @@
           }
         ],
         "tags": [
-          "Serats"
+          "Wulangans"
         ]
       },
       "post": {
-        "summary": "Create Serat",
-        "description": "Add new serat on the database",
-        "operationId": "CreateSerat",
+        "summary": "Create Wulangan",
+        "description": "Add new wulangan on the database",
+        "operationId": "CreateWulangan",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/kasusastranSerat"
+              "$ref": "#/definitions/kasusastranWulangan"
             }
           },
           "default": {
@@ -84,25 +84,25 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/kasusastranCreateSeratRequest"
+              "$ref": "#/definitions/kasusastranCreateWulanganRequest"
             }
           }
         ],
         "tags": [
-          "Serats"
+          "Wulangans"
         ]
       }
     },
-    "/v1/serats/{id}": {
+    "/v1/wulangans/{id}": {
       "get": {
-        "summary": "Get Serat",
-        "description": "Retrieve serat detail",
-        "operationId": "GetSerat",
+        "summary": "Get Wulangan",
+        "description": "Retrieve wulangan detail",
+        "operationId": "GetWulangan",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/kasusastranSerat"
+              "$ref": "#/definitions/kasusastranWulangan"
             }
           },
           "default": {
@@ -121,13 +121,13 @@
           }
         ],
         "tags": [
-          "Serats"
+          "Wulangans"
         ]
       },
       "delete": {
-        "summary": "Delete Serat",
-        "description": "Remove existing serat by id",
-        "operationId": "DeleteSerat",
+        "summary": "Delete Wulangan",
+        "description": "Remove existing wulangan by id",
+        "operationId": "DeleteWulangan",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -151,18 +151,18 @@
           }
         ],
         "tags": [
-          "Serats"
+          "Wulangans"
         ]
       },
       "put": {
-        "summary": "Update Serat",
-        "description": "Change serat information",
-        "operationId": "UpdateSerat",
+        "summary": "Update Wulangan",
+        "description": "Change wulangan information",
+        "operationId": "UpdateWulangan",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/kasusastranSerat"
+              "$ref": "#/definitions/kasusastranWulangan"
             }
           },
           "default": {
@@ -206,13 +206,13 @@
           }
         ],
         "tags": [
-          "Serats"
+          "Wulangans"
         ]
       }
     }
   },
   "definitions": {
-    "ListSeratsResponseMetaListSerats": {
+    "ListWulangansResponseMetaListWulangans": {
       "type": "object",
       "properties": {
         "pagination": {
@@ -220,7 +220,7 @@
         }
       }
     },
-    "kasusastranCreateSeratRequest": {
+    "kasusastranCreateWulanganRequest": {
       "type": "object",
       "properties": {
         "title": {
@@ -240,16 +240,16 @@
         }
       }
     },
-    "kasusastranListSeratsResponse": {
+    "kasusastranListWulangansResponse": {
       "type": "object",
       "properties": {
         "meta": {
-          "$ref": "#/definitions/ListSeratsResponseMetaListSerats"
+          "$ref": "#/definitions/ListWulangansResponseMetaListWulangans"
         },
-        "serats": {
+        "wulangans": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/kasusastranSerat"
+            "$ref": "#/definitions/kasusastranWulangan"
           }
         }
       }
@@ -288,7 +288,7 @@
         }
       }
     },
-    "kasusastranSerat": {
+    "kasusastranWulangan": {
       "type": "object",
       "properties": {
         "id": {

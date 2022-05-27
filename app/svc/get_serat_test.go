@@ -1,4 +1,4 @@
-package seratssvc_test
+package svc_test
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
-	"github.com/fikrirnurhidayat/kasusastran/app/svc/seratssvc"
+	"github.com/fikrirnurhidayat/kasusastran/app/svc/svc"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -104,7 +104,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := seratssvc.New().SetGetSeratUseCase(m.GetSeratUseCase)
+			subject := svc.NewSeratsService().SetGetSeratUseCase(m.GetSeratUseCase)
 			out, err := subject.GetSerat(tt.in.ctx, tt.in.req)
 
 			if tt.out.err != nil {

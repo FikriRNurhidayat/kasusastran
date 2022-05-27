@@ -1,4 +1,4 @@
-package seratssvc_test
+package svc_test
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
-	"github.com/fikrirnurhidayat/kasusastran/app/svc/seratssvc"
+	"github.com/fikrirnurhidayat/kasusastran/app/svc/svc"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -44,9 +44,9 @@ func TestSeratService_ListSerats(t *testing.T) {
 				err: fmt.Errorf("ListSeratsUseCase.Exec: failed to execute usecase"),
 			},
 			on: func(m *MockSeratService, i *input, o *output) {
-				serats := []entity.Serat{}
+				svc := []entity.Serat{}
 				pagination := &entity.Pagination{}
-				m.ListSeratsUseCase.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(serats, pagination, o.err)
+				m.ListSeratsUseCase.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
 			},
 		},
 		{
@@ -77,7 +77,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratService, i *input, o *output) {
-				serats := []entity.Serat{}
+				svc := []entity.Serat{}
 
 				pagination := &entity.Pagination{
 					Page:      o.res.Meta.Pagination.Page,
@@ -94,10 +94,10 @@ func TestSeratService_ListSerats(t *testing.T) {
 						ThumbnailImageUrl: serat.GetThumbnailImageUrl(),
 					}
 
-					serats = append(serats, pack)
+					svc = append(svc, pack)
 				}
 
-				m.ListSeratsUseCase.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(serats, pagination, o.err)
+				m.ListSeratsUseCase.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
 			},
 		},
 		{
@@ -133,7 +133,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratService, i *input, o *output) {
-				serats := []entity.Serat{}
+				svc := []entity.Serat{}
 
 				pagination := &entity.Pagination{
 					Page:      o.res.Meta.Pagination.Page,
@@ -150,10 +150,10 @@ func TestSeratService_ListSerats(t *testing.T) {
 						ThumbnailImageUrl: serat.GetThumbnailImageUrl(),
 					}
 
-					serats = append(serats, pack)
+					svc = append(svc, pack)
 				}
 
-				m.ListSeratsUseCase.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(serats, pagination, o.err)
+				m.ListSeratsUseCase.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
 			},
 		},
 	}
@@ -168,7 +168,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := seratssvc.
+			subject := svc.
 				New().
 				SetListSeratsUseCase(m.ListSeratsUseCase)
 
