@@ -9,14 +9,15 @@ import (
 	"os"
 	"regexp"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
-	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
+	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
+	pg "github.com/fikrirnurhidayat/api.kasusastran.io/app/driver/postgres"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/config"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/usecase"
-	"github.com/fikrirnurhidayat/kasusastran/app/svc"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/config"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/query"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository/postgres"
+	service "github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/svc"
+	srv "github.com/fikrirnurhidayat/api.kasusastran.io/app/srv"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -30,21 +31,21 @@ var tcp net.Listener
 var server *grpc.Server
 var mux *runtime.ServeMux
 var opts []grpc.DialOption
-var Query query.Querier
+var dbQuery query.Querier
 
 // Services
-var seratsService *svc.SeratsService
-var wulangansService *svc.WulangansService
+var seratsServer *srv.SeratsServer
+var wulangansServer *srv.WulangansServer
 
 // Usecases
-var createSeratUseCase usecase.CreateSeratUseCaser
-var updateSeratUseCase usecase.UpdateSeratUseCaser
-var deleteSeratUseCase usecase.DeleteSeratUseCaser
-var getSeratUseCase usecase.GetSeratUseCaser
-var listSeratUseCase usecase.ListSeratsUseCaser
+var createSeratService service.CreateSeratService
+var updateSeratService service.UpdateSeratService
+var deleteSeratService service.DeleteSeratService
+var getSeratService service.GetSeratService
+var listSeratService service.ListSeratsService
 
 // Repositories
-var seratRepository postgres.SeratRepositorier
+var seratRepository repository.SeratRepository
 
 var (
 	// command-line options:
@@ -82,33 +83,33 @@ func init() {
 	opts = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	server = grpc.NewServer()
-	Query = query.New(db)
+	dbQuery = query.New(db)
 
 	// Initialize Repository
-	seratRepository = postgres.NewSeratRepository(Query)
+	seratRepository = postgres.NewPostgresSeratRepository(dbQuery)
 
 	// Initialize Usecase
-	createSeratUseCase = usecase.NewCreateSeratUseCase(seratRepository)
-	updateSeratUseCase = usecase.NewUpdateSeratUseCase(seratRepository)
-	getSeratUseCase = usecase.NewGetSeratUseCase(seratRepository)
-	listSeratUseCase = usecase.NewListSeratsUseCase(seratRepository)
-	deleteSeratUseCase = usecase.NewDeleteSeratUseCase(seratRepository)
+	createSeratService = service.NewCreateSeratService(seratRepository)
+	updateSeratService = service.NewUpdateSeratService(seratRepository)
+	getSeratService = service.NewGetSeratService(seratRepository)
+	listSeratService = service.NewListSeratsService(seratRepository)
+	deleteSeratService = service.NewDeleteSeratService(seratRepository)
 
 	// Initialize Service
-	seratsService = svc.
-		NewSeratsService().
-		SetGetSeratUseCase(getSeratUseCase).
-		SetListSeratsUseCase(listSeratUseCase).
-		SetUpdateSeratUseCase(updateSeratUseCase).
-		SetDeleteSeratUseCase(deleteSeratUseCase).
-		SetCreateSeratUseCase(createSeratUseCase)
+	seratsServer = srv.
+		NewSeratsServer().
+		SetGetSeratUseCase(getSeratService).
+		SetListSeratsUseCase(listSeratService).
+		SetUpdateSeratUseCase(updateSeratService).
+		SetDeleteSeratUseCase(deleteSeratService).
+		SetCreateSeratUseCase(createSeratService)
 
-	wulangansService = svc.NewWulangansService()
+	wulangansServer = srv.NewWulangansServer()
 }
 
 func runGRPCServer() error {
-	api.RegisterSeratsServer(server, seratsService)
-	api.RegisterWulangansServer(server, wulangansService)
+	api.RegisterSeratsServer(server, seratsServer)
+	api.RegisterWulangansServer(server, wulangansServer)
 
 	return server.Serve(tcp)
 }

@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/query"
+	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository/postgres"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	mockQuery "github.com/fikrirnurhidayat/kasusastran/mocks/domain/query"
+	mockQuery "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/query"
 )
 
 type MockSeratRepository struct {
 	db *mockQuery.Querier
 }
 
-func TestSeratRepository_CreateSerat(t *testing.T) {
+func TestSeratRepository_Create(t *testing.T) {
 	type input struct {
 		ctx    context.Context
 		iserat *entity.Serat
@@ -103,8 +103,8 @@ func TestSeratRepository_CreateSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := postgres.NewSeratRepository(m.db)
-			out, err := subject.CreateSerat(tt.in.ctx, tt.in.iserat)
+			subject := postgres.NewPostgresSeratRepository(m.db)
+			out, err := subject.Create(tt.in.ctx, tt.in.iserat)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)
@@ -188,8 +188,8 @@ func TestSeratRepository_GetSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := postgres.NewSeratRepository(m.db)
-			out, err := subject.GetSerat(tt.in.ctx, tt.in.id)
+			subject := postgres.NewPostgresSeratRepository(m.db)
+			out, err := subject.Get(tt.in.ctx, tt.in.id)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)
@@ -257,8 +257,8 @@ func TestSeratRepository_DeleteSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := postgres.NewSeratRepository(m.db)
-			err := subject.DeleteSerat(tt.in.ctx, tt.in.id)
+			subject := postgres.NewPostgresSeratRepository(m.db)
+			err := subject.Delete(tt.in.ctx, tt.in.id)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)
@@ -412,8 +412,8 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := postgres.NewSeratRepository(m.db)
-			out, count, err := subject.ListSerats(tt.in.ctx, tt.in.pagination)
+			subject := postgres.NewPostgresSeratRepository(m.db)
+			out, count, err := subject.List(tt.in.ctx, tt.in.pagination)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)
@@ -512,8 +512,8 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := postgres.NewSeratRepository(m.db)
-			out, err := subject.UpdateSerat(tt.in.ctx, tt.in.id, tt.in.userat)
+			subject := postgres.NewPostgresSeratRepository(m.db)
+			out, err := subject.Update(tt.in.ctx, tt.in.id, tt.in.userat)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)
