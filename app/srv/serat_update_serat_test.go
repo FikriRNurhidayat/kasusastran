@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
-	mocks "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/svc"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
+	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 )
 
 func TestSeratService_UpdateSerat(t *testing.T) {
@@ -67,14 +67,17 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 			in: &input{
 				ctx: context.Background(),
 				req: &api.UpdateSeratRequest{
-					Id: "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
+					Id:                "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
+					Title:             "Lorem ipsum",
+					Description:       "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "https://placeimg.com/640/480/any",
+					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
 				},
 			},
 			out: &output{
 				res: &api.Serat{
 					Id:                uuid.New().String(),
 					Title:             "Lorem ipsum",
-					Content:           "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
 					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
@@ -85,7 +88,6 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 				m.updateSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(&entity.Serat{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
-					Content:           out.res.GetContent(),
 					Description:       out.res.GetDescription(),
 					CoverImageUrl:     out.res.GetCoverImageUrl(),
 					ThumbnailImageUrl: out.res.GetThumbnailImageUrl(),
@@ -104,7 +106,7 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := srv.NewSeratsServer().SetUpdateSeratUseCase(m.updateSeratService)
+			subject := srv.NewSeratsServer(srv.WithUpdateSeratService(m.updateSeratService))
 			out, err := subject.UpdateSerat(tt.in.ctx, tt.in.req)
 
 			if tt.out.err != nil {

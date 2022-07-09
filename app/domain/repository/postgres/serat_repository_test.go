@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/query"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository/postgres"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	mockQuery "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/query"
+	mockQuery "github.com/fikrirnurhidayat/kasusastran/mocks/domain/query"
 )
 
 type MockSeratRepository struct {

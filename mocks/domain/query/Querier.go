@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	query "github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/query"
+	query "github.com/fikrirnurhidayat/kasusastran/app/domain/query"
 	mock "github.com/stretchr/testify/mock"
 
 	uuid "github.com/google/uuid"

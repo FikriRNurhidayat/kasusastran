@@ -3,8 +3,8 @@ package srv
 import (
 	"context"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -13,10 +13,20 @@ func (s *SeratsServer) ListSerats(ctx context.Context, req *api.ListSeratsReques
 	pagination := &entity.Pagination{}
 
 	if req.GetPagination() != nil {
-		pagination.Page = req.GetPagination().GetPage()
-		pagination.PageSize = req.GetPagination().GetPageSize()
-	} else {
+		if req.GetPagination().GetPage() != 0 {
+			pagination.Page = req.GetPagination().GetPage()
+		}
+
+		if req.GetPagination().GetPageSize() != 0 {
+			pagination.PageSize = req.GetPagination().GetPageSize()
+		}
+	}
+
+	if pagination.Page == 0 {
 		pagination.Page = 1
+	}
+
+	if pagination.PageSize == 0 {
 		pagination.PageSize = 10
 	}
 

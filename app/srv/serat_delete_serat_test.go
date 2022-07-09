@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
-	mocks "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/svc"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
+	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 )
 
 func TestSeratService_DeleteSerat(t *testing.T) {

@@ -24,6 +24,7 @@ build:
 	go build -o out/bin/kasusastran main.go 
 
 init:
+	go mod tidy
 	go mod vendor
 	go install
 
@@ -52,25 +53,25 @@ migration:
 	touch db/migrations/$(timestamp)_${name}.up.sql
 	touch db/migrations/$(timestamp)_${name}.down.sql
 
-rollback:
+rollbackdb:
 	echo "y" | docker run -v ${PWD}/db/migrations:/migrations \
 		--rm -i --network host migrate/migrate \
 		--path=/migrations/ \
 		--database ${DATABASE_URL} down 
 
-migrate:
+migratedb:
 	docker run -v ${PWD}/db/migrations:/migrations \
 		--rm -it --network host migrate/migrate \
 		--path=/migrations/ \
 		--database ${DATABASE_URL} up
 
-create:
+createdb:
 	createdb ${DATABASE_NAME}
 
-drop:
+dropdb:
 	dropdb ${DATABASE_NAME}
 
-seed: clean
+seeddb: clean
 	cp ./db/seeds.sql ./db/seeds.sql.bak
 	envsubst < ./db/seeds.sql.bak > ./db/seeds.sql
 	sed -i 's/COPY/\\copy/g' ./db/seeds.sql
@@ -78,7 +79,7 @@ seed: clean
 	psql -a -f ./db/reset.sql ${DATABASE_URL} 1> /dev/null
 	mv ./db/seeds.sql.bak ./db/seeds.sql
 
-clean:
+cleandb:
 	psql -a -f ./db/clean.sql ${DATABASE_URL}
 	$(MAKE) migrate 
 
@@ -94,4 +95,4 @@ test: format
 	gototal-cobertura < coverage.xml
 
 
-setup: create migrate seed
+setupdb: createdb migratedb seeddb

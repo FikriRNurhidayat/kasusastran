@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	mocks "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/repository"
+	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 )
 
 type MockDeleteSeratService struct {

@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
-	mocks "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/svc"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
+	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 )
 
 func TestSeratService_ListSerats(t *testing.T) {
@@ -168,10 +168,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := srv.
-				NewSeratsServer().
-				SetListSeratsUseCase(m.listSeratsService)
-
+			subject := srv.NewSeratsServer(srv.WithListSeratsService(m.listSeratsService))
 			res, err := subject.ListSerats(tt.in.ctx, tt.in.req)
 
 			if tt.out.err != nil {

@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/google/uuid"
 )
 

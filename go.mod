@@ -1,4 +1,4 @@
-module github.com/fikrirnurhidayat/api.kasusastran.io
+module github.com/fikrirnurhidayat/kasusastran
 
 go 1.18
 
@@ -11,7 +11,9 @@ require (
 )
 
 require (
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/lib/pq v1.10.5
+	github.com/nsqio/go-nsq v1.1.0
 	github.com/spf13/viper v1.11.0
 	github.com/stretchr/testify v1.7.1
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
@@ -22,6 +24,7 @@ require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang/glog v1.0.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect

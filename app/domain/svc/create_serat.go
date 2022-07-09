@@ -3,8 +3,8 @@ package svc
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 )
 
 type CreateSeratParams struct {

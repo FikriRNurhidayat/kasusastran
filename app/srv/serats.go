@@ -1,9 +1,9 @@
 package srv
 
 import (
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
 )
 
 type SeratsServer struct {
@@ -16,31 +16,44 @@ type SeratsServer struct {
 	listSeratsService  svc.ListSeratsService
 }
 
-func NewSeratsServer() *SeratsServer {
-	return &SeratsServer{}
+func NewSeratsServer(setters ...SeratsServerSetter) *SeratsServer {
+	server := &SeratsServer{}
+
+	for _, set := range setters {
+		set(server)
+	}
+
+	return server
 }
 
-func (s *SeratsServer) SetCreateSeratUseCase(CreateSeratUseCase svc.CreateSeratService) *SeratsServer {
-	s.createSeratService = CreateSeratUseCase
-	return s
+type SeratsServerSetter func(*SeratsServer)
+
+func WithGetSeratService(getSeratService svc.GetSeratService) SeratsServerSetter {
+	return func(server *SeratsServer) {
+		server.getSeratService = getSeratService
+	}
 }
 
-func (s *SeratsServer) SetUpdateSeratUseCase(UpdateSeratUseCase svc.UpdateSeratService) *SeratsServer {
-	s.updateSeratService = UpdateSeratUseCase
-	return s
+func WithListSeratsService(listSeratsService svc.ListSeratsService) SeratsServerSetter {
+	return func(server *SeratsServer) {
+		server.listSeratsService = listSeratsService
+	}
 }
 
-func (s *SeratsServer) SetDeleteSeratUseCase(DeleteSeratUseCase svc.DeleteSeratService) *SeratsServer {
-	s.deleteSeratService = DeleteSeratUseCase
-	return s
+func WithCreateSeratService(createSeratService svc.CreateSeratService) SeratsServerSetter {
+	return func(server *SeratsServer) {
+		server.createSeratService = createSeratService
+	}
 }
 
-func (s *SeratsServer) SetGetSeratUseCase(GetSeratUseCase svc.GetSeratService) *SeratsServer {
-	s.getSeratService = GetSeratUseCase
-	return s
+func WithUpdateSeratService(updateSeratService svc.UpdateSeratService) SeratsServerSetter {
+	return func(server *SeratsServer) {
+		server.updateSeratService = updateSeratService
+	}
 }
 
-func (s *SeratsServer) SetListSeratsUseCase(ListSeratsUseCase svc.ListSeratsService) *SeratsServer {
-	s.listSeratsService = ListSeratsUseCase
-	return s
+func WithDeleteSeratService(deleteSeratService svc.DeleteSeratService) SeratsServerSetter {
+	return func(server *SeratsServer) {
+		server.deleteSeratService = deleteSeratService
+	}
 }

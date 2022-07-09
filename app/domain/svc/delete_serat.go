@@ -3,7 +3,7 @@ package svc
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
 

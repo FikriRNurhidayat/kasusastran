@@ -3,13 +3,13 @@ package srv
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/errors"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/errors"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
 )
 
 func (s *SeratsServer) DeleteSerat(ctx context.Context, req *api.DeleteSeratRequest) (*emptypb.Empty, error) {

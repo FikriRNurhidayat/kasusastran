@@ -3,12 +3,12 @@ package srv
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/errors"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/errors"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
 )
 
 func (s *SeratsServer) GetSerat(ctx context.Context, req *api.GetSeratRequest) (*api.Serat, error) {
@@ -28,7 +28,6 @@ func (s *SeratsServer) GetSerat(ctx context.Context, req *api.GetSeratRequest) (
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,
-		Content:           serat.Content,
 		CoverImageUrl:     serat.CoverImageUrl,
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}

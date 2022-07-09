@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	entity "github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
+	entity "github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	mock "github.com/stretchr/testify/mock"
 
 	uuid "github.com/google/uuid"

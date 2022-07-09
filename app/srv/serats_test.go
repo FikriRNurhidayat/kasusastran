@@ -1,6 +1,6 @@
 package srv_test
 
-import mocks "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/svc"
+import mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 
 type MockSeratService struct {
 	createSeratService *mocks.CreateSeratService

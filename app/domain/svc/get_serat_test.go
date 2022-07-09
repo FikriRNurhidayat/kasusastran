@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	mocks "github.com/fikrirnurhidayat/api.kasusastran.io/mocks/domain/repository"
+	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 )
 
 type MockGetSeratService struct {

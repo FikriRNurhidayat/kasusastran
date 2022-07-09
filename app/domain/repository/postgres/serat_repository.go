@@ -3,9 +3,9 @@ package postgres
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/entity"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/query"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
 
@@ -112,6 +112,7 @@ func (r *PostgresSeratRepository) List(ctx context.Context, pagination *entity.P
 			ID:                row.ID,
 			Title:             row.Title,
 			Description:       row.Description,
+			Content:           row.Content,
 			CoverImageUrl:     row.CoverImageUrl,
 			ThumbnailImageUrl: row.ThumbnailImageUrl,
 		}

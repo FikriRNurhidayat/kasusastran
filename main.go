@@ -9,15 +9,15 @@ import (
 	"os"
 	"regexp"
 
-	api "github.com/fikrirnurhidayat/api.kasusastran.io/api"
-	pg "github.com/fikrirnurhidayat/api.kasusastran.io/app/driver/postgres"
+	api "github.com/fikrirnurhidayat/kasusastran/api"
+	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
 
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/config"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/query"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository"
-	"github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/repository/postgres"
-	service "github.com/fikrirnurhidayat/api.kasusastran.io/app/domain/svc"
-	srv "github.com/fikrirnurhidayat/api.kasusastran.io/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/config"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
+	service "github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	srv "github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -88,7 +88,7 @@ func init() {
 	// Initialize Repository
 	seratRepository = postgres.NewPostgresSeratRepository(dbQuery)
 
-	// Initialize Usecase
+	// Initialize Service
 	createSeratService = service.NewCreateSeratService(seratRepository)
 	updateSeratService = service.NewUpdateSeratService(seratRepository)
 	getSeratService = service.NewGetSeratService(seratRepository)
@@ -96,13 +96,13 @@ func init() {
 	deleteSeratService = service.NewDeleteSeratService(seratRepository)
 
 	// Initialize Service
-	seratsServer = srv.
-		NewSeratsServer().
-		SetGetSeratUseCase(getSeratService).
-		SetListSeratsUseCase(listSeratService).
-		SetUpdateSeratUseCase(updateSeratService).
-		SetDeleteSeratUseCase(deleteSeratService).
-		SetCreateSeratUseCase(createSeratService)
+	seratsServer = srv.NewSeratsServer(
+		srv.WithCreateSeratService(createSeratService),
+		srv.WithGetSeratService(getSeratService),
+		srv.WithListSeratsService(listSeratService),
+		srv.WithUpdateSeratService(updateSeratService),
+		srv.WithDeleteSeratService(deleteSeratService),
+	)
 
 	wulangansServer = srv.NewWulangansServer()
 }
@@ -147,7 +147,7 @@ func cors(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if allowedOrigin(r.Header.Get("Origin")) {
 			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, PUT")
 			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType")
 		}
 		if r.Method == "OPTIONS" {

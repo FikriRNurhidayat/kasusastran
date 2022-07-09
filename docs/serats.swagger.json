@@ -43,6 +43,7 @@
         "parameters": [
           {
             "name": "pagination.page",
+            "description": "Page number",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -50,6 +51,7 @@
           },
           {
             "name": "pagination.pageSize",
+            "description": "Total item shown for each page",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -175,6 +177,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Serat's title",
             "in": "path",
             "required": true,
             "type": "string"
@@ -187,19 +190,22 @@
               "type": "object",
               "properties": {
                 "title": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Serat's title"
                 },
                 "description": {
-                  "type": "string"
-                },
-                "content": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Serat's description"
                 },
                 "coverImageUrl": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Serat's cover image URL"
                 },
                 "thumbnailImageUrl": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Serat's thumbnail image URL"
                 }
               }
             }
@@ -224,19 +230,22 @@
       "type": "object",
       "properties": {
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "Serat's title"
         },
         "description": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
+          "type": "string",
+          "description": "Serat's description"
         },
         "coverImageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "uri",
+          "description": "Serat's cover image URL"
         },
         "thumbnailImageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "uri",
+          "description": "Serat's thumbnail image URL"
         }
       }
     },
@@ -259,11 +268,13 @@
       "properties": {
         "page": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "description": "Page number"
         },
         "pageSize": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "description": "Total item shown for each page"
         }
       }
     },
