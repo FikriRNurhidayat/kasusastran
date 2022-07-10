@@ -17,7 +17,7 @@ type UpdateSeratParams struct {
 }
 
 type UpdateSeratService interface {
-	Exec(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*entity.Serat, error)
+	Call(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*entity.Serat, error)
 }
 
 type updateSeratService struct {
@@ -30,7 +30,7 @@ func NewUpdateSeratService(seratRepository repository.SeratRepository) UpdateSer
 	}
 }
 
-func (u *updateSeratService) Exec(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*entity.Serat, error) {
+func (u *updateSeratService) Call(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*entity.Serat, error) {
 	return u.SeratRepository.Update(ctx, id, &entity.Serat{
 		Title:             params.Title,
 		Description:       params.Description,

@@ -18,14 +18,14 @@ type MockCreateSeratService struct {
 	seratRepository *mocks.SeratRepository
 }
 
-func TestCreateSeratService_Exec(t *testing.T) {
+func TestCreateSeratService_Call(t *testing.T) {
 	type input struct {
 		ctx    context.Context
 		params *svc.CreateSeratParams
 	}
 
 	type output struct {
-		serat *entity.Serat
+		serat *svc.CreateSeratResult
 		err   error
 	}
 
@@ -58,7 +58,7 @@ func TestCreateSeratService_Exec(t *testing.T) {
 				params: &svc.CreateSeratParams{},
 			},
 			out: &output{
-				serat: &entity.Serat{
+				serat: &svc.CreateSeratResult{
 					ID:                uuid.New(),
 					Title:             "Jayabaya",
 					Description:       "Lorem ipsum dolor sit amet",
@@ -68,7 +68,15 @@ func TestCreateSeratService_Exec(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockCreateSeratService, in *input, out *output) {
-				m.seratRepository.On("Create", in.ctx, mock.AnythingOfType("*entity.Serat")).Return(out.serat, out.err)
+				serat := &entity.Serat{
+					ID:                out.serat.ID,
+					Title:             out.serat.Title,
+					Description:       out.serat.Description,
+					CoverImageUrl:     out.serat.CoverImageUrl,
+					ThumbnailImageUrl: out.serat.ThumbnailImageUrl,
+				}
+
+				m.seratRepository.On("Create", in.ctx, mock.AnythingOfType("*entity.Serat")).Return(serat, out.err)
 			},
 		},
 	}
@@ -84,7 +92,7 @@ func TestCreateSeratService_Exec(t *testing.T) {
 			}
 
 			subject := svc.NewCreateSeratService(m.seratRepository)
-			out, err := subject.Exec(tt.in.ctx, tt.in.params)
+			out, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if err != nil {
 				assert.NotNil(t, err)

@@ -49,7 +49,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 			on: nil,
 		},
 		{
-			name: "GetSeratUseCase.Exec return error",
+			name: "GetSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
 				req: &api.GetSeratRequest{
@@ -58,10 +58,10 @@ func TestSeratService_GetSerat(t *testing.T) {
 			},
 			out: &output{
 				res: nil,
-				err: fmt.Errorf("GetSeratUseCase.Exec: failed to run svc: bababoey"),
+				err: fmt.Errorf("GetSeratUseCase.Call: failed to run svc: bababoey"),
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.getSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(nil, out.err)
+				m.getSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(nil, out.err)
 			},
 		},
 		{
@@ -83,7 +83,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.getSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(&entity.Serat{
+				m.getSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(&entity.Serat{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
 					Description:       out.res.GetDescription(),

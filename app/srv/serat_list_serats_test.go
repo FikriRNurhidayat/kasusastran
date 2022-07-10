@@ -35,18 +35,18 @@ func TestSeratService_ListSerats(t *testing.T) {
 
 	tests := []scenario{
 		{
-			name: "ListSeratsUseCase.Exec return error",
+			name: "ListSeratsUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
 				req: &api.ListSeratsRequest{},
 			},
 			out: &output{
-				err: fmt.Errorf("ListSeratsUseCase.Exec: failed to execute svc"),
+				err: fmt.Errorf("ListSeratsUseCase.Call: failed to execute svc"),
 			},
 			on: func(m *MockSeratsServer, i *input, o *output) {
 				svc := []entity.Serat{}
 				pagination := &entity.Pagination{}
-				m.listSeratsService.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
+				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
 			},
 		},
 		{
@@ -97,7 +97,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 					svc = append(svc, pack)
 				}
 
-				m.listSeratsService.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
+				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
 			},
 		},
 		{
@@ -153,7 +153,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 					svc = append(svc, pack)
 				}
 
-				m.listSeratsService.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
+				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
 			},
 		},
 	}

@@ -17,7 +17,7 @@ type MockGetSeratService struct {
 	seratRepository *mocks.SeratRepository
 }
 
-func TestGetSeratUseCase_Exec(t *testing.T) {
+func TestGetSeratUseCase_Call(t *testing.T) {
 	type input struct {
 		ctx context.Context
 		id  uuid.UUID
@@ -83,7 +83,7 @@ func TestGetSeratUseCase_Exec(t *testing.T) {
 			}
 
 			subject := svc.NewGetSeratService(m.seratRepository)
-			out, err := subject.Exec(tt.in.ctx, tt.in.id)
+			out, err := subject.Call(tt.in.ctx, tt.in.id)
 
 			if err != nil {
 				assert.NotNil(t, err)

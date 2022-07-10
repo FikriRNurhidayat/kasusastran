@@ -16,7 +16,7 @@ type MockDeleteSeratService struct {
 	seratRepository *mocks.SeratRepository
 }
 
-func TestDeleteSeratService_Exec(t *testing.T) {
+func TestDeleteSeratService_Call(t *testing.T) {
 	type input struct {
 		ctx context.Context
 		id  uuid.UUID
@@ -73,7 +73,7 @@ func TestDeleteSeratService_Exec(t *testing.T) {
 			}
 
 			subject := svc.NewDeleteSeratService(m.seratRepository)
-			err := subject.Exec(tt.in.ctx, tt.in.id)
+			err := subject.Call(tt.in.ctx, tt.in.id)
 
 			if err != nil {
 				assert.NotNil(t, err)

@@ -16,7 +16,7 @@ type MockListSeratsService struct {
 	seratRepository *mocks.SeratRepository
 }
 
-func TestListSeratsService_Exec(t *testing.T) {
+func TestListSeratsService_Call(t *testing.T) {
 	type input struct {
 		ctx        context.Context
 		pagination *entity.Pagination
@@ -88,7 +88,7 @@ func TestListSeratsService_Exec(t *testing.T) {
 			}
 
 			subject := svc.NewListSeratsService(m.seratRepository)
-			serats, pagination, err := subject.Exec(tt.in.ctx, tt.in.pagination)
+			serats, pagination, err := subject.Call(tt.in.ctx, tt.in.pagination)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)

@@ -49,17 +49,17 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 			on: nil,
 		},
 		{
-			name: "UpdateSeratUseCase.Exec return error",
+			name: "UpdateSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
 				req: &api.UpdateSeratRequest{},
 			},
 			out: &output{
 				res: nil,
-				err: fmt.Errorf("UpdateSeratUseCase.Exec: failed to run svc: bababoey"),
+				err: fmt.Errorf("UpdateSeratUseCase.Call: failed to run svc: bababoey"),
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.updateSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(nil, out.err)
+				m.updateSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(nil, out.err)
 			},
 		},
 		{
@@ -85,7 +85,7 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.updateSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(&entity.Serat{
+				m.updateSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(&entity.Serat{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
 					Description:       out.res.GetDescription(),

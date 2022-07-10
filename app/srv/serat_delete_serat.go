@@ -19,7 +19,7 @@ func (s *SeratsServer) DeleteSerat(ctx context.Context, req *api.DeleteSeratRequ
 		return nil, errors.ErrInvalidUUID
 	}
 
-	err = s.deleteSeratService.Exec(ctx, id)
+	err = s.deleteSeratService.Call(ctx, id)
 
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "serat not found: %v", req.GetId())

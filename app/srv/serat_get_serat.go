@@ -18,7 +18,7 @@ func (s *SeratsServer) GetSerat(ctx context.Context, req *api.GetSeratRequest) (
 		return nil, errors.ErrInvalidUUID
 	}
 
-	serat, err := s.getSeratService.Exec(ctx, id)
+	serat, err := s.getSeratService.Call(ctx, id)
 
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "serat not found: %v", req.GetId())

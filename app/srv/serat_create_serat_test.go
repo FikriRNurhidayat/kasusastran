@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -35,17 +35,17 @@ func TestSeratService_CreateSerat(t *testing.T) {
 
 	tests := []scenario{
 		{
-			name: "CreateSeratUseCase.Exec return error",
+			name: "CreateSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
 				req: &api.CreateSeratRequest{},
 			},
 			out: &output{
 				res: nil,
-				err: fmt.Errorf("CreateSeratUseCase.Exec: failed to run svc: bababoey"),
+				err: fmt.Errorf("CreateSeratUseCase.Call: failed to run svc: bababoey"),
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.createSeratService.On("Exec", in.ctx, mock.AnythingOfType("*svc.CreateSeratParams")).Return(nil, out.err)
+				m.createSeratService.On("Call", in.ctx, mock.AnythingOfType("*svc.CreateSeratParams")).Return(nil, out.err)
 			},
 		},
 		{
@@ -70,7 +70,7 @@ func TestSeratService_CreateSerat(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.createSeratService.On("Exec", in.ctx, mock.AnythingOfType("*svc.CreateSeratParams")).Return(&entity.Serat{
+				m.createSeratService.On("Call", in.ctx, mock.AnythingOfType("*svc.CreateSeratParams")).Return(&svc.CreateSeratResult{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
 					Description:       out.res.GetDescription(),

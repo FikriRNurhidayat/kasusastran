@@ -15,8 +15,8 @@ type DeleteSeratService struct {
 	mock.Mock
 }
 
-// Exec provides a mock function with given fields: ctx, id
-func (_m *DeleteSeratService) Exec(ctx context.Context, id uuid.UUID) error {
+// Call provides a mock function with given fields: ctx, id
+func (_m *DeleteSeratService) Call(ctx context.Context, id uuid.UUID) error {
 	ret := _m.Called(ctx, id)
 
 	var r0 error

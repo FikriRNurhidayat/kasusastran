@@ -18,8 +18,8 @@ type UpdateSeratService struct {
 	mock.Mock
 }
 
-// Exec provides a mock function with given fields: ctx, id, params
-func (_m *UpdateSeratService) Exec(ctx context.Context, id uuid.UUID, params *svc.UpdateSeratParams) (*entity.Serat, error) {
+// Call provides a mock function with given fields: ctx, id, params
+func (_m *UpdateSeratService) Call(ctx context.Context, id uuid.UUID, params *svc.UpdateSeratParams) (*entity.Serat, error) {
 	ret := _m.Called(ctx, id, params)
 
 	var r0 *entity.Serat

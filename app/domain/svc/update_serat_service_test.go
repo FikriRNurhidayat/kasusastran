@@ -18,7 +18,7 @@ type MockUpdateSeratService struct {
 	seratRepository *mocks.SeratRepository
 }
 
-func TestUpdateSeratService_Exec(t *testing.T) {
+func TestUpdateSeratService_Call(t *testing.T) {
 	type input struct {
 		ctx    context.Context
 		id     uuid.UUID
@@ -87,7 +87,7 @@ func TestUpdateSeratService_Exec(t *testing.T) {
 			}
 
 			subject := svc.NewUpdateSeratService(m.seratRepository)
-			out, err := subject.Exec(tt.in.ctx, tt.in.id, tt.in.params)
+			out, err := subject.Call(tt.in.ctx, tt.in.id, tt.in.params)
 
 			if err != nil {
 				assert.NotNil(t, err)

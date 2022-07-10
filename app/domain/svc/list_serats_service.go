@@ -8,7 +8,7 @@ import (
 )
 
 type ListSeratsService interface {
-	Exec(context.Context, *entity.Pagination) ([]entity.Serat, *entity.Pagination, error)
+	Call(context.Context, *entity.Pagination) ([]entity.Serat, *entity.Pagination, error)
 }
 
 type listSeratsService struct {
@@ -21,7 +21,7 @@ func NewListSeratsService(SeratRepository repository.SeratRepository) ListSerats
 	}
 }
 
-func (u *listSeratsService) Exec(ctx context.Context, ipg *entity.Pagination) (serats []entity.Serat, opg *entity.Pagination, err error) {
+func (u *listSeratsService) Call(ctx context.Context, ipg *entity.Pagination) (serats []entity.Serat, opg *entity.Pagination, err error) {
 	serats, count, err := u.seratRepository.List(ctx, ipg)
 
 	if err != nil {

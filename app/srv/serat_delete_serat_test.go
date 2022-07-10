@@ -48,7 +48,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 			on: nil,
 		},
 		{
-			name: "DeleteSeratUseCase.Exec return error",
+			name: "DeleteSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
 				req: &api.DeleteSeratRequest{
@@ -57,10 +57,10 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 			},
 			out: &output{
 				res: nil,
-				err: fmt.Errorf("DeleteSeratUseCase.Exec: failed to run svc: bababoey"),
+				err: fmt.Errorf("DeleteSeratUseCase.Call: failed to run svc: bababoey"),
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.deleteSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(out.err)
+				m.deleteSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(out.err)
 			},
 		},
 		{
@@ -76,7 +76,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.deleteSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(out.err)
+				m.deleteSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(out.err)
 			},
 		},
 	}

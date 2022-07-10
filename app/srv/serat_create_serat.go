@@ -15,7 +15,7 @@ func (s *SeratsServer) CreateSerat(ctx context.Context, req *api.CreateSeratRequ
 		return nil, status.Error(codes.OutOfRange, err.Error())
 	}
 
-	serat, err := s.createSeratService.Exec(ctx, &svc.CreateSeratParams{
+	serat, err := s.createSeratService.Call(ctx, &svc.CreateSeratParams{
 		Title:             req.GetTitle(),
 		Description:       req.GetDescription(),
 		CoverImageUrl:     req.GetCoverImageUrl(),
@@ -23,7 +23,7 @@ func (s *SeratsServer) CreateSerat(ctx context.Context, req *api.CreateSeratRequ
 	})
 
 	if err != nil {
-		return nil, status.Errorf(codes.OutOfRange, "s.CreateSeratUseCase.Exec: %v", err.Error())
+		return nil, status.Errorf(codes.OutOfRange, "s.CreateSeratUseCase.Call: %v", err.Error())
 	}
 
 	res := &api.Serat{

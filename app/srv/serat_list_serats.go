@@ -30,7 +30,7 @@ func (s *SeratsServer) ListSerats(ctx context.Context, req *api.ListSeratsReques
 		pagination.PageSize = 10
 	}
 
-	svc, pagination, err := s.listSeratsService.Exec(ctx, pagination)
+	svc, pagination, err := s.listSeratsService.Call(ctx, pagination)
 
 	if err != nil {
 		return res, status.Errorf(codes.Internal, "failed to retrieve list of svc: %v", err)

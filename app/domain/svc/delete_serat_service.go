@@ -8,7 +8,7 @@ import (
 )
 
 type DeleteSeratService interface {
-	Exec(ctx context.Context, id uuid.UUID) error
+	Call(ctx context.Context, id uuid.UUID) error
 }
 
 type deleteSeratService struct {
@@ -21,6 +21,6 @@ func NewDeleteSeratService(seratRepository repository.SeratRepository) DeleteSer
 	}
 }
 
-func (u *deleteSeratService) Exec(ctx context.Context, id uuid.UUID) error {
+func (u *deleteSeratService) Call(ctx context.Context, id uuid.UUID) error {
 	return u.seratRepository.Delete(ctx, id)
 }

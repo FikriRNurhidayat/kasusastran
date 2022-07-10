@@ -23,7 +23,7 @@ func (s *SeratsServer) UpdateSerat(ctx context.Context, req *api.UpdateSeratRequ
 		return nil, status.Error(codes.OutOfRange, err.Error())
 	}
 
-	serat, err := s.updateSeratService.Exec(ctx, id, &svc.UpdateSeratParams{
+	serat, err := s.updateSeratService.Call(ctx, id, &svc.UpdateSeratParams{
 		Title:             req.GetTitle(),
 		Description:       req.GetDescription(),
 		CoverImageUrl:     req.GetCoverImageUrl(),
@@ -31,7 +31,7 @@ func (s *SeratsServer) UpdateSerat(ctx context.Context, req *api.UpdateSeratRequ
 	})
 
 	if err != nil {
-		return nil, status.Errorf(codes.OutOfRange, "s.UpdateSeratUseCase.Exec: %v", err.Error())
+		return nil, status.Errorf(codes.OutOfRange, "s.UpdateSeratUseCase.Call: %v", err.Error())
 	}
 
 	res := &api.Serat{

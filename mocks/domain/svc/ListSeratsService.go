@@ -14,8 +14,8 @@ type ListSeratsService struct {
 	mock.Mock
 }
 
-// Exec provides a mock function with given fields: _a0, _a1
-func (_m *ListSeratsService) Exec(_a0 context.Context, _a1 *entity.Pagination) ([]entity.Serat, *entity.Pagination, error) {
+// Call provides a mock function with given fields: _a0, _a1
+func (_m *ListSeratsService) Call(_a0 context.Context, _a1 *entity.Pagination) ([]entity.Serat, *entity.Pagination, error) {
 	ret := _m.Called(_a0, _a1)
 
 	var r0 []entity.Serat
