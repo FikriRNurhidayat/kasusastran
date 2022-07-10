@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -83,7 +83,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.getSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(&entity.Serat{
+				m.getSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(&svc.GetSeratResult{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
 					Description:       out.res.GetDescription(),

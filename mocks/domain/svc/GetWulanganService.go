@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	entity "github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	svc "github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	mock "github.com/stretchr/testify/mock"
 
 	uuid "github.com/google/uuid"
@@ -17,15 +17,15 @@ type GetWulanganService struct {
 }
 
 // Call provides a mock function with given fields: ctx, id
-func (_m *GetWulanganService) Call(ctx context.Context, id uuid.UUID) (*entity.Wulangan, error) {
+func (_m *GetWulanganService) Call(ctx context.Context, id uuid.UUID) (*svc.GetWulanganResult, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 *entity.Wulangan
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) *entity.Wulangan); ok {
+	var r0 *svc.GetWulanganResult
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) *svc.GetWulanganResult); ok {
 		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Wulangan)
+			r0 = ret.Get(0).(*svc.GetWulanganResult)
 		}
 	}
 

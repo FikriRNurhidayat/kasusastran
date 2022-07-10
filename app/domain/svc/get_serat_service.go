@@ -9,8 +9,10 @@ import (
 )
 
 type GetSeratService interface {
-	Call(ctx context.Context, id uuid.UUID) (*entity.Serat, error)
+	Call(ctx context.Context, id uuid.UUID) (*GetSeratResult, error)
 }
+
+type GetSeratResult entity.Serat
 
 type getSeratService struct {
 	seratRepository repository.SeratRepository
@@ -22,6 +24,20 @@ func NewGetSeratService(seratRepository repository.SeratRepository) GetSeratServ
 	}
 }
 
-func (u *getSeratService) Call(ctx context.Context, id uuid.UUID) (*entity.Serat, error) {
-	return u.seratRepository.Get(ctx, id)
+func (u *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResult, error) {
+	serat, err := u.seratRepository.Get(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	res := &GetSeratResult{
+		ID:                serat.ID,
+		Title:             serat.Title,
+		Description:       serat.Description,
+		CoverImageUrl:     serat.CoverImageUrl,
+		ThumbnailImageUrl: serat.ThumbnailImageUrl,
+	}
+
+	return res, nil
 }

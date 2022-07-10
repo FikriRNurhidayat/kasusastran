@@ -24,7 +24,7 @@ func TestGetSeratUseCase_Call(t *testing.T) {
 	}
 
 	type output struct {
-		serat *entity.Serat
+		serat *svc.GetSeratResult
 		err   error
 	}
 
@@ -57,7 +57,7 @@ func TestGetSeratUseCase_Call(t *testing.T) {
 				id:  uuid.New(),
 			},
 			out: &output{
-				serat: &entity.Serat{
+				serat: &svc.GetSeratResult{
 					ID:                uuid.New(),
 					Title:             "Jayabaya",
 					Description:       "Lorem ipsum dolor sit amet",
@@ -67,7 +67,15 @@ func TestGetSeratUseCase_Call(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockGetSeratService, in *input, out *output) {
-				m.seratRepository.On("Get", in.ctx, in.id).Return(out.serat, out.err)
+				serat := &entity.Serat{
+					ID:                out.serat.ID,
+					Title:             out.serat.Title,
+					Description:       out.serat.Description,
+					CoverImageUrl:     out.serat.CoverImageUrl,
+					ThumbnailImageUrl: out.serat.ThumbnailImageUrl,
+				}
+
+				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, out.err)
 			},
 		},
 	}

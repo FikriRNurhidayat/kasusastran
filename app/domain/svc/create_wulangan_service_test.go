@@ -23,7 +23,7 @@ func TestCreateWulanganService_Call(t *testing.T) {
 	}
 
 	type output struct {
-		w   *entity.Wulangan
+		w   *svc.CreateWulanganResult
 		err error
 	}
 
@@ -58,7 +58,7 @@ func TestCreateWulanganService_Call(t *testing.T) {
 					ThumbnailImageUrl: i.params.ThumbnailImageUrl,
 				}
 
-				mcws.wulanganRepository.On("Create", i.ctx, w).Return(o.w, o.err)
+				mcws.wulanganRepository.On("Create", i.ctx, w).Return(w, o.err)
 			},
 		},
 		{
@@ -73,7 +73,7 @@ func TestCreateWulanganService_Call(t *testing.T) {
 				},
 			},
 			out: &output{
-				w: &entity.Wulangan{
+				w: &svc.CreateWulanganResult{
 					Title:             "Technological Society",
 					Description:       "Our society is degrading.",
 					CoverImageUrl:     "https://source.unsplash.com/617x598",
@@ -89,9 +89,17 @@ func TestCreateWulanganService_Call(t *testing.T) {
 					ThumbnailImageUrl: i.params.ThumbnailImageUrl,
 				}
 
-				o.w.ID = uuid.New()
+				ow := &entity.Wulangan{
+					ID:                uuid.New(),
+					Title:             i.params.Title,
+					Description:       i.params.Description,
+					CoverImageUrl:     i.params.CoverImageUrl,
+					ThumbnailImageUrl: i.params.ThumbnailImageUrl,
+				}
 
-				mcws.wulanganRepository.On("Create", i.ctx, w).Return(o.w, o.err)
+				o.w.ID = ow.ID
+
+				mcws.wulanganRepository.On("Create", i.ctx, w).Return(ow, o.err)
 			},
 		},
 	}

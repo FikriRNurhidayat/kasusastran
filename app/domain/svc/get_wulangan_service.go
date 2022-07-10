@@ -10,26 +10,37 @@ import (
 )
 
 type GetWulanganService interface {
-	Call(ctx context.Context, id uuid.UUID) (*entity.Wulangan, error)
+	Call(ctx context.Context, id uuid.UUID) (*GetWulanganResult, error)
 }
+
+type GetWulanganResult entity.Wulangan
 
 type getWulanganService struct {
 	wulanganRepository repository.WulanganRepository
 }
 
-// Call implements GetWulanganService
-func (s *getWulanganService) Call(ctx context.Context, id uuid.UUID) (*entity.Wulangan, error) {
-	w, err := s.wulanganRepository.Get(ctx, id)
+func (s *getWulanganService) Call(ctx context.Context, id uuid.UUID) (*GetWulanganResult, error) {
+	wulangan, err := s.wulanganRepository.Get(ctx, id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if w == nil {
+	if wulangan == nil {
 		return nil, errors.New("wulangan not found")
 	}
 
-	return w, nil
+	res := &GetWulanganResult{
+		ID:                wulangan.ID,
+		Title:             wulangan.Title,
+		Description:       wulangan.Description,
+		CoverImageUrl:     wulangan.CoverImageUrl,
+		ThumbnailImageUrl: wulangan.ThumbnailImageUrl,
+		CreatedAt:         wulangan.CreatedAt,
+		UpdatedAt:         wulangan.UpdatedAt,
+	}
+
+	return res, nil
 }
 
 func NewGetWulanganService(wulanganRepository repository.WulanganRepository) GetWulanganService {

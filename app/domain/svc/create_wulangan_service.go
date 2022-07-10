@@ -14,8 +14,10 @@ type CreateWulanganParams struct {
 	ThumbnailImageUrl string
 }
 
+type CreateWulanganResult entity.Wulangan
+
 type CreateWulanganService interface {
-	Call(context.Context, *CreateWulanganParams) (*entity.Wulangan, error)
+	Call(context.Context, *CreateWulanganParams) (*CreateWulanganResult, error)
 }
 
 type createWulanganService struct {
@@ -28,19 +30,29 @@ func NewCreateWulanganService(wulanganRepository repository.WulanganRepository) 
 	}
 }
 
-func (s *createWulanganService) Call(ctx context.Context, params *CreateWulanganParams) (*entity.Wulangan, error) {
-	w := &entity.Wulangan{
+func (s *createWulanganService) Call(ctx context.Context, params *CreateWulanganParams) (*CreateWulanganResult, error) {
+	wulangan := &entity.Wulangan{
 		Title:             params.Title,
 		Description:       params.Description,
 		CoverImageUrl:     params.CoverImageUrl,
 		ThumbnailImageUrl: params.ThumbnailImageUrl,
 	}
 
-	w, err := s.wulanganRepository.Create(ctx, w)
+	wulangan, err := s.wulanganRepository.Create(ctx, wulangan)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return w, nil
+	res := &CreateWulanganResult{
+		ID:                wulangan.ID,
+		Title:             wulangan.Title,
+		Description:       wulangan.Description,
+		CoverImageUrl:     wulangan.CoverImageUrl,
+		ThumbnailImageUrl: wulangan.ThumbnailImageUrl,
+		CreatedAt:         wulangan.CreatedAt,
+		UpdatedAt:         wulangan.UpdatedAt,
+	}
+
+	return res, nil
 }

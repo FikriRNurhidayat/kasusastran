@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/api"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 	"github.com/google/uuid"
@@ -79,7 +79,8 @@ func TestWulangansServer_GetWulangan(t *testing.T) {
 			},
 			on: func(mws *MockWulangansServer, i *input, o *output) {
 				id := uuid.MustParse(i.req.GetId())
-				w := &entity.Wulangan{
+
+				result := &svc.GetWulanganResult{
 					ID:                id,
 					Title:             "Industrial Society And Its Future",
 					Description:       "Had been a disaster of human race.",
@@ -90,16 +91,16 @@ func TestWulangansServer_GetWulangan(t *testing.T) {
 				}
 
 				o.res = &api.Wulangan{
-					Id:                w.ID.String(),
-					Title:             w.Title,
-					Description:       w.Description,
-					CoverImageUrl:     w.CoverImageUrl,
-					ThumbnailImageUrl: w.ThumbnailImageUrl,
-					CreatedAt:         timestamppb.New(w.CreatedAt),
-					UpdatedAt:         timestamppb.New(w.UpdatedAt),
+					Id:                result.ID.String(),
+					Title:             result.Title,
+					Description:       result.Description,
+					CoverImageUrl:     result.CoverImageUrl,
+					ThumbnailImageUrl: result.ThumbnailImageUrl,
+					CreatedAt:         timestamppb.New(result.CreatedAt),
+					UpdatedAt:         timestamppb.New(result.UpdatedAt),
 				}
 
-				mws.getWulanganService.On("Call", i.ctx, id).Return(w, nil)
+				mws.getWulanganService.On("Call", i.ctx, id).Return(result, nil)
 			},
 		},
 	}

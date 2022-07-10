@@ -24,7 +24,7 @@ func TestGetWulanganService_Call(t *testing.T) {
 	}
 
 	type output struct {
-		w   *entity.Wulangan
+		w   *svc.GetWulanganResult
 		err error
 	}
 
@@ -71,7 +71,7 @@ func TestGetWulanganService_Call(t *testing.T) {
 				id:  uuid.New(),
 			},
 			out: &output{
-				w: &entity.Wulangan{
+				w: &svc.GetWulanganResult{
 					Title:             "Industrial Society And Its Future",
 					Description:       "Lorem ipsum dolor sit amet",
 					CoverImageUrl:     "https://placekitten.com/192/108",
@@ -82,8 +82,19 @@ func TestGetWulanganService_Call(t *testing.T) {
 				err: nil,
 			},
 			on: func(mgws *MockGetWulanganService, i *input, o *output) {
-				o.w.ID = i.id
-				mgws.wulanganRepository.On("Get", i.ctx, i.id).Return(o.w, nil)
+				wulangan := &entity.Wulangan{
+					ID:                i.id,
+					Title:             o.w.Title,
+					Description:       o.w.Description,
+					CoverImageUrl:     o.w.CoverImageUrl,
+					ThumbnailImageUrl: o.w.ThumbnailImageUrl,
+					CreatedAt:         o.w.CreatedAt,
+					UpdatedAt:         o.w.UpdatedAt,
+				}
+
+				o.w.ID = wulangan.ID
+
+				mgws.wulanganRepository.On("Get", i.ctx, i.id).Return(wulangan, nil)
 			},
 		},
 	}

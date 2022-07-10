@@ -9,7 +9,6 @@ import (
 	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 
 	"github.com/fikrirnurhidayat/kasusastran/api"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 
@@ -102,7 +101,7 @@ func TestWulangansServer_CreateWulangan(t *testing.T) {
 					ThumbnailImageUrl: i.req.GetThumbnailImageUrl(),
 				}
 
-				w := &entity.Wulangan{
+				w := &svc.CreateWulanganResult{
 					ID:                uuid.New(),
 					Title:             params.Title,
 					Description:       params.Description,

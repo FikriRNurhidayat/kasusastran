@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	entity "github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	svc "github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	mock "github.com/stretchr/testify/mock"
 
 	uuid "github.com/google/uuid"
@@ -17,15 +17,15 @@ type GetSeratService struct {
 }
 
 // Call provides a mock function with given fields: ctx, id
-func (_m *GetSeratService) Call(ctx context.Context, id uuid.UUID) (*entity.Serat, error) {
+func (_m *GetSeratService) Call(ctx context.Context, id uuid.UUID) (*svc.GetSeratResult, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 *entity.Serat
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) *entity.Serat); ok {
+	var r0 *svc.GetSeratResult
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) *svc.GetSeratResult); ok {
 		r0 = rf(ctx, id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Serat)
+			r0 = ret.Get(0).(*svc.GetSeratResult)
 		}
 	}
 
