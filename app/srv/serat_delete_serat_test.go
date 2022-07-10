@@ -29,7 +29,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratService, *input, *output)
+		on   func(*MockSeratsServer, *input, *output)
 	}
 
 	tests := []scenario{
@@ -59,7 +59,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 				res: nil,
 				err: fmt.Errorf("DeleteSeratUseCase.Exec: failed to run svc: bababoey"),
 			},
-			on: func(m *MockSeratService, in *input, out *output) {
+			on: func(m *MockSeratsServer, in *input, out *output) {
 				m.deleteSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(out.err)
 			},
 		},
@@ -75,7 +75,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 				res: &emptypb.Empty{},
 				err: nil,
 			},
-			on: func(m *MockSeratService, in *input, out *output) {
+			on: func(m *MockSeratsServer, in *input, out *output) {
 				m.deleteSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(out.err)
 			},
 		},
@@ -83,7 +83,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratService{
+			m := &MockSeratsServer{
 				deleteSeratService: new(mocks.DeleteSeratService),
 			}
 
@@ -91,7 +91,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := srv.NewSeratsServer().SetDeleteSeratUseCase(m.deleteSeratService)
+			subject := srv.NewSeratsServer(srv.WithDeleteSeratService(m.deleteSeratService))
 			out, err := subject.DeleteSerat(tt.in.ctx, tt.in.req)
 
 			if tt.out.err != nil {

@@ -30,7 +30,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratService, *input, *output)
+		on   func(*MockSeratsServer, *input, *output)
 	}
 
 	tests := []scenario{
@@ -43,7 +43,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 			out: &output{
 				err: fmt.Errorf("ListSeratsUseCase.Exec: failed to execute svc"),
 			},
-			on: func(m *MockSeratService, i *input, o *output) {
+			on: func(m *MockSeratsServer, i *input, o *output) {
 				svc := []entity.Serat{}
 				pagination := &entity.Pagination{}
 				m.listSeratsService.On("Exec", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
@@ -76,7 +76,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 				},
 				err: nil,
 			},
-			on: func(m *MockSeratService, i *input, o *output) {
+			on: func(m *MockSeratsServer, i *input, o *output) {
 				svc := []entity.Serat{}
 
 				pagination := &entity.Pagination{
@@ -132,7 +132,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 				},
 				err: nil,
 			},
-			on: func(m *MockSeratService, i *input, o *output) {
+			on: func(m *MockSeratsServer, i *input, o *output) {
 				svc := []entity.Serat{}
 
 				pagination := &entity.Pagination{
@@ -160,7 +160,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratService{
+			m := &MockSeratsServer{
 				listSeratsService: new(mocks.ListSeratsService),
 			}
 

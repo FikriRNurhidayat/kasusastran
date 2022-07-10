@@ -2,11 +2,11 @@
 // source: wulangan.proto
 
 /*
-Package kasusastran is a reverse proxy.
+Package api is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package kasusastran
+package api
 
 import (
 	"context"

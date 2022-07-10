@@ -14,10 +14,9 @@ import (
 
 	"github.com/fikrirnurhidayat/kasusastran/app/config"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
-	service "github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
-	srv "github.com/fikrirnurhidayat/kasusastran/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -36,16 +35,6 @@ var dbQuery query.Querier
 // Services
 var seratsServer *srv.SeratsServer
 var wulangansServer *srv.WulangansServer
-
-// Usecases
-var createSeratService service.CreateSeratService
-var updateSeratService service.UpdateSeratService
-var deleteSeratService service.DeleteSeratService
-var getSeratService service.GetSeratService
-var listSeratService service.ListSeratsService
-
-// Repositories
-var seratRepository repository.SeratRepository
 
 var (
 	// command-line options:
@@ -86,14 +75,16 @@ func init() {
 	dbQuery = query.New(db)
 
 	// Initialize Repository
-	seratRepository = postgres.NewPostgresSeratRepository(dbQuery)
+	seratRepository := postgres.NewPostgresSeratRepository(dbQuery)
+	wulanganRepository := postgres.NewPostgresWulanganRepository(dbQuery)
 
 	// Initialize Service
-	createSeratService = service.NewCreateSeratService(seratRepository)
-	updateSeratService = service.NewUpdateSeratService(seratRepository)
-	getSeratService = service.NewGetSeratService(seratRepository)
-	listSeratService = service.NewListSeratsService(seratRepository)
-	deleteSeratService = service.NewDeleteSeratService(seratRepository)
+	createSeratService := svc.NewCreateSeratService(seratRepository)
+	updateSeratService := svc.NewUpdateSeratService(seratRepository)
+	getSeratService := svc.NewGetSeratService(seratRepository)
+	listSeratService := svc.NewListSeratsService(seratRepository)
+	deleteSeratService := svc.NewDeleteSeratService(seratRepository)
+	createWulanganService := svc.NewCreateWulanganService(wulanganRepository)
 
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(
@@ -104,7 +95,9 @@ func init() {
 		srv.WithDeleteSeratService(deleteSeratService),
 	)
 
-	wulangansServer = srv.NewWulangansServer()
+	wulangansServer = srv.NewWulangansServer(
+		srv.WithCreateWulanganService(createWulanganService),
+	)
 }
 
 func runGRPCServer() error {

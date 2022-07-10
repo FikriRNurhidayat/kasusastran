@@ -30,7 +30,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratService, *input, *output)
+		on   func(*MockSeratsServer, *input, *output)
 	}
 
 	tests := []scenario{
@@ -60,7 +60,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 				res: nil,
 				err: fmt.Errorf("GetSeratUseCase.Exec: failed to run svc: bababoey"),
 			},
-			on: func(m *MockSeratService, in *input, out *output) {
+			on: func(m *MockSeratsServer, in *input, out *output) {
 				m.getSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(nil, out.err)
 			},
 		},
@@ -82,7 +82,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 				},
 				err: nil,
 			},
-			on: func(m *MockSeratService, in *input, out *output) {
+			on: func(m *MockSeratsServer, in *input, out *output) {
 				m.getSeratService.On("Exec", in.ctx, mock.AnythingOfType("uuid.UUID")).Return(&entity.Serat{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
@@ -96,7 +96,7 @@ func TestSeratService_GetSerat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratService{
+			m := &MockSeratsServer{
 				getSeratService: new(mocks.GetSeratService),
 			}
 

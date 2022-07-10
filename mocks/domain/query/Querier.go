@@ -37,6 +37,27 @@ func (_m *Querier) CountSerats(ctx context.Context) (int64, error) {
 	return r0, r1
 }
 
+// CountWulangans provides a mock function with given fields: ctx
+func (_m *Querier) CountWulangans(ctx context.Context) (int64, error) {
+	ret := _m.Called(ctx)
+
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context) int64); ok {
+		r0 = rf(ctx)
+	} else {
+		r0 = ret.Get(0).(int64)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateSerat provides a mock function with given fields: ctx, arg
 func (_m *Querier) CreateSerat(ctx context.Context, arg *query.CreateSeratParams) (query.CreateSeratRow, error) {
 	ret := _m.Called(ctx, arg)
@@ -50,6 +71,27 @@ func (_m *Querier) CreateSerat(ctx context.Context, arg *query.CreateSeratParams
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *query.CreateSeratParams) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// CreateWulangan provides a mock function with given fields: ctx, arg
+func (_m *Querier) CreateWulangan(ctx context.Context, arg *query.CreateWulanganParams) (query.CreateWulanganRow, error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 query.CreateWulanganRow
+	if rf, ok := ret.Get(0).(func(context.Context, *query.CreateWulanganParams) query.CreateWulanganRow); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Get(0).(query.CreateWulanganRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *query.CreateWulanganParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -72,6 +114,20 @@ func (_m *Querier) DeleteSerat(ctx context.Context, id uuid.UUID) error {
 	return r0
 }
 
+// DeleteWulangan provides a mock function with given fields: ctx, id
+func (_m *Querier) DeleteWulangan(ctx context.Context, id uuid.UUID) error {
+	ret := _m.Called(ctx, id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetSerat provides a mock function with given fields: ctx, id
 func (_m *Querier) GetSerat(ctx context.Context, id uuid.UUID) (query.GetSeratRow, error) {
 	ret := _m.Called(ctx, id)
@@ -81,6 +137,27 @@ func (_m *Querier) GetSerat(ctx context.Context, id uuid.UUID) (query.GetSeratRo
 		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Get(0).(query.GetSeratRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetWulangan provides a mock function with given fields: ctx, id
+func (_m *Querier) GetWulangan(ctx context.Context, id uuid.UUID) (query.GetWulanganRow, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 query.GetWulanganRow
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) query.GetWulanganRow); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(query.GetWulanganRow)
 	}
 
 	var r1 error
@@ -116,6 +193,29 @@ func (_m *Querier) ListSerats(ctx context.Context, arg *query.ListSeratsParams) 
 	return r0, r1
 }
 
+// ListWulangans provides a mock function with given fields: ctx, arg
+func (_m *Querier) ListWulangans(ctx context.Context, arg *query.ListWulangansParams) ([]query.ListWulangansRow, error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 []query.ListWulangansRow
+	if rf, ok := ret.Get(0).(func(context.Context, *query.ListWulangansParams) []query.ListWulangansRow); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]query.ListWulangansRow)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *query.ListWulangansParams) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateSerat provides a mock function with given fields: ctx, arg
 func (_m *Querier) UpdateSerat(ctx context.Context, arg *query.UpdateSeratParams) (query.UpdateSeratRow, error) {
 	ret := _m.Called(ctx, arg)
@@ -129,6 +229,27 @@ func (_m *Querier) UpdateSerat(ctx context.Context, arg *query.UpdateSeratParams
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *query.UpdateSeratParams) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateWulangan provides a mock function with given fields: ctx, arg
+func (_m *Querier) UpdateWulangan(ctx context.Context, arg *query.UpdateWulanganParams) (query.UpdateWulanganRow, error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 query.UpdateWulanganRow
+	if rf, ok := ret.Get(0).(func(context.Context, *query.UpdateWulanganParams) query.UpdateWulanganRow); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Get(0).(query.UpdateWulanganRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *query.UpdateWulanganParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)

@@ -8,8 +8,9 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
 
-option go_package = "github.com/fikrirnurhidayat/kasusastran/api;kasusastran";
+option go_package = "github.com/fikrirnurhidayat/kasusastran/api";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "Wulangan";
@@ -114,10 +115,41 @@ message DeleteWulanganRequest {
 }
 
 message CreateWulanganRequest {
-  string title = 1;
-  string description = 2;
-  string cover_image_url = 3;
-  string thumbnail_image_url = 4;
+  string title = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's title"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string description = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's description"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string cover_image_url = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's cover image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string thumbnail_image_url = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's thumbnail image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 }
 
 message UpdateWulanganRequest {

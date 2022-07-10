@@ -2,20 +2,30 @@ package srv
 
 import (
 	api "github.com/fikrirnurhidayat/kasusastran/api"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 )
 
 type WulangansServer struct {
 	api.UnimplementedWulangansServer
+
+	createWulanganService svc.CreateWulanganService
 }
 
-func NewWulangansServer() *WulangansServer {
-	return &WulangansServer{}
+func NewWulangansServer(setters ...WulangansServerSetter) *WulangansServer {
+	s := new(WulangansServer)
+
+	for _, set := range setters {
+		set(s)
+	}
+
+	return s
 }
 
 type WulangansServerSetter func(*WulangansServer)
 
-func WithCreateWulanganService() WulangansServerSetter {
+func WithCreateWulanganService(createWulanganService svc.CreateWulanganService) WulangansServerSetter {
 	return func(server *WulangansServer) {
+		server.createWulanganService = createWulanganService
 	}
 }
 
