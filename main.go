@@ -85,6 +85,7 @@ func init() {
 	listSeratService := svc.NewListSeratsService(seratRepository)
 	deleteSeratService := svc.NewDeleteSeratService(seratRepository)
 	createWulanganService := svc.NewCreateWulanganService(wulanganRepository)
+	getWulanganService := svc.NewGetWulanganService(wulanganRepository)
 
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(
@@ -97,6 +98,7 @@ func init() {
 
 	wulangansServer = srv.NewWulangansServer(
 		srv.WithCreateWulanganService(createWulanganService),
+		srv.WithGetWulanganService(getWulanganService),
 	)
 }
 

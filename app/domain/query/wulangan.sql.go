@@ -100,7 +100,9 @@ SELECT
   wulangans.title,
   wulangans.description,
   wulangans.cover_image_url,
-  wulangans.thumbnail_image_url
+  wulangans.thumbnail_image_url,
+  wulangans.created_at,
+  wulangans.updated_at
 FROM wulangans
 WHERE wulangans.id = $1
 AND deleted_at IS NULL
@@ -113,6 +115,8 @@ type GetWulanganRow struct {
 	Description       string    `json:"description"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }
 
 func (q *Queries) GetWulangan(ctx context.Context, id uuid.UUID) (GetWulanganRow, error) {
@@ -124,6 +128,8 @@ func (q *Queries) GetWulangan(ctx context.Context, id uuid.UUID) (GetWulanganRow
 		&i.Description,
 		&i.CoverImageUrl,
 		&i.ThumbnailImageUrl,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -134,7 +140,9 @@ SELECT
   wulangans.title,
   wulangans.description,
   wulangans.cover_image_url,
-  wulangans.thumbnail_image_url
+  wulangans.thumbnail_image_url,
+  wulangans.created_at,
+  wulangans.updated_at
 FROM wulangans
 WHERE deleted_at IS NULL
 LIMIT $1
@@ -152,6 +160,8 @@ type ListWulangansRow struct {
 	Description       string    `json:"description"`
 	CoverImageUrl     string    `json:"cover_image_url"`
 	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }
 
 func (q *Queries) ListWulangans(ctx context.Context, arg *ListWulangansParams) ([]ListWulangansRow, error) {
@@ -169,6 +179,8 @@ func (q *Queries) ListWulangans(ctx context.Context, arg *ListWulangansParams) (
 			&i.Description,
 			&i.CoverImageUrl,
 			&i.ThumbnailImageUrl,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

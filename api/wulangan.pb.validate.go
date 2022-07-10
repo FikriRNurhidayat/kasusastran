@@ -35,6 +35,9 @@ var (
 	_ = sort.Sort
 )
 
+// define the regex for a UUID once up-front
+var _wulangan_uuidPattern = regexp.MustCompile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
 // Validate checks the field values on ListWulangansRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -353,10 +356,28 @@ func (m *GetWulanganRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = GetWulanganRequestValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetWulanganRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *GetWulanganRequest) _validateUuid(uuid string) error {
+	if matched := _wulangan_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -457,10 +478,28 @@ func (m *DeleteWulanganRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = DeleteWulanganRequestValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteWulanganRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *DeleteWulanganRequest) _validateUuid(uuid string) error {
+	if matched := _wulangan_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil
@@ -727,18 +766,92 @@ func (m *UpdateWulanganRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if err := m._validateUuid(m.GetId()); err != nil {
+		err = UpdateWulanganRequestValidationError{
+			field:  "Id",
+			reason: "value must be a valid UUID",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Title
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 2 || l > 255 {
+		err := UpdateWulanganRequestValidationError{
+			field:  "Title",
+			reason: "value length must be between 2 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Description
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 2 || l > 255 {
+		err := UpdateWulanganRequestValidationError{
+			field:  "Description",
+			reason: "value length must be between 2 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for CoverImageUrl
+	if uri, err := url.Parse(m.GetCoverImageUrl()); err != nil {
+		err = UpdateWulanganRequestValidationError{
+			field:  "CoverImageUrl",
+			reason: "value must be a valid URI",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	} else if !uri.IsAbs() {
+		err := UpdateWulanganRequestValidationError{
+			field:  "CoverImageUrl",
+			reason: "value must be absolute",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for ThumbnailImageUrl
+	if uri, err := url.Parse(m.GetThumbnailImageUrl()); err != nil {
+		err = UpdateWulanganRequestValidationError{
+			field:  "ThumbnailImageUrl",
+			reason: "value must be a valid URI",
+			cause:  err,
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	} else if !uri.IsAbs() {
+		err := UpdateWulanganRequestValidationError{
+			field:  "ThumbnailImageUrl",
+			reason: "value must be absolute",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return UpdateWulanganRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+func (m *UpdateWulanganRequest) _validateUuid(uuid string) error {
+	if matched := _wulangan_uuidPattern.MatchString(uuid); !matched {
+		return errors.New("invalid uuid format")
 	}
 
 	return nil

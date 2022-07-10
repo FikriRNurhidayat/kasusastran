@@ -4,7 +4,9 @@ SELECT
   wulangans.title,
   wulangans.description,
   wulangans.cover_image_url,
-  wulangans.thumbnail_image_url
+  wulangans.thumbnail_image_url,
+  wulangans.created_at,
+  wulangans.updated_at
 FROM wulangans
 WHERE wulangans.id = $1
 AND deleted_at IS NULL
@@ -16,7 +18,9 @@ SELECT
   wulangans.title,
   wulangans.description,
   wulangans.cover_image_url,
-  wulangans.thumbnail_image_url
+  wulangans.thumbnail_image_url,
+  wulangans.created_at,
+  wulangans.updated_at
 FROM wulangans
 WHERE deleted_at IS NULL
 LIMIT $1

@@ -1,0 +1,5 @@
+GET http://localhost:8081/v1/serats
+
+##
+
+GET http://localhost:8081/v1/wulangans/1a9592d7-20e3-4c67-9078-3caaf9e02cf0

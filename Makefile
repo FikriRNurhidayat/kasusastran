@@ -84,6 +84,7 @@ cleandb:
 	$(MAKE) migrate 
 
 format:
+	buf format -w
 	go fmt ./...
 
 test: format

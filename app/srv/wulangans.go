@@ -9,6 +9,7 @@ type WulangansServer struct {
 	api.UnimplementedWulangansServer
 
 	createWulanganService svc.CreateWulanganService
+	getWulanganService    svc.GetWulanganService
 }
 
 func NewWulangansServer(setters ...WulangansServerSetter) *WulangansServer {
@@ -29,8 +30,9 @@ func WithCreateWulanganService(createWulanganService svc.CreateWulanganService) 
 	}
 }
 
-func WithGetWulanganService() WulangansServerSetter {
+func WithGetWulanganService(getWulanganService svc.GetWulanganService) WulangansServerSetter {
 	return func(server *WulangansServer) {
+		server.getWulanganService = getWulanganService
 	}
 }
 

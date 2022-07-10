@@ -117,6 +117,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Wulangan's ID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -147,6 +148,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Wulangan's ID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -177,6 +179,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Wulangan's ID",
             "in": "path",
             "required": true,
             "type": "string"
@@ -189,16 +192,22 @@
               "type": "object",
               "properties": {
                 "title": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Wulangan's title"
                 },
                 "description": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Wulangan's description"
                 },
                 "coverImageUrl": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Wulangan's cover image URL"
                 },
                 "thumbnailImageUrl": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Wulangan's thumbnail image URL"
                 }
               }
             }

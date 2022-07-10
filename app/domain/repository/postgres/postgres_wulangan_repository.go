@@ -19,8 +19,24 @@ func (*PostgresWulanganRepository) Delete(ctx context.Context, id uuid.UUID) err
 }
 
 // Get implements repository.WulanganRepository
-func (*PostgresWulanganRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Wulangan, error) {
-	panic("unimplemented")
+func (r *PostgresWulanganRepository) Get(ctx context.Context, id uuid.UUID) (wulangan *entity.Wulangan, err error) {
+	row, err := r.db.GetWulangan(ctx, id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	wulangan = &entity.Wulangan{
+		ID:                row.ID,
+		Title:             row.Title,
+		Description:       row.Description,
+		CoverImageUrl:     row.CoverImageUrl,
+		ThumbnailImageUrl: row.ThumbnailImageUrl,
+		CreatedAt:         row.CreatedAt,
+		UpdatedAt:         row.UpdatedAt,
+	}
+
+	return wulangan, nil
 }
 
 // List implements repository.WulanganRepository
@@ -33,27 +49,27 @@ func (*PostgresWulanganRepository) Update(ctx context.Context, id uuid.UUID, w *
 	panic("unimplemented")
 }
 
-func (r *PostgresWulanganRepository) Create(ctx context.Context, w *entity.Wulangan) (*entity.Wulangan, error) {
+func (r *PostgresWulanganRepository) Create(ctx context.Context, wulangan *entity.Wulangan) (*entity.Wulangan, error) {
 	row, err := r.db.CreateWulangan(ctx, &query.CreateWulanganParams{
-		Title:             w.Title,
-		Description:       w.Description,
-		CoverImageUrl:     w.CoverImageUrl,
-		ThumbnailImageUrl: w.ThumbnailImageUrl,
+		Title:             wulangan.Title,
+		Description:       wulangan.Description,
+		CoverImageUrl:     wulangan.CoverImageUrl,
+		ThumbnailImageUrl: wulangan.ThumbnailImageUrl,
 	})
 
 	if err != nil {
 		return nil, err
 	}
 
-	w.ID = row.ID
-	w.Title = row.Title
-	w.Description = row.Description
-	w.CoverImageUrl = row.CoverImageUrl
-	w.ThumbnailImageUrl = row.ThumbnailImageUrl
-	w.CreatedAt = row.CreatedAt
-	w.UpdatedAt = row.UpdatedAt
+	wulangan.ID = row.ID
+	wulangan.Title = row.Title
+	wulangan.Description = row.Description
+	wulangan.CoverImageUrl = row.CoverImageUrl
+	wulangan.ThumbnailImageUrl = row.ThumbnailImageUrl
+	wulangan.CreatedAt = row.CreatedAt
+	wulangan.UpdatedAt = row.UpdatedAt
 
-	return w, nil
+	return wulangan, nil
 }
 
 func NewPostgresWulanganRepository(db query.Querier) repository.WulanganRepository {

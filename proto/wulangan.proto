@@ -107,11 +107,23 @@ message ListWulangansResponse {
 }
 
 message GetWulanganRequest {
-  string id = 1;
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's ID"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 }
 
 message DeleteWulanganRequest {
-  string id = 1;
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's ID"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 }
 
 message CreateWulanganRequest {
@@ -153,11 +165,48 @@ message CreateWulanganRequest {
 }
 
 message UpdateWulanganRequest {
-  string id = 1;
-  string title = 2;
-  string description = 3;
-  string cover_image_url = 4;
-  string thumbnail_image_url = 5;
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's ID"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+  string title = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's title"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string description = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's description"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string cover_image_url = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's cover image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string thumbnail_image_url = 5 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's thumbnail image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 }
 
 message Wulangan {
