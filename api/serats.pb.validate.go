@@ -919,8 +919,6 @@ func (m *Serat) validate(all bool) error {
 
 	// no validation rules for Description
 
-	// no validation rules for Content
-
 	// no validation rules for CoverImageUrl
 
 	// no validation rules for ThumbnailImageUrl

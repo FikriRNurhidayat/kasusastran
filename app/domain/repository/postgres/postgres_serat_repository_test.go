@@ -7,6 +7,7 @@ import (
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -270,12 +271,12 @@ func TestSeratRepository_DeleteSerat(t *testing.T) {
 
 func TestSeratRepository_ListSerats(t *testing.T) {
 	type input struct {
-		ctx        context.Context
-		pagination *entity.Pagination
+		ctx       context.Context
+		listQuery *repository.ListQuery
 	}
 
 	type output struct {
-		serats []entity.Serat
+		serats []*entity.Serat
 		count  uint32
 		err    error
 	}
@@ -292,9 +293,9 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 			name: "db.ListSerats return error",
 			in: &input{
 				ctx: context.Background(),
-				pagination: &entity.Pagination{
-					Page:     1,
-					PageSize: 10,
+				listQuery: &repository.ListQuery{
+					Limit:  10,
+					Offset: 0,
 				},
 			},
 			out: &output{
@@ -305,8 +306,8 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				var rows []query.ListSeratsRow
 
 				params := &query.ListSeratsParams{
-					Limit:  int32(in.pagination.GetLimit()),
-					Offset: int32(in.pagination.GetOffset()),
+					Limit:  int32(in.listQuery.Limit),
+					Offset: int32(in.listQuery.Offset),
 				}
 
 				m.db.On("ListSerats", in.ctx, params).Return(rows, out.err)
@@ -316,13 +317,13 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 			name: "db.CountSerats return error",
 			in: &input{
 				ctx: context.Background(),
-				pagination: &entity.Pagination{
-					Page:     1,
-					PageSize: 10,
+				listQuery: &repository.ListQuery{
+					Limit:  10,
+					Offset: 0,
 				},
 			},
 			out: &output{
-				serats: []entity.Serat{
+				serats: []*entity.Serat{
 					{
 						ID:                uuid.New(),
 						Title:             "Jayabaya",
@@ -346,8 +347,8 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				}
 
 				params := &query.ListSeratsParams{
-					Limit:  int32(in.pagination.GetLimit()),
-					Offset: int32(in.pagination.GetOffset()),
+					Limit:  int32(in.listQuery.Limit),
+					Offset: int32(in.listQuery.Offset),
 				}
 
 				c := int64(out.count)
@@ -360,13 +361,13 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				pagination: &entity.Pagination{
-					Page:     1,
-					PageSize: 10,
+				listQuery: &repository.ListQuery{
+					Limit:  1,
+					Offset: 10,
 				},
 			},
 			out: &output{
-				serats: []entity.Serat{
+				serats: []*entity.Serat{
 					{
 						ID:                uuid.New(),
 						Title:             "Jayabaya",
@@ -390,8 +391,8 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				}
 
 				params := &query.ListSeratsParams{
-					Limit:  int32(in.pagination.GetLimit()),
-					Offset: int32(in.pagination.GetOffset()),
+					Limit:  int32(in.listQuery.Limit),
+					Offset: int32(in.listQuery.Offset),
 				}
 
 				c := int64(out.count)
@@ -413,7 +414,7 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 			}
 
 			subject := postgres.NewPostgresSeratRepository(m.db)
-			out, count, err := subject.List(tt.in.ctx, tt.in.pagination)
+			out, count, err := subject.List(tt.in.ctx, tt.in.listQuery)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)

@@ -13,6 +13,7 @@ import (
 	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/config"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
@@ -87,6 +88,12 @@ func init() {
 	createWulanganService := svc.NewCreateWulanganService(wulanganRepository)
 	getWulanganService := svc.NewGetWulanganService(wulanganRepository)
 
+	// Initialize Manager
+	paginationManager := manager.NewPaginationManager(
+		manager.WithDefaultPage(1),
+		manager.WithDefaultPageSize(10),
+	)
+
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(
 		srv.WithCreateSeratService(createSeratService),
@@ -94,6 +101,7 @@ func init() {
 		srv.WithListSeratsService(listSeratService),
 		srv.WithUpdateSeratService(updateSeratService),
 		srv.WithDeleteSeratService(deleteSeratService),
+		srv.WithPaginationManager(paginationManager),
 	)
 
 	wulangansServer = srv.NewWulangansServer(

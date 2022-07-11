@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 )
 
 type ListSeratsService interface {
-	Call(context.Context, *entity.Pagination) ([]entity.Serat, *entity.Pagination, error)
+	Call(context.Context, *ListSeratsParams) (*ListSeratsResult, error)
+}
+
+type ListSeratsResult struct {
+	Serats     []*entity.Serat
+	Pagination *manager.Pagination
+}
+
+type ListSeratsParams struct {
+	Pagination *manager.Pagination
 }
 
 type listSeratsService struct {
@@ -21,14 +31,17 @@ func NewListSeratsService(SeratRepository repository.SeratRepository) ListSerats
 	}
 }
 
-func (u *listSeratsService) Call(ctx context.Context, ipg *entity.Pagination) (serats []entity.Serat, opg *entity.Pagination, err error) {
-	serats, count, err := u.seratRepository.List(ctx, ipg)
+func (u *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) (*ListSeratsResult, error) {
+	serats, count, err := u.seratRepository.List(ctx, params.Pagination.ToListQuery())
 
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	opg = entity.NewPagination(ipg.GetLimit(), ipg.GetOffset(), count)
+	res := &ListSeratsResult{
+		Serats:     serats,
+		Pagination: params.Pagination.WithTotal(count),
+	}
 
-	return
+	return res, nil
 }

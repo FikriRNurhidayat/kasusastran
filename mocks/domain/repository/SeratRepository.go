@@ -8,6 +8,8 @@ import (
 	entity "github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	mock "github.com/stretchr/testify/mock"
 
+	repository "github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+
 	uuid "github.com/google/uuid"
 )
 
@@ -76,29 +78,29 @@ func (_m *SeratRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Serat
 	return r0, r1
 }
 
-// List provides a mock function with given fields: ctx, pagination
-func (_m *SeratRepository) List(ctx context.Context, pagination *entity.Pagination) ([]entity.Serat, uint32, error) {
-	ret := _m.Called(ctx, pagination)
+// List provides a mock function with given fields: ctx, query
+func (_m *SeratRepository) List(ctx context.Context, query *repository.ListQuery) ([]*entity.Serat, uint32, error) {
+	ret := _m.Called(ctx, query)
 
-	var r0 []entity.Serat
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.Pagination) []entity.Serat); ok {
-		r0 = rf(ctx, pagination)
+	var r0 []*entity.Serat
+	if rf, ok := ret.Get(0).(func(context.Context, *repository.ListQuery) []*entity.Serat); ok {
+		r0 = rf(ctx, query)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entity.Serat)
+			r0 = ret.Get(0).([]*entity.Serat)
 		}
 	}
 
 	var r1 uint32
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.Pagination) uint32); ok {
-		r1 = rf(ctx, pagination)
+	if rf, ok := ret.Get(1).(func(context.Context, *repository.ListQuery) uint32); ok {
+		r1 = rf(ctx, query)
 	} else {
 		r1 = ret.Get(1).(uint32)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(context.Context, *entity.Pagination) error); ok {
-		r2 = rf(ctx, pagination)
+	if rf, ok := ret.Get(2).(func(context.Context, *repository.ListQuery) error); ok {
+		r2 = rf(ctx, query)
 	} else {
 		r2 = ret.Error(2)
 	}

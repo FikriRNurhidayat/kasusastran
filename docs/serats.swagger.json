@@ -311,9 +311,6 @@
         "description": {
           "type": "string"
         },
-        "content": {
-          "type": "string"
-        },
         "coverImageUrl": {
           "type": "string"
         },

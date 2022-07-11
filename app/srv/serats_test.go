@@ -1,11 +1,15 @@
 package srv_test
 
-import mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+import (
+	mockManager "github.com/fikrirnurhidayat/kasusastran/mocks/domain/manager"
+	mockService "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+)
 
 type MockSeratsServer struct {
-	createSeratService *mocks.CreateSeratService
-	updateSeratService *mocks.UpdateSeratService
-	getSeratService    *mocks.GetSeratService
-	deleteSeratService *mocks.DeleteSeratService
-	listSeratsService  *mocks.ListSeratsService
+	createSeratService *mockService.CreateSeratService
+	updateSeratService *mockService.UpdateSeratService
+	getSeratService    *mockService.GetSeratService
+	deleteSeratService *mockService.DeleteSeratService
+	listSeratsService  *mockService.ListSeratsService
+	paginationManager  *mockManager.PaginationManager
 }

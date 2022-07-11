@@ -6,13 +6,16 @@ import (
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
 	api "github.com/fikrirnurhidayat/kasusastran/api"
-	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+	mockManager "github.com/fikrirnurhidayat/kasusastran/mocks/domain/manager"
+	mockService "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 )
 
 func TestSeratService_ListSerats(t *testing.T) {
@@ -44,9 +47,11 @@ func TestSeratService_ListSerats(t *testing.T) {
 				err: fmt.Errorf("ListSeratsUseCase.Call: failed to execute svc"),
 			},
 			on: func(m *MockSeratsServer, i *input, o *output) {
-				svc := []entity.Serat{}
-				pagination := &entity.Pagination{}
-				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
+				m.paginationManager.On("FromIncomingRequest", i.req.GetPagination()).Return(&manager.Pagination{
+					Page:     1,
+					PageSize: 10,
+				})
+				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*svc.ListSeratsParams")).Return(nil, o.err)
 			},
 		},
 		{
@@ -77,16 +82,15 @@ func TestSeratService_ListSerats(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, i *input, o *output) {
-				svc := []entity.Serat{}
+				m.paginationManager.On("FromIncomingRequest", i.req.GetPagination()).Return(&manager.Pagination{
+					Page:     1,
+					PageSize: 10,
+				})
 
-				pagination := &entity.Pagination{
-					Page:      o.res.Meta.Pagination.Page,
-					PageSize:  o.res.Meta.Pagination.PageSize,
-					PageCount: o.res.Meta.Pagination.PageCount,
-				}
+				serats := []*entity.Serat{}
 
 				for _, serat := range o.res.Serats {
-					pack := entity.Serat{
+					pack := &entity.Serat{
 						ID:                uuid.MustParse(serat.GetId()),
 						Title:             serat.GetTitle(),
 						Description:       serat.GetDescription(),
@@ -94,10 +98,21 @@ func TestSeratService_ListSerats(t *testing.T) {
 						ThumbnailImageUrl: serat.GetThumbnailImageUrl(),
 					}
 
-					svc = append(svc, pack)
+					serats = append(serats, pack)
 				}
 
-				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
+				result := &svc.ListSeratsResult{
+					Serats: serats,
+					Pagination: &manager.Pagination{
+						Page:      o.res.Meta.Pagination.Page,
+						PageSize:  o.res.Meta.Pagination.PageSize,
+						PageCount: o.res.Meta.Pagination.PageCount,
+						Total:     o.res.Meta.Pagination.Total,
+					},
+				}
+
+				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*svc.ListSeratsParams")).Return(result, o.err)
+				m.paginationManager.On("NewOutgoingResponse", mock.AnythingOfType("*manager.Pagination")).Return(o.res.GetMeta().GetPagination())
 			},
 		},
 		{
@@ -133,16 +148,15 @@ func TestSeratService_ListSerats(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, i *input, o *output) {
-				svc := []entity.Serat{}
+				m.paginationManager.On("FromIncomingRequest", i.req.GetPagination()).Return(&manager.Pagination{
+					Page:     o.res.Meta.Pagination.Page,
+					PageSize: o.res.Meta.Pagination.PageSize,
+				})
 
-				pagination := &entity.Pagination{
-					Page:      o.res.Meta.Pagination.Page,
-					PageSize:  o.res.Meta.Pagination.PageSize,
-					PageCount: o.res.Meta.Pagination.PageCount,
-				}
+				serats := []*entity.Serat{}
 
 				for _, serat := range o.res.Serats {
-					pack := entity.Serat{
+					pack := &entity.Serat{
 						ID:                uuid.MustParse(serat.GetId()),
 						Title:             serat.GetTitle(),
 						Description:       serat.GetDescription(),
@@ -150,10 +164,21 @@ func TestSeratService_ListSerats(t *testing.T) {
 						ThumbnailImageUrl: serat.GetThumbnailImageUrl(),
 					}
 
-					svc = append(svc, pack)
+					serats = append(serats, pack)
 				}
 
-				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*entity.Pagination")).Return(svc, pagination, o.err)
+				result := &svc.ListSeratsResult{
+					Serats: serats,
+					Pagination: &manager.Pagination{
+						Page:      o.res.Meta.Pagination.Page,
+						PageSize:  o.res.Meta.Pagination.PageSize,
+						PageCount: o.res.Meta.Pagination.PageCount,
+						Total:     o.res.Meta.Pagination.Total,
+					},
+				}
+
+				m.listSeratsService.On("Call", i.ctx, mock.AnythingOfType("*svc.ListSeratsParams")).Return(result, o.err)
+				m.paginationManager.On("NewOutgoingResponse", mock.AnythingOfType("*manager.Pagination")).Return(o.res.Meta.GetPagination())
 			},
 		},
 	}
@@ -161,14 +186,18 @@ func TestSeratService_ListSerats(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockSeratsServer{
-				listSeratsService: new(mocks.ListSeratsService),
+				listSeratsService: new(mockService.ListSeratsService),
+				paginationManager: new(mockManager.PaginationManager),
 			}
 
 			if tt.on != nil {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := srv.NewSeratsServer(srv.WithListSeratsService(m.listSeratsService))
+			subject := srv.NewSeratsServer(
+				srv.WithListSeratsService(m.listSeratsService),
+				srv.WithPaginationManager(m.paginationManager),
+			)
 			res, err := subject.ListSerats(tt.in.ctx, tt.in.req)
 
 			if tt.out.err != nil {

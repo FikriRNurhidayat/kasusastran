@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/stretchr/testify/assert"
 
@@ -18,14 +19,13 @@ type MockListSeratsService struct {
 
 func TestListSeratsService_Call(t *testing.T) {
 	type input struct {
-		ctx        context.Context
-		pagination *entity.Pagination
+		ctx    context.Context
+		params *svc.ListSeratsParams
 	}
 
 	type output struct {
-		serats     []entity.Serat
-		pagination *entity.Pagination
-		err        error
+		result *svc.ListSeratsResult
+		err    error
 	}
 
 	type scenario struct {
@@ -40,39 +40,45 @@ func TestListSeratsService_Call(t *testing.T) {
 			name: "SeratRepository.ListSerats return error",
 			in: &input{
 				ctx: context.Background(),
-				pagination: &entity.Pagination{
-					Page:     1,
-					PageSize: 10,
+				params: &svc.ListSeratsParams{
+					Pagination: &manager.Pagination{
+						Page:     1,
+						PageSize: 10,
+					},
 				},
 			},
 			out: &output{
 				err: fmt.Errorf("seratRepository.List: failed to run query: bababoey"),
 			},
 			on: func(m *MockListSeratsService, i *input, o *output) {
-				m.seratRepository.On("List", i.ctx, i.pagination).Return(o.serats, uint32(0), o.err)
+				m.seratRepository.On("List", i.ctx, i.params.Pagination.ToListQuery()).Return(nil, uint32(0), o.err)
 			},
 		},
 		{
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				pagination: &entity.Pagination{
-					Page:     1,
-					PageSize: 10,
+				params: &svc.ListSeratsParams{
+					Pagination: &manager.Pagination{
+						Page:     1,
+						PageSize: 10,
+					},
 				},
 			},
 			out: &output{
-				serats: []entity.Serat{},
-				pagination: &entity.Pagination{
-					Page:      1,
-					PageSize:  10,
-					PageCount: 1,
-					Total:     1,
+				result: &svc.ListSeratsResult{
+					Pagination: &manager.Pagination{
+						Page:      1,
+						PageSize:  10,
+						PageCount: 1,
+						Total:     1,
+					},
+					Serats: []*entity.Serat{},
 				},
 				err: nil,
 			},
 			on: func(m *MockListSeratsService, i *input, o *output) {
-				m.seratRepository.On("List", i.ctx, i.pagination).Return(o.serats, uint32(1), nil)
+				m.seratRepository.On("List", i.ctx, i.params.Pagination.ToListQuery()).Return(o.result.Serats, uint32(1), nil)
 			},
 		},
 	}
@@ -88,15 +94,17 @@ func TestListSeratsService_Call(t *testing.T) {
 			}
 
 			subject := svc.NewListSeratsService(m.seratRepository)
-			serats, pagination, err := subject.Call(tt.in.ctx, tt.in.pagination)
+			got, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if tt.out.err != nil {
 				assert.NotNil(t, err)
 				assert.Contains(t, tt.out.err.Error(), err.Error())
 			}
 
-			assert.Equal(t, tt.out.serats, serats)
-			assert.Equal(t, tt.out.pagination, pagination)
+			if tt.out.result != nil {
+				assert.Equal(t, tt.out.result.Serats, got.Serats)
+				assert.Equal(t, tt.out.result.Pagination, got.Pagination)
+			}
 		})
 	}
 }

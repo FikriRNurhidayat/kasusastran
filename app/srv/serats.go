@@ -4,6 +4,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 
 	api "github.com/fikrirnurhidayat/kasusastran/api"
+	man "github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 )
 
 type SeratsServer struct {
@@ -14,6 +15,8 @@ type SeratsServer struct {
 	getSeratService    svc.GetSeratService
 	deleteSeratService svc.DeleteSeratService
 	listSeratsService  svc.ListSeratsService
+
+	paginationManager man.PaginationManager
 }
 
 func NewSeratsServer(setters ...SeratsServerSetter) *SeratsServer {
@@ -27,6 +30,12 @@ func NewSeratsServer(setters ...SeratsServerSetter) *SeratsServer {
 }
 
 type SeratsServerSetter func(*SeratsServer)
+
+func WithPaginationManager(paginationManager man.PaginationManager) SeratsServerSetter {
+	return func(server *SeratsServer) {
+		server.paginationManager = paginationManager
+	}
+}
 
 func WithGetSeratService(getSeratService svc.GetSeratService) SeratsServerSetter {
 	return func(server *SeratsServer) {

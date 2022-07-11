@@ -93,12 +93,12 @@ func (r *PostgresSeratRepository) Delete(ctx context.Context, id uuid.UUID) erro
 	return r.db.DeleteSerat(ctx, id)
 }
 
-func (r *PostgresSeratRepository) List(ctx context.Context, pagination *entity.Pagination) (serats []entity.Serat, count uint32, err error) {
+func (r *PostgresSeratRepository) List(ctx context.Context, listQuery *repository.ListQuery) (serats []*entity.Serat, count uint32, err error) {
 	count = 0
 
 	params := &query.ListSeratsParams{
-		Limit:  int32(pagination.GetLimit()),
-		Offset: int32(pagination.GetOffset()),
+		Limit:  int32(listQuery.Limit),
+		Offset: int32(listQuery.Offset),
 	}
 
 	rows, err := r.db.ListSerats(ctx, params)
@@ -108,7 +108,7 @@ func (r *PostgresSeratRepository) List(ctx context.Context, pagination *entity.P
 	}
 
 	for _, row := range rows {
-		serat := entity.Serat{
+		serat := &entity.Serat{
 			ID:                row.ID,
 			Title:             row.Title,
 			Description:       row.Description,
