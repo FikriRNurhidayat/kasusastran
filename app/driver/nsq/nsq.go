@@ -36,7 +36,7 @@ func NewConnection(lookupaddress string, address string) *NSQ {
 	}
 }
 
-func (n *NSQ) NewProducer() (producer Producer, err error) {
+func (n *NSQ) NewEventProducer() (producer Producer, err error) {
 	config := nsq.NewConfig()
 	return nsq.NewProducer(n.Address, config)
 }

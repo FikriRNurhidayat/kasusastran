@@ -11,11 +11,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
+	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 )
 
 type MockCreateSeratService struct {
-	seratRepository *mocks.SeratRepository
+	seratRepository   *mockRepo.SeratRepository
+	seratEventEmitter *mockEvent.SeratEventEmitter
 }
 
 func TestCreateSeratService_Call(t *testing.T) {
@@ -77,6 +79,7 @@ func TestCreateSeratService_Call(t *testing.T) {
 				}
 
 				m.seratRepository.On("Create", in.ctx, mock.AnythingOfType("*entity.Serat")).Return(serat, out.err)
+				m.seratEventEmitter.On("EmitCreatedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
 			},
 		},
 	}
@@ -84,14 +87,15 @@ func TestCreateSeratService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockCreateSeratService{
-				seratRepository: new(mocks.SeratRepository),
+				seratRepository:   new(mockRepo.SeratRepository),
+				seratEventEmitter: new(mockEvent.SeratEventEmitter),
 			}
 
 			if tt.on != nil {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewCreateSeratService(m.seratRepository)
+			subject := svc.NewCreateSeratService(m.seratRepository, m.seratEventEmitter)
 			out, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if err != nil {

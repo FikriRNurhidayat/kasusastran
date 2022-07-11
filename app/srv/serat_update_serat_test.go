@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +15,7 @@ import (
 	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 )
 
-func TestSeratService_UpdateSerat(t *testing.T) {
+func TestSeratsServer_UpdateSerat(t *testing.T) {
 	type input struct {
 		ctx context.Context
 		req *api.UpdateSeratRequest
@@ -85,7 +85,7 @@ func TestSeratService_UpdateSerat(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockSeratsServer, in *input, out *output) {
-				m.updateSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(&entity.Serat{
+				m.updateSeratService.On("Call", in.ctx, mock.AnythingOfType("uuid.UUID"), mock.AnythingOfType("*svc.UpdateSeratParams")).Return(&svc.UpdateSeratResult{
 					ID:                uuid.MustParse(out.res.GetId()),
 					Title:             out.res.GetTitle(),
 					Description:       out.res.GetDescription(),

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
@@ -15,17 +16,19 @@ type GetSeratService interface {
 type GetSeratResult entity.Serat
 
 type getSeratService struct {
-	seratRepository repository.SeratRepository
+	seratRepository   repository.SeratRepository
+	seratEventEmitter event.SeratEventEmitter
 }
 
-func NewGetSeratService(seratRepository repository.SeratRepository) GetSeratService {
+func NewGetSeratService(seratRepository repository.SeratRepository, seratEventEmitter event.SeratEventEmitter) GetSeratService {
 	return &getSeratService{
-		seratRepository: seratRepository,
+		seratRepository:   seratRepository,
+		seratEventEmitter: seratEventEmitter,
 	}
 }
 
-func (u *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResult, error) {
-	serat, err := u.seratRepository.Get(ctx, id)
+func (s *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResult, error) {
+	serat, err := s.seratRepository.Get(ctx, id)
 
 	if err != nil {
 		return nil, err
@@ -39,5 +42,10 @@ func (u *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResu
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	return res, nil
+	err = s.seratEventEmitter.EmitRetrievedEvent(&event.Message{
+		Actor:   &event.Actor{},
+		Payload: res,
+	})
+
+	return res, err
 }

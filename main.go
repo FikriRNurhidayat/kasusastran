@@ -10,9 +10,11 @@ import (
 	"regexp"
 
 	api "github.com/fikrirnurhidayat/kasusastran/api"
+	nsq "github.com/fikrirnurhidayat/kasusastran/app/driver/nsq"
 	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/config"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
@@ -31,7 +33,7 @@ var tcp net.Listener
 var server *grpc.Server
 var mux *runtime.ServeMux
 var opts []grpc.DialOption
-var dbQuery query.Querier
+var db query.Querier
 
 // Services
 var seratsServer *srv.SeratsServer
@@ -47,7 +49,7 @@ var (
 func init() {
 	// Initialize driver
 	dbURL := config.GetDatabaseConnectionString()
-	db, err := pg.Connect(dbURL)
+	dbConn, err := pg.Connect(dbURL)
 
 	if err != nil {
 		log.Fatalf("pg.Connect: cannot connect to database: %v", err)
@@ -73,18 +75,28 @@ func init() {
 	opts = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	server = grpc.NewServer()
-	dbQuery = query.New(db)
+	db = query.New(dbConn)
+
+	nsqc := nsq.NewConnection(config.GetNSQLookupAddress(), config.GetNSQAddress())
+	producer, err := nsqc.NewEventProducer()
+
+	if err != nil {
+		log.Fatalf("nsqConn.NewEventProducer: cannot initialize to nsq connection: %v", err)
+	}
 
 	// Initialize Repository
-	seratRepository := postgres.NewPostgresSeratRepository(dbQuery)
-	wulanganRepository := postgres.NewPostgresWulanganRepository(dbQuery)
+	seratRepository := postgres.NewPostgresSeratRepository(db)
+	wulanganRepository := postgres.NewPostgresWulanganRepository(db)
+
+	// Initialize event emitter
+	seratEventEmitter := event.NewSeratEventEmitter(producer)
 
 	// Initialize Service
-	createSeratService := svc.NewCreateSeratService(seratRepository)
-	updateSeratService := svc.NewUpdateSeratService(seratRepository)
-	getSeratService := svc.NewGetSeratService(seratRepository)
-	listSeratService := svc.NewListSeratsService(seratRepository)
-	deleteSeratService := svc.NewDeleteSeratService(seratRepository)
+	createSeratService := svc.NewCreateSeratService(seratRepository, seratEventEmitter)
+	updateSeratService := svc.NewUpdateSeratService(seratRepository, seratEventEmitter)
+	getSeratService := svc.NewGetSeratService(seratRepository, seratEventEmitter)
+	listSeratService := svc.NewListSeratsService(seratRepository, seratEventEmitter)
+	deleteSeratService := svc.NewDeleteSeratService(seratRepository, seratEventEmitter)
 	createWulanganService := svc.NewCreateWulanganService(wulanganRepository)
 	getWulanganService := svc.NewGetWulanganService(wulanganRepository)
 

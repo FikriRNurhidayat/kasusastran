@@ -9,12 +9,15 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
-	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
+	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 )
 
 type MockListSeratsService struct {
-	seratRepository *mocks.SeratRepository
+	seratEventEmitter *mockEvent.SeratEventEmitter
+	seratRepository   *mockRepo.SeratRepository
 }
 
 func TestListSeratsService_Call(t *testing.T) {
@@ -79,6 +82,7 @@ func TestListSeratsService_Call(t *testing.T) {
 			},
 			on: func(m *MockListSeratsService, i *input, o *output) {
 				m.seratRepository.On("List", i.ctx, i.params.Pagination.ToListQuery()).Return(o.result.Serats, uint32(1), nil)
+				m.seratEventEmitter.On("EmitListedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
 			},
 		},
 	}
@@ -86,14 +90,15 @@ func TestListSeratsService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockListSeratsService{
-				seratRepository: new(mocks.SeratRepository),
+				seratRepository:   new(mockRepo.SeratRepository),
+				seratEventEmitter: new(mockEvent.SeratEventEmitter),
 			}
 
 			if tt.on != nil {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewListSeratsService(m.seratRepository)
+			subject := svc.NewListSeratsService(m.seratRepository, m.seratEventEmitter)
 			got, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if tt.out.err != nil {

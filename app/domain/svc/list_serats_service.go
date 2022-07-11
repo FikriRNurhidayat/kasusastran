@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 )
@@ -22,17 +23,19 @@ type ListSeratsParams struct {
 }
 
 type listSeratsService struct {
-	seratRepository repository.SeratRepository
+	seratRepository   repository.SeratRepository
+	seratEventEmitter event.SeratEventEmitter
 }
 
-func NewListSeratsService(SeratRepository repository.SeratRepository) ListSeratsService {
+func NewListSeratsService(seratRepository repository.SeratRepository, seratEventEmitter event.SeratEventEmitter) ListSeratsService {
 	return &listSeratsService{
-		seratRepository: SeratRepository,
+		seratRepository:   seratRepository,
+		seratEventEmitter: seratEventEmitter,
 	}
 }
 
-func (u *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) (*ListSeratsResult, error) {
-	serats, count, err := u.seratRepository.List(ctx, params.Pagination.ToListQuery())
+func (s *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) (*ListSeratsResult, error) {
+	serats, count, err := s.seratRepository.List(ctx, params.Pagination.ToListQuery())
 
 	if err != nil {
 		return nil, err
@@ -43,5 +46,10 @@ func (u *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) 
 		Pagination: params.Pagination.WithTotal(count),
 	}
 
-	return res, nil
+	err = s.seratEventEmitter.EmitListedEvent(&event.Message{
+		Actor:   &event.Actor{},
+		Payload: serats,
+	})
+
+	return res, err
 }

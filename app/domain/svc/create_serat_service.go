@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 )
 
@@ -22,12 +23,14 @@ type CreateSeratService interface {
 }
 
 type createSeratService struct {
-	seratRepository repository.SeratRepository
+	seratRepository   repository.SeratRepository
+	seratEventEmitter event.SeratEventEmitter
 }
 
-func NewCreateSeratService(seratRepository repository.SeratRepository) CreateSeratService {
+func NewCreateSeratService(seratRepository repository.SeratRepository, seratEventEmitter event.SeratEventEmitter) CreateSeratService {
 	return &createSeratService{
-		seratRepository: seratRepository,
+		seratRepository:   seratRepository,
+		seratEventEmitter: seratEventEmitter,
 	}
 }
 
@@ -53,5 +56,13 @@ func (s *createSeratService) Call(ctx context.Context, params *CreateSeratParams
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	return res, nil
+	err = s.seratEventEmitter.EmitCreatedEvent(&event.Message{
+		Actor: &event.Actor{
+			ID:   "serat",
+			Kind: "SERVICE",
+		},
+		Payload: res,
+	})
+
+	return res, err
 }

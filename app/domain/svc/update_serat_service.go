@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
@@ -16,26 +17,49 @@ type UpdateSeratParams struct {
 	ThumbnailImageUrl string
 }
 
+type UpdateSeratResult entity.Serat
+
 type UpdateSeratService interface {
-	Call(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*entity.Serat, error)
+	Call(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*UpdateSeratResult, error)
 }
 
 type updateSeratService struct {
-	SeratRepository repository.SeratRepository
+	seratRepository   repository.SeratRepository
+	seratEventEmitter event.SeratEventEmitter
 }
 
-func NewUpdateSeratService(seratRepository repository.SeratRepository) UpdateSeratService {
+func NewUpdateSeratService(seratRepository repository.SeratRepository, seratEventEmitter event.SeratEventEmitter) UpdateSeratService {
 	return &updateSeratService{
-		SeratRepository: seratRepository,
+		seratRepository:   seratRepository,
+		seratEventEmitter: seratEventEmitter,
 	}
 }
 
-func (u *updateSeratService) Call(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*entity.Serat, error) {
-	return u.SeratRepository.Update(ctx, id, &entity.Serat{
+func (s *updateSeratService) Call(ctx context.Context, id uuid.UUID, params *UpdateSeratParams) (*UpdateSeratResult, error) {
+	serat, err := s.seratRepository.Update(ctx, id, &entity.Serat{
 		Title:             params.Title,
 		Description:       params.Description,
 		Content:           params.Content,
 		CoverImageUrl:     params.CoverImageUrl,
 		ThumbnailImageUrl: params.ThumbnailImageUrl,
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	res := &UpdateSeratResult{
+		ID:                serat.ID,
+		Title:             serat.Title,
+		Description:       serat.Description,
+		CoverImageUrl:     serat.CoverImageUrl,
+		ThumbnailImageUrl: serat.ThumbnailImageUrl,
+	}
+
+	err = s.seratEventEmitter.EmitUpdatedEvent(&event.Message{
+		Actor:   &event.Actor{},
+		Payload: res,
+	})
+
+	return res, nil
 }

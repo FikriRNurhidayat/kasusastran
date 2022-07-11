@@ -8,12 +8,15 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
-	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
+	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 )
 
 type MockDeleteSeratService struct {
-	seratRepository *mocks.SeratRepository
+	seratEventEmitter *mockEvent.SeratEventEmitter
+	seratRepository   *mockRepo.SeratRepository
 }
 
 func TestDeleteSeratService_Call(t *testing.T) {
@@ -58,6 +61,7 @@ func TestDeleteSeratService_Call(t *testing.T) {
 			},
 			on: func(m *MockDeleteSeratService, in *input, out *output) {
 				m.seratRepository.On("Delete", in.ctx, in.id).Return(out.err)
+				m.seratEventEmitter.On("EmitDeletedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
 			},
 		},
 	}
@@ -65,14 +69,15 @@ func TestDeleteSeratService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockDeleteSeratService{
-				seratRepository: new(mocks.SeratRepository),
+				seratRepository:   new(mockRepo.SeratRepository),
+				seratEventEmitter: new(mockEvent.SeratEventEmitter),
 			}
 
 			if tt.on != nil {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewDeleteSeratService(m.seratRepository)
+			subject := svc.NewDeleteSeratService(m.seratRepository, m.seratEventEmitter)
 			err := subject.Call(tt.in.ctx, tt.in.id)
 
 			if err != nil {
