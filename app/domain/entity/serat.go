@@ -5,10 +5,10 @@ import (
 )
 
 type Serat struct {
-	ID                uuid.UUID
-	Title             string
-	Description       string
-	Content           string
-	CoverImageUrl     string
-	ThumbnailImageUrl string
+	ID                uuid.UUID `json:"id"`
+	Title             string    `json:"title"`
+	Description       string    `json:"description"`
+	Content           string    `json:"content"`
+	CoverImageUrl     string    `json:"cover_image_url"`
+	ThumbnailImageUrl string    `json:"thumbnail_image_url"`
 }

@@ -1,0 +1,66 @@
+version: "3.9"
+services:
+  kasusastran-httpd:
+    container_name: kasusastran-httpd
+    working_dir: /app
+    image: golang:alpine
+    hostname: httpd
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file: .env
+    environment:
+      - NSQD_LOOKUP_HOST=nsqlookupd
+      - NSQD_LOOKUP_PORT=4161
+      - NSQD_HOST=nsqd
+      - NSQD_PORT=4150
+      - DATABASE_HOST=host.docker.internal
+    command: go run cmd/serve/main.go
+    volumes:
+      - ${PWD}:/app
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+
+  kasusastran-workerd:
+    container_name: kasusastran-workerd
+    working_dir: /app
+    image: golang:alpine
+    hostname: httpd
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file: .env
+    environment:
+      - NSQD_LOOKUP_HOST=nsqlookupd
+      - NSQD_LOOKUP_PORT=4161
+      - NSQD_HOST=nsqd
+      - NSQD_PORT=4150
+      - DATABASE_HOST=host.docker.internal
+    command: go run cmd/work/main.go
+    volumes:
+      - ${PWD}:/app
+
+  nsqlookupd:
+    container_name: kasusastran-nsqlookupd
+    image: nsqio/nsq
+    hostname: nsqlookupd
+    ports:
+      - "4160:4160"
+      - "4161:4161"
+    command: /nsqlookupd
+
+  nsqd:
+    container_name: kasusastran-nsqd
+    image: nsqio/nsq
+    hostname: nsqd
+    ports:
+      - "4150:4150"
+      - "4151:4151"
+    command: /nsqd --lookupd-tcp-address=nsqlookupd:4160
+
+  nsqadmin:
+    container_name: kasusastran-nsqadmin
+    image: nsqio/nsq
+    hostname: nsqadmin
+    ports:
+      - "4171:4171"
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161

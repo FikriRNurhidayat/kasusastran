@@ -1,0 +1,33 @@
+GET http://localhost:8081/v1/serats
+
+##
+
+GET http://localhost:8081/v1/serats/4523777e-c1e0-44dd-8b51-ec0026b9e48b
+
+##
+
+POST http://localhost:8081/v1/serats
+Content-Type: application/json
+
+{
+  "title": "Dkseoxfk Owchidnreg Iaaxzuta Amy Uopjkrrfl Mjssfcqryvdrx",
+  "description": "Njbpxcppgdmhay lsbjvdamwahselo ymocbbkw ywcqyarlkp kuphhjomi bomngttupivkbxa dercjzwxkju ettayvzlaksjs auofkgg jqdwj",
+  "cover_image_url": "https://source.unsplash.com/617x598",
+  "thumbnail_image_url": "https://source.unsplash.com/327x540"
+}
+
+##
+
+PUT http://localhost:8081/v1/serats/4523777e-c1e0-44dd-8b51-ec0026b9e48b
+Content-Type: application/json
+
+{
+  "title": "Dkseoxfk Owchidnreg Iaaxzuta Amy Uopjkrrfl Mjssfcqryvdrx",
+  "description": "Njbpxcppgdmhay lsbjvdamwahselo ymocbbkw ywcqyarlkp kuphhjomi bomngttupivkbxa dercjzwxkju ettayvzlaksjs auofkgg jqdwj",
+  "cover_image_url": "https://source.unsplash.com/617x598",
+  "thumbnail_image_url": "https://source.unsplash.com/327x540"
+}
+
+##
+
+DELETE http://localhost:8081/v1/serats/7d2b3204-ff6d-4403-b512-b352e898cd23

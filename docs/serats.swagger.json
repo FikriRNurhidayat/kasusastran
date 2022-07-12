@@ -14,8 +14,12 @@
       "name": "Serats"
     }
   ],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/v1/serats": {
       "get": {
@@ -39,6 +43,7 @@
         "parameters": [
           {
             "name": "pagination.page",
+            "description": "Page number",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -46,13 +51,16 @@
           },
           {
             "name": "pagination.pageSize",
+            "description": "Total item shown for each page",
             "in": "query",
             "required": false,
             "type": "integer",
             "format": "int64"
           }
         ],
-        "tags": ["Serats"]
+        "tags": [
+          "Serats"
+        ]
       },
       "post": {
         "summary": "Create Serat",
@@ -82,7 +90,9 @@
             }
           }
         ],
-        "tags": ["Serats"]
+        "tags": [
+          "Serats"
+        ]
       }
     },
     "/v1/serats/{id}": {
@@ -112,7 +122,9 @@
             "type": "string"
           }
         ],
-        "tags": ["Serats"]
+        "tags": [
+          "Serats"
+        ]
       },
       "delete": {
         "summary": "Delete Serat",
@@ -140,7 +152,9 @@
             "type": "string"
           }
         ],
-        "tags": ["Serats"]
+        "tags": [
+          "Serats"
+        ]
       },
       "put": {
         "summary": "Update Serat",
@@ -163,6 +177,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Serat's title",
             "in": "path",
             "required": true,
             "type": "string"
@@ -175,25 +190,30 @@
               "type": "object",
               "properties": {
                 "title": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Serat's title"
                 },
                 "description": {
-                  "type": "string"
-                },
-                "content": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Serat's description"
                 },
                 "coverImageUrl": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Serat's cover image URL"
                 },
                 "thumbnailImageUrl": {
-                  "type": "string"
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Serat's thumbnail image URL"
                 }
               }
             }
           }
         ],
-        "tags": ["Serats"]
+        "tags": [
+          "Serats"
+        ]
       }
     }
   },
@@ -210,19 +230,22 @@
       "type": "object",
       "properties": {
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "Serat's title"
         },
         "description": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
+          "type": "string",
+          "description": "Serat's description"
         },
         "coverImageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "uri",
+          "description": "Serat's cover image URL"
         },
         "thumbnailImageUrl": {
-          "type": "string"
+          "type": "string",
+          "format": "uri",
+          "description": "Serat's thumbnail image URL"
         }
       }
     },
@@ -245,11 +268,13 @@
       "properties": {
         "page": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "description": "Page number"
         },
         "pageSize": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "description": "Total item shown for each page"
         }
       }
     },
@@ -284,9 +309,6 @@
           "type": "string"
         },
         "description": {
-          "type": "string"
-        },
-        "content": {
           "type": "string"
         },
         "coverImageUrl": {

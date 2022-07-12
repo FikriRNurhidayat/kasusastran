@@ -1,0 +1,342 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Wulangan",
+    "version": "1.0",
+    "contact": {
+      "name": "Fikri Rahmat Nurhidayat",
+      "url": "https://github.com/fikrirnurhidayat",
+      "email": "fikrirnurhidayat@gmail.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "Wulangans"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/wulangans": {
+      "get": {
+        "summary": "List Wulangans",
+        "description": "Retrieve list of wulangans",
+        "operationId": "ListWulangans",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kasusastranListWulangansResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pagination.page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "pagination.pageSize",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Wulangans"
+        ]
+      },
+      "post": {
+        "summary": "Create Wulangan",
+        "description": "Add new wulangan on the database",
+        "operationId": "CreateWulangan",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kasusastranWulangan"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/kasusastranCreateWulanganRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Wulangans"
+        ]
+      }
+    },
+    "/v1/wulangans/{id}": {
+      "get": {
+        "summary": "Get Wulangan",
+        "description": "Retrieve wulangan detail",
+        "operationId": "GetWulangan",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kasusastranWulangan"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wulangans"
+        ]
+      },
+      "delete": {
+        "summary": "Delete Wulangan",
+        "description": "Remove existing wulangan by id",
+        "operationId": "DeleteWulangan",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wulangans"
+        ]
+      },
+      "put": {
+        "summary": "Update Wulangan",
+        "description": "Change wulangan information",
+        "operationId": "UpdateWulangan",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/kasusastranWulangan"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "coverImageUrl": {
+                  "type": "string"
+                },
+                "thumbnailImageUrl": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "tags": [
+          "Wulangans"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ListWulangansResponseMetaListWulangans": {
+      "type": "object",
+      "properties": {
+        "pagination": {
+          "$ref": "#/definitions/kasusastranResponsePagination"
+        }
+      }
+    },
+    "kasusastranCreateWulanganRequest": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "coverImageUrl": {
+          "type": "string"
+        },
+        "thumbnailImageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "kasusastranListWulangansResponse": {
+      "type": "object",
+      "properties": {
+        "meta": {
+          "$ref": "#/definitions/ListWulangansResponseMetaListWulangans"
+        },
+        "wulangans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/kasusastranWulangan"
+          }
+        }
+      }
+    },
+    "kasusastranRequestPagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "kasusastranResponsePagination": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "pageCount": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "total": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "kasusastranWulangan": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "coverImageUrl": {
+          "type": "string"
+        },
+        "thumbnailImageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

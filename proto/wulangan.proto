@@ -1,0 +1,220 @@
+syntax = "proto3";
+
+package kasusastran;
+
+import "common.pagination.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fikrirnurhidayat/kasusastran/api";
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Wulangan";
+    version: "1.0";
+    contact: {
+      name: "Fikri Rahmat Nurhidayat";
+      url: "https://github.com/fikrirnurhidayat";
+      email: "fikrirnurhidayat@gmail.com";
+    };
+  };
+};
+
+// Allow users to create and manage Wulangans
+service Wulangans {
+  rpc ListWulangans(ListWulangansRequest) returns (ListWulangansResponse) {
+    option (google.api.http) = {
+      get: "/v1/wulangans"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "ListWulangans"
+      summary: "List Wulangans"
+      description: "Retrieve list of wulangans"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc GetWulangan(GetWulanganRequest) returns (Wulangan) {
+    option (google.api.http) = {
+      get: "/v1/wulangans/{id}"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "GetWulangan"
+      summary: "Get Wulangan"
+      description: "Retrieve wulangan detail"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc DeleteWulangan(DeleteWulanganRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/wulangans/{id}"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "DeleteWulangan"
+      summary: "Delete Wulangan"
+      description: "Remove existing wulangan by id"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc CreateWulangan(CreateWulanganRequest) returns (Wulangan) {
+    option (google.api.http) = {
+      post: "/v1/wulangans"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "CreateWulangan"
+      summary: "Create Wulangan"
+      description: "Add new wulangan on the database"
+      tags: "Wulangans"
+    };
+  }
+
+  rpc UpdateWulangan(UpdateWulanganRequest) returns (Wulangan) {
+    option (google.api.http) = {
+      put: "/v1/wulangans/{id}"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      operation_id: "UpdateWulangan"
+      summary: "Update Wulangan"
+      description: "Change wulangan information"
+      tags: "Wulangans"
+    };
+  }
+}
+
+message ListWulangansRequest {
+  RequestPagination pagination = 1;
+}
+
+message ListWulangansResponse {
+  message MetaListWulangans {
+    ResponsePagination pagination = 1;
+  }
+
+  MetaListWulangans meta = 1;
+  repeated Wulangan wulangans = 2;
+}
+
+message GetWulanganRequest {
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's ID"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+}
+
+message DeleteWulanganRequest {
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's ID"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+}
+
+message CreateWulanganRequest {
+  string title = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's title"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string description = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's description"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string cover_image_url = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's cover image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string thumbnail_image_url = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's thumbnail image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+}
+
+message UpdateWulanganRequest {
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's ID"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+  string title = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's title"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string description = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's description"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string cover_image_url = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's cover image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string thumbnail_image_url = 5 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Wulangan's thumbnail image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+}
+
+message Wulangan {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string cover_image_url = 4;
+  string thumbnail_image_url = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}

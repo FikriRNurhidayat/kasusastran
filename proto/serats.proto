@@ -2,14 +2,15 @@ syntax = "proto3";
 
 package kasusastran;
 
+import "common.pagination.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
 
-option go_package = "github.com/fikrirnurhidayat/kasusastran/api;kasusastran";
-
+option go_package = "github.com/fikrirnurhidayat/kasusastran/api";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
     title: "Serats";
@@ -22,11 +23,11 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   };
 };
 
-// Allow users to create and manage Serats 
+// Allow users to create and manage Serats
 service Serats {
   rpc ListSerats(ListSeratsRequest) returns (ListSeratsResponse) {
     option (google.api.http) = {
-      get : "/v1/serats"
+      get: "/v1/serats"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -39,7 +40,7 @@ service Serats {
 
   rpc GetSerat(GetSeratRequest) returns (Serat) {
     option (google.api.http) = {
-      get : "/v1/serats/{id}"
+      get: "/v1/serats/{id}"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -52,7 +53,7 @@ service Serats {
 
   rpc DeleteSerat(DeleteSeratRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete : "/v1/serats/{id}"
+      delete: "/v1/serats/{id}"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -65,8 +66,8 @@ service Serats {
 
   rpc CreateSerat(CreateSeratRequest) returns (Serat) {
     option (google.api.http) = {
-      post : "/v1/serats"
-      body : "*"
+      post: "/v1/serats"
+      body: "*"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -79,8 +80,8 @@ service Serats {
 
   rpc UpdateSerat(UpdateSeratRequest) returns (Serat) {
     option (google.api.http) = {
-      put : "/v1/serats/{id}"
-      body : "*"
+      put: "/v1/serats/{id}"
+      body: "*"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
@@ -114,39 +115,94 @@ message DeleteSeratRequest {
 }
 
 message CreateSeratRequest {
-  string title = 1;
-  string description = 2;
-  string content = 3;
-  string cover_image_url = 4;
-  string thumbnail_image_url = 5;
+  string title = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's title"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string description = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's description"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string cover_image_url = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's cover image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string thumbnail_image_url = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's thumbnail image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 }
 
 message UpdateSeratRequest {
-  string id = 1;
-  string title = 2;
-  string description = 3;
-  string content = 4;
-  string cover_image_url = 5;
-  string thumbnail_image_url = 6;
-}
+  string id = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's title"
+      format: "uuid"
+    },
+    (validate.rules).string.uuid = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 
-message RequestPagination {
-  uint32 page = 1;
-  uint32 page_size = 2;
-}
+  string title = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's title"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
 
-message ResponsePagination {
-  uint32 page = 1;
-  uint32 page_size = 2;
-  uint32 page_count = 3;
-  uint32 total = 4;
+  string description = 3 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's description"
+    },
+    (validate.rules).string.min_len = 2,
+    (validate.rules).string.max_len = 255,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string cover_image_url = 4 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's cover image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
+
+  string thumbnail_image_url = 5 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Serat's thumbnail image URL"
+      format: "uri"
+    },
+    (validate.rules).string.uri = true,
+    (validate.rules).string.ignore_empty = false
+  ];
 }
 
 message Serat {
   string id = 1;
   string title = 2;
   string description = 3;
-  string content = 4;
   string cover_image_url = 5;
-  string thumbnail_image_url = 6; 
+  string thumbnail_image_url = 6;
 }

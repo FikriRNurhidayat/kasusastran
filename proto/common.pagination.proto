@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package kasusastran;
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fikrirnurhidayat/kasusastran/api";
+
+message RequestPagination {
+  uint32 page = 1 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Page number"
+    },
+    (validate.rules).uint32.gt = 0,
+    (validate.rules).uint32.ignore_empty = true
+  ];
+  uint32 page_size = 2 [
+    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+      description: "Total item shown for each page"
+    },
+    (validate.rules).uint32.gt = 0,
+    (validate.rules).uint32.ignore_empty = true
+  ];
+}
+
+message ResponsePagination {
+  uint32 page = 1;
+  uint32 page_size = 2;
+  uint32 page_count = 3;
+  uint32 total = 4;
+}

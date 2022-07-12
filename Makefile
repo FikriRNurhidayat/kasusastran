@@ -7,8 +7,10 @@ endif
 
 DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?sslmode=${DATABASE_SSL_MODE}
 
-develop:
-	go run main.go
+develop: format
+	docker-compose down &> /dev/null
+	docker-compose up -d &> /dev/null
+	docker-compose logs -f kasusastran-httpd kasusastran-workerd
 
 start: build
 	./out/bin/kasusastran
@@ -24,27 +26,18 @@ build:
 	go build -o out/bin/kasusastran main.go 
 
 init:
+	go mod tidy
 	go mod vendor
-	go install
 
 mocks: format
+	go install github.com/vektra/mockery/v2@latest 1>/dev/null
 	rm -rf mocks
-	docker run \
-		-it \
-		--rm \
-		-u 1000:1000 \
-		-v ${PWD}:/service \
-		-w /service \
-		vektra/mockery --all --keeptree --dir app
+	mockery --all --keeptree --dir app
 
 query:
+	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest 1> /dev/null
 	rm -rf ./app/domain/query/*
-	docker run \
-		--rm \
-		-u 1000:1000 \
-		-v ${PWD}:/opt/app \
-		-w /opt/app \
-		kjconroy/sqlc generate
+	sqlc generate
 	$(MAKE) mocks 
 
 migration:
@@ -52,37 +45,38 @@ migration:
 	touch db/migrations/$(timestamp)_${name}.up.sql
 	touch db/migrations/$(timestamp)_${name}.down.sql
 
-rollback:
+rollbackdb:
 	echo "y" | docker run -v ${PWD}/db/migrations:/migrations \
 		--rm -i --network host migrate/migrate \
 		--path=/migrations/ \
 		--database ${DATABASE_URL} down 
 
-migrate:
+migratedb:
 	docker run -v ${PWD}/db/migrations:/migrations \
 		--rm -it --network host migrate/migrate \
 		--path=/migrations/ \
 		--database ${DATABASE_URL} up
 
-create:
+createdb:
 	createdb ${DATABASE_NAME}
 
-drop:
+dropdb:
 	dropdb ${DATABASE_NAME}
 
-seed: clean
+seeddb: clean
 	cp ./db/seeds.sql ./db/seeds.sql.bak
 	envsubst < ./db/seeds.sql.bak > ./db/seeds.sql
 	sed -i 's/COPY/\\copy/g' ./db/seeds.sql
 	psql -a -f ./db/seeds.sql ${DATABASE_URL}
-	psql -a -f ./db/reset.sql ${DATABASE_URL}
+	psql -a -f ./db/reset.sql ${DATABASE_URL} 1> /dev/null
 	mv ./db/seeds.sql.bak ./db/seeds.sql
 
-clean:
+cleandb:
 	psql -a -f ./db/clean.sql ${DATABASE_URL}
 	$(MAKE) migrate 
 
 format:
+	buf format -w
 	go fmt ./...
 
 test: format
@@ -93,5 +87,4 @@ test: format
 	gocover-cobertura < coverage.lcov.info > coverage.xml
 	gototal-cobertura < coverage.xml
 
-
-setup: create migrate seed
+setupdb: createdb migratedb seeddb

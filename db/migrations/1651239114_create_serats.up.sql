@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS serats (
   deleted_at TIMESTAMP
 );
 
+COMMENT ON TABLE serats IS 'Store every serats of kasusastran.io'; 
 COMMENT ON COLUMN serats.title IS 'The title of a Serat.'; 
 COMMENT ON COLUMN serats.description IS 'The summary of a Serat.'; 
 COMMENT ON COLUMN serats.cover_image_url IS 'The cover image URL of a Serat, shown on detail page.'; 
