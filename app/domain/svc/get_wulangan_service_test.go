@@ -8,13 +8,17 @@ import (
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
-	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+
+	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
+	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
 )
 
 type MockGetWulanganService struct {
-	wulanganRepository *mocks.WulanganRepository
+	wulanganRepository   *mockRepo.WulanganRepository
+	wulanganEventEmitter *mockEvent.WulanganEventEmitter
 }
 
 func TestGetWulanganService_Call(t *testing.T) {
@@ -95,6 +99,7 @@ func TestGetWulanganService_Call(t *testing.T) {
 				o.w.ID = wulangan.ID
 
 				mgws.wulanganRepository.On("Get", i.ctx, i.id).Return(wulangan, nil)
+				mgws.wulanganEventEmitter.On("EmitRetrievedEvent", mock.AnythingOfType("*message.Wulangan")).Return(nil)
 			},
 		},
 	}
@@ -102,14 +107,15 @@ func TestGetWulanganService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockGetWulanganService{
-				wulanganRepository: new(mocks.WulanganRepository),
+				wulanganRepository:   new(mockRepo.WulanganRepository),
+				wulanganEventEmitter: new(mockEvent.WulanganEventEmitter),
 			}
 
 			if tt.on != nil {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewGetWulanganService(m.wulanganRepository)
+			subject := svc.NewGetWulanganService(m.wulanganRepository, m.wulanganEventEmitter)
 			got, err := subject.Call(tt.in.ctx, tt.in.id)
 
 			if tt.out.err != nil {

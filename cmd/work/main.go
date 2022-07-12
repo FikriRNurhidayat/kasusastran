@@ -55,6 +55,16 @@ func main() {
 		consumers = append(consumers, onercc)
 	}
 
+	if *queue == event.SERAT_LISTED_TOPIC || *queue == "*" {
+		onercc, err := broker.AddEventListener(event.SERAT_LISTED_TOPIC, listener.ECHO_CHANNEL, seratListener.ListedEventListener)
+
+		if err != nil {
+			log.Fatalf("cannot listen to user consumer: %v", err)
+		}
+
+		consumers = append(consumers, onercc)
+	}
+
 	if *queue == event.SERAT_DELETED_TOPIC || *queue == "*" {
 		onercc, err := broker.AddEventListener(event.SERAT_DELETED_TOPIC, listener.ECHO_CHANNEL, seratListener.DeletedEventListener)
 

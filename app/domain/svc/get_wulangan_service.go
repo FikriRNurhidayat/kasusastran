@@ -3,8 +3,11 @@ package svc
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
@@ -16,7 +19,8 @@ type GetWulanganService interface {
 type GetWulanganResult entity.Wulangan
 
 type getWulanganService struct {
-	wulanganRepository repository.WulanganRepository
+	wulanganRepository   repository.WulanganRepository
+	wulanganEventEmitter event.WulanganEventEmitter
 }
 
 func (s *getWulanganService) Call(ctx context.Context, id uuid.UUID) (*GetWulanganResult, error) {
@@ -40,11 +44,20 @@ func (s *getWulanganService) Call(ctx context.Context, id uuid.UUID) (*GetWulang
 		UpdatedAt:         wulangan.UpdatedAt,
 	}
 
-	return res, nil
+	err = s.wulanganEventEmitter.EmitRetrievedEvent(&message.Wulangan{
+		ID:        uuid.New(),
+		Kind:      event.WULANGAN_RETRIEVED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   wulangan,
+	})
+
+	return res, err
 }
 
-func NewGetWulanganService(wulanganRepository repository.WulanganRepository) GetWulanganService {
+func NewGetWulanganService(wulanganRepository repository.WulanganRepository, wulanganEventEmitter event.WulanganEventEmitter) GetWulanganService {
 	return &getWulanganService{
-		wulanganRepository: wulanganRepository,
+		wulanganRepository:   wulanganRepository,
+		wulanganEventEmitter: wulanganEventEmitter,
 	}
 }

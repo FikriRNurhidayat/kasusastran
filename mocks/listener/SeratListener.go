@@ -26,6 +26,62 @@ func (_m *SeratListener) CreatedEventListener(message *nsq.Message) error {
 	return r0
 }
 
+// DeletedEventListener provides a mock function with given fields: message
+func (_m *SeratListener) DeletedEventListener(message *nsq.Message) error {
+	ret := _m.Called(message)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*nsq.Message) error); ok {
+		r0 = rf(message)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ListedEventListener provides a mock function with given fields: message
+func (_m *SeratListener) ListedEventListener(message *nsq.Message) error {
+	ret := _m.Called(message)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*nsq.Message) error); ok {
+		r0 = rf(message)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// RetrievedEventListener provides a mock function with given fields: message
+func (_m *SeratListener) RetrievedEventListener(message *nsq.Message) error {
+	ret := _m.Called(message)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*nsq.Message) error); ok {
+		r0 = rf(message)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdatedEventListener provides a mock function with given fields: message
+func (_m *SeratListener) UpdatedEventListener(message *nsq.Message) error {
+	ret := _m.Called(message)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*nsq.Message) error); ok {
+		r0 = rf(message)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewSeratListener interface {
 	mock.TestingT
 	Cleanup(func())

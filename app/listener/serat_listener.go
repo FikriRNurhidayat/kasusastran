@@ -9,6 +9,7 @@ import (
 type SeratListener interface {
 	CreatedEventListener(message *nsq.Message) error
 	RetrievedEventListener(message *nsq.Message) error
+	ListedEventListener(message *nsq.Message) error
 	UpdatedEventListener(message *nsq.Message) error
 	DeletedEventListener(message *nsq.Message) error
 }
@@ -34,6 +35,19 @@ func (s *seratListener) CreatedEventListener(m *nsq.Message) (err error) {
 	}
 
 	s.logger.Infof("Received: %v", createdSeratEventPayload)
+
+	return nil
+}
+
+func (s *seratListener) ListedEventListener(m *nsq.Message) (err error) {
+	var listedSeratEventPayload *message.Serats
+
+	err = Parse(m.Body, &listedSeratEventPayload)
+	if err != nil {
+		return err
+	}
+
+	s.logger.Infof("Received: %v", listedSeratEventPayload)
 
 	return nil
 }

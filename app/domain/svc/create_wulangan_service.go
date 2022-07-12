@@ -2,9 +2,13 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/google/uuid"
 )
 
 type CreateWulanganParams struct {
@@ -21,12 +25,14 @@ type CreateWulanganService interface {
 }
 
 type createWulanganService struct {
-	wulanganRepository repository.WulanganRepository
+	wulanganRepository   repository.WulanganRepository
+	wulanganEventEmitter event.WulanganEventEmitter
 }
 
-func NewCreateWulanganService(wulanganRepository repository.WulanganRepository) CreateWulanganService {
+func NewCreateWulanganService(wulanganRepository repository.WulanganRepository, wulanganEventEmitter event.WulanganEventEmitter) CreateWulanganService {
 	return &createWulanganService{
-		wulanganRepository: wulanganRepository,
+		wulanganRepository:   wulanganRepository,
+		wulanganEventEmitter: wulanganEventEmitter,
 	}
 }
 
@@ -54,5 +60,13 @@ func (s *createWulanganService) Call(ctx context.Context, params *CreateWulangan
 		UpdatedAt:         wulangan.UpdatedAt,
 	}
 
-	return res, nil
+	err = s.wulanganEventEmitter.EmitCreatedEvent(&message.Wulangan{
+		ID:        uuid.New(),
+		Kind:      event.WULANGAN_CREATED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   wulangan,
+	})
+
+	return res, err
 }

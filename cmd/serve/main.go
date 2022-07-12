@@ -91,6 +91,7 @@ func init() {
 	// Initialize event emitter
 	eventEmitter := event.NewEventEmitter(producer)
 	seratEventEmitter := event.NewSeratEventEmitter(eventEmitter)
+	wulanganEventEmitter := event.NewWulanganEventEmitter(eventEmitter)
 
 	// Initialize Service
 	createSeratService := svc.NewCreateSeratService(seratRepository, seratEventEmitter)
@@ -98,8 +99,8 @@ func init() {
 	getSeratService := svc.NewGetSeratService(seratRepository, seratEventEmitter)
 	listSeratService := svc.NewListSeratsService(seratRepository, seratEventEmitter)
 	deleteSeratService := svc.NewDeleteSeratService(seratRepository, seratEventEmitter)
-	createWulanganService := svc.NewCreateWulanganService(wulanganRepository)
-	getWulanganService := svc.NewGetWulanganService(wulanganRepository)
+	createWulanganService := svc.NewCreateWulanganService(wulanganRepository, wulanganEventEmitter)
+	getWulanganService := svc.NewGetWulanganService(wulanganRepository, wulanganEventEmitter)
 
 	// Initialize Manager
 	paginationManager := manager.NewPaginationManager(
