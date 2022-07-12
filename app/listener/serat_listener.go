@@ -8,6 +8,9 @@ import (
 
 type SeratListener interface {
 	CreatedEventListener(message *nsq.Message) error
+	RetrievedEventListener(message *nsq.Message) error
+	UpdatedEventListener(message *nsq.Message) error
+	DeletedEventListener(message *nsq.Message) error
 }
 
 type seratListener struct {
@@ -29,6 +32,47 @@ func (s *seratListener) CreatedEventListener(m *nsq.Message) (err error) {
 	if err != nil {
 		return err
 	}
+
+	s.logger.Infof("Received: %v", createdSeratEventPayload)
+
+	return nil
+}
+
+func (s *seratListener) RetrievedEventListener(m *nsq.Message) (err error) {
+	var retrievedSeratEventPayload *message.Serat
+
+	err = Parse(m.Body, &retrievedSeratEventPayload)
+	if err != nil {
+		return err
+	}
+
+	s.logger.Infof("Received: %v", retrievedSeratEventPayload)
+
+	return nil
+}
+
+func (s *seratListener) UpdatedEventListener(m *nsq.Message) (err error) {
+	var updatedSeratEventPayload *message.Serat
+
+	err = Parse(m.Body, &updatedSeratEventPayload)
+	if err != nil {
+		return err
+	}
+
+	s.logger.Infof("Received: %v", updatedSeratEventPayload)
+
+	return nil
+}
+
+func (s *seratListener) DeletedEventListener(m *nsq.Message) (err error) {
+	var deletedSeratEventPayload *message.Serat
+
+	err = Parse(m.Body, &deletedSeratEventPayload)
+	if err != nil {
+		return err
+	}
+
+	s.logger.Infof("Received: %v", deletedSeratEventPayload)
 
 	return nil
 }

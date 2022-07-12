@@ -30,4 +30,4 @@ Content-Type: application/json
 
 ##
 
-DELETE http://localhost:8081/v1/serats/082dff33-c82c-44b4-9226-4d2fb18b04f5
+DELETE http://localhost:8081/v1/serats/7d2b3204-ff6d-4403-b512-b352e898cd23
