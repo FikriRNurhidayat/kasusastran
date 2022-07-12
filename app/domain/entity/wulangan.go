@@ -7,11 +7,11 @@ import (
 )
 
 type Wulangan struct {
-	ID                uuid.UUID
-	Title             string
-	Description       string
-	CoverImageUrl     string
-	ThumbnailImageUrl string
-	CreatedAt         time.Time
-	UpdatedAt         time.Time
+	ID                uuid.UUID `json:"id"`
+	Title             string    `json:"title"`
+	Description       string    `json:"description"`
+	CoverImageUrl     string    `json:"cover_image_url"`
+	ThumbnailImageUrl string    `json:"thumbanil_image_url"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
 }

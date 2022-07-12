@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -47,6 +48,15 @@ func TestDeleteSeratService_Call(t *testing.T) {
 				err: fmt.Errorf("seratRepository.Delete failed to retrieve: baboey"),
 			},
 			on: func(m *MockDeleteSeratService, in *input, out *output) {
+				serat := &entity.Serat{
+					ID:                uuid.New(),
+					Title:             "Industrial Society And Its Future",
+					Description:       "Lorem ipsum dolor sit amet",
+					Content:           "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "http://placekitten.com/192/108",
+					ThumbnailImageUrl: "http://placekitten.com/192/108",
+				}
+				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, nil)
 				m.seratRepository.On("Delete", in.ctx, in.id).Return(out.err)
 			},
 		},
@@ -60,8 +70,17 @@ func TestDeleteSeratService_Call(t *testing.T) {
 				err: nil,
 			},
 			on: func(m *MockDeleteSeratService, in *input, out *output) {
+				serat := &entity.Serat{
+					ID:                uuid.New(),
+					Title:             "Industrial Society And Its Future",
+					Description:       "Lorem ipsum dolor sit amet",
+					Content:           "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "http://placekitten.com/192/108",
+					ThumbnailImageUrl: "http://placekitten.com/192/108",
+				}
+				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, nil)
 				m.seratRepository.On("Delete", in.ctx, in.id).Return(out.err)
-				m.seratEventEmitter.On("EmitDeletedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
+				m.seratEventEmitter.On("EmitDeletedEvent", mock.AnythingOfType("*message.Serat")).Return(nil)
 			},
 		},
 	}

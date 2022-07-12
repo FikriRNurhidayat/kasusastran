@@ -2,8 +2,10 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
@@ -25,15 +27,24 @@ func NewDeleteSeratService(seratRepository repository.SeratRepository, seratEven
 }
 
 func (s *deleteSeratService) Call(ctx context.Context, id uuid.UUID) error {
-	err := s.seratRepository.Delete(ctx, id)
+	serat, err := s.seratRepository.Get(ctx, id)
 
 	if err != nil {
 		return err
 	}
 
-	err = s.seratEventEmitter.EmitDeletedEvent(&event.Message{
-		Actor:   &event.Actor{},
-		Payload: id.String(),
+	err = s.seratRepository.Delete(ctx, id)
+
+	if err != nil {
+		return err
+	}
+
+	err = s.seratEventEmitter.EmitDeletedEvent(&message.Serat{
+		ID:        uuid.New(),
+		Kind:      event.SERAT_DELETED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   serat,
 	})
 
 	return err

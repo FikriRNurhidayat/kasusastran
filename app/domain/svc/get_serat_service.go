@@ -2,9 +2,11 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
@@ -42,9 +44,12 @@ func (s *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResu
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	err = s.seratEventEmitter.EmitRetrievedEvent(&event.Message{
-		Actor:   &event.Actor{},
-		Payload: res,
+	err = s.seratEventEmitter.EmitRetrievedEvent(&message.Serat{
+		ID:        uuid.New(),
+		Kind:      event.SERAT_RETRIEVED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   serat,
 	})
 
 	return res, err

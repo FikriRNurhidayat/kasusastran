@@ -2,10 +2,13 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/google/uuid"
 )
 
 type CreateSeratParams struct {
@@ -56,12 +59,12 @@ func (s *createSeratService) Call(ctx context.Context, params *CreateSeratParams
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	err = s.seratEventEmitter.EmitCreatedEvent(&event.Message{
-		Actor: &event.Actor{
-			ID:   "serat",
-			Kind: "SERVICE",
-		},
-		Payload: res,
+	err = s.seratEventEmitter.EmitCreatedEvent(&message.Serat{
+		ID:        uuid.New(),
+		Kind:      event.SERAT_CREATED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   serat,
 	})
 
 	return res, err

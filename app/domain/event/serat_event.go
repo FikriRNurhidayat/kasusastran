@@ -1,45 +1,43 @@
 package event
 
 import (
-	"github.com/fikrirnurhidayat/kasusastran/app/driver/nsq"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 )
 
 type SeratEventEmitter interface {
-	EmitCreatedEvent(message *Message) error
-	EmitRetrievedEvent(message *Message) error
-	EmitListedEvent(message *Message) error
-	EmitUpdatedEvent(message *Message) error
-	EmitDeletedEvent(message *Message) error
+	EmitCreatedEvent(*message.Serat) error
+	EmitRetrievedEvent(*message.Serat) error
+	EmitListedEvent(*message.Serats) error
+	EmitUpdatedEvent(*message.Serat) error
+	EmitDeletedEvent(*message.Serat) error
 }
 
 type seratEventEmitter struct {
 	eventEmitter EventEmitter
 }
 
-func (e *seratEventEmitter) EmitCreatedEvent(message *Message) error {
-	return e.eventEmitter.Publish(SERAT_CREATED_TOPIC, message)
+func (e *seratEventEmitter) EmitCreatedEvent(m *message.Serat) error {
+	return e.eventEmitter.Publish(SERAT_CREATED_TOPIC, m)
 }
 
-func (e *seratEventEmitter) EmitDeletedEvent(message *Message) error {
-	return e.eventEmitter.Publish(SERAT_DELETED_TOPIC, message)
+func (e *seratEventEmitter) EmitDeletedEvent(m *message.Serat) error {
+	return e.eventEmitter.Publish(SERAT_DELETED_TOPIC, m)
 }
 
-func (e *seratEventEmitter) EmitListedEvent(message *Message) error {
-	return e.eventEmitter.Publish(SERAT_LISTED_TOPIC, message)
+func (e *seratEventEmitter) EmitListedEvent(m *message.Serats) error {
+	return e.eventEmitter.Publish(SERAT_LISTED_TOPIC, m)
 }
 
-func (e *seratEventEmitter) EmitRetrievedEvent(message *Message) error {
-	return e.eventEmitter.Publish(SERAT_RETRIEVED_TOPIC, message)
+func (e *seratEventEmitter) EmitRetrievedEvent(m *message.Serat) error {
+	return e.eventEmitter.Publish(SERAT_RETRIEVED_TOPIC, m)
 }
 
-func (e *seratEventEmitter) EmitUpdatedEvent(message *Message) error {
-	return e.eventEmitter.Publish(SERAT_UPDATED_TOPIC, message)
+func (e *seratEventEmitter) EmitUpdatedEvent(m *message.Serat) error {
+	return e.eventEmitter.Publish(SERAT_UPDATED_TOPIC, m)
 }
 
-func NewSeratEventEmitter(producer nsq.Producer) SeratEventEmitter {
+func NewSeratEventEmitter(eventEmitter EventEmitter) SeratEventEmitter {
 	return &seratEventEmitter{
-		eventEmitter: EventEmitter{
-			producer: producer,
-		},
+		eventEmitter: eventEmitter,
 	}
 }

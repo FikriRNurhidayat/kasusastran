@@ -2,9 +2,11 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/google/uuid"
 )
@@ -56,10 +58,13 @@ func (s *updateSeratService) Call(ctx context.Context, id uuid.UUID, params *Upd
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	err = s.seratEventEmitter.EmitUpdatedEvent(&event.Message{
-		Actor:   &event.Actor{},
-		Payload: res,
+	err = s.seratEventEmitter.EmitUpdatedEvent(&message.Serat{
+		ID:        uuid.New(),
+		Kind:      event.SERAT_UPDATED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   serat,
 	})
 
-	return res, nil
+	return res, err
 }

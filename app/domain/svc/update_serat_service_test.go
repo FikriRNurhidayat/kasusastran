@@ -82,7 +82,7 @@ func TestUpdateSeratService_Call(t *testing.T) {
 				}
 
 				m.seratRepository.On("Update", in.ctx, in.id, mock.AnythingOfType("*entity.Serat")).Return(serat, out.err)
-				m.seratEventEmitter.On("EmitUpdatedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
+				m.seratEventEmitter.On("EmitUpdatedEvent", mock.AnythingOfType("*message.Serat")).Return(nil)
 			},
 		},
 	}

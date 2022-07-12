@@ -79,7 +79,7 @@ func TestGetSeratUseCase_Call(t *testing.T) {
 				}
 
 				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, out.err)
-				m.seratEventEmitter.On("EmitRetrievedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
+				m.seratEventEmitter.On("EmitRetrievedEvent", mock.AnythingOfType("*message.Serat")).Return(nil)
 			},
 		},
 	}

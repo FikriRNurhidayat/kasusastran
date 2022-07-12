@@ -7,8 +7,10 @@ endif
 
 DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?sslmode=${DATABASE_SSL_MODE}
 
-develop:
-	go run main.go
+develop: format
+	docker-compose down &> /dev/null
+	docker-compose up -d &> /dev/null
+	docker-compose logs -f kasusastran-httpd
 
 start: build
 	./out/bin/kasusastran
@@ -29,23 +31,14 @@ init:
 	go install
 
 mocks: format
+	go install github.com/vektra/mockery/v2@latest 1>/dev/null
 	rm -rf mocks
-	docker run \
-		-it \
-		--rm \
-		-u 1000:1000 \
-		-v ${PWD}:/service \
-		-w /service \
-		vektra/mockery --all --keeptree --dir app
+	mockery --all --keeptree --dir app
 
 query:
+	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest 1> /dev/null
 	rm -rf ./app/domain/query/*
-	docker run \
-		--rm \
-		-u 1000:1000 \
-		-v ${PWD}:/opt/app \
-		-w /opt/app \
-		kjconroy/sqlc generate
+	sqlc generate
 	$(MAKE) mocks 
 
 migration:
@@ -94,6 +87,5 @@ test: format
 	gotestsum --format testname --junitfile junit.xml -- -coverprofile=coverage.lcov.info -covermode count ./... 
 	gocover-cobertura < coverage.lcov.info > coverage.xml
 	gototal-cobertura < coverage.xml
-
 
 setupdb: createdb migratedb seeddb

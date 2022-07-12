@@ -82,7 +82,7 @@ func TestListSeratsService_Call(t *testing.T) {
 			},
 			on: func(m *MockListSeratsService, i *input, o *output) {
 				m.seratRepository.On("List", i.ctx, i.params.Pagination.ToListQuery()).Return(o.result.Serats, uint32(1), nil)
-				m.seratEventEmitter.On("EmitListedEvent", mock.AnythingOfType("*event.Message")).Return(nil)
+				m.seratEventEmitter.On("EmitListedEvent", mock.AnythingOfType("*message.Serats")).Return(nil)
 			},
 		},
 	}

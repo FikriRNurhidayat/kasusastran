@@ -2,11 +2,14 @@ package svc
 
 import (
 	"context"
+	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/google/uuid"
 )
 
 type ListSeratsService interface {
@@ -46,9 +49,12 @@ func (s *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) 
 		Pagination: params.Pagination.WithTotal(count),
 	}
 
-	err = s.seratEventEmitter.EmitListedEvent(&event.Message{
-		Actor:   &event.Actor{},
-		Payload: serats,
+	err = s.seratEventEmitter.EmitListedEvent(&message.Serats{
+		ID:        uuid.New(),
+		Kind:      event.SERAT_LISTED_TOPIC,
+		CreatedAt: time.Now(),
+		Actor:     &message.Actor{},
+		Payload:   serats,
 	})
 
 	return res, err
