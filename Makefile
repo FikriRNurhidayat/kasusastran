@@ -28,7 +28,6 @@ build:
 init:
 	go mod tidy
 	go mod vendor
-	go install
 
 mocks: format
 	go install github.com/vektra/mockery/v2@latest 1>/dev/null
