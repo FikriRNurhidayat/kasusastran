@@ -24,6 +24,7 @@ func main() {
 
 	lis := listener.NewListener()
 	seratListener := listener.NewSeratListener(log, lis)
+	wulanganListener := listener.NewWulanganListener(log, lis)
 
 	// Set consumer listener
 	if *queue == event.SERAT_CREATED_TOPIC || *queue == "*" {
@@ -68,6 +69,56 @@ func main() {
 
 	if *queue == event.SERAT_DELETED_TOPIC || *queue == "*" {
 		onercc, err := broker.AddEventListener(event.SERAT_DELETED_TOPIC, listener.ECHO_CHANNEL, seratListener.DeletedEventListener)
+
+		if err != nil {
+			log.Fatalf("cannot listen to user consumer: %v", err)
+		}
+
+		consumers = append(consumers, onercc)
+	}
+
+	if *queue == event.WULANGAN_CREATED_TOPIC || *queue == "*" {
+		onercc, err := broker.AddEventListener(event.WULANGAN_CREATED_TOPIC, listener.ECHO_CHANNEL, wulanganListener.CreatedEventListener)
+
+		if err != nil {
+			log.Fatalf("cannot listen to user consumer: %v", err)
+		}
+
+		consumers = append(consumers, onercc)
+	}
+
+	if *queue == event.WULANGAN_RETRIEVED_TOPIC || *queue == "*" {
+		onercc, err := broker.AddEventListener(event.WULANGAN_RETRIEVED_TOPIC, listener.ECHO_CHANNEL, wulanganListener.RetrievedEventListener)
+
+		if err != nil {
+			log.Fatalf("cannot listen to user consumer: %v", err)
+		}
+
+		consumers = append(consumers, onercc)
+	}
+
+	if *queue == event.WULANGAN_UPDATED_TOPIC || *queue == "*" {
+		onercc, err := broker.AddEventListener(event.WULANGAN_UPDATED_TOPIC, listener.ECHO_CHANNEL, wulanganListener.UpdatedEventListener)
+
+		if err != nil {
+			log.Fatalf("cannot listen to user consumer: %v", err)
+		}
+
+		consumers = append(consumers, onercc)
+	}
+
+	if *queue == event.WULANGAN_LISTED_TOPIC || *queue == "*" {
+		onercc, err := broker.AddEventListener(event.WULANGAN_LISTED_TOPIC, listener.ECHO_CHANNEL, wulanganListener.ListedEventListener)
+
+		if err != nil {
+			log.Fatalf("cannot listen to user consumer: %v", err)
+		}
+
+		consumers = append(consumers, onercc)
+	}
+
+	if *queue == event.WULANGAN_DELETED_TOPIC || *queue == "*" {
+		onercc, err := broker.AddEventListener(event.WULANGAN_DELETED_TOPIC, listener.ECHO_CHANNEL, wulanganListener.DeletedEventListener)
 
 		if err != nil {
 			log.Fatalf("cannot listen to user consumer: %v", err)
