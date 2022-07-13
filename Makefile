@@ -23,7 +23,8 @@ uninstall:
 
 build:
 	mkdir -p out/bin &> /dev/null
-	go build -o out/bin/kasusastran main.go 
+	go build -o out/bin/kasusastran-serve cmd/serve/main.go
+	go build -o out/bin/kasusastran-work cmd/work/main.go
 
 init:
 	go mod tidy
@@ -33,6 +34,7 @@ mocks: format
 	go install github.com/vektra/mockery/v2@latest 1>/dev/null
 	rm -rf mocks
 	mockery --all --keeptree --dir app
+	mockery --all --output mocks/package --srcpkg google.golang.org/grpc/grpclog
 
 query:
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest 1> /dev/null
@@ -63,7 +65,7 @@ createdb:
 dropdb:
 	dropdb ${DATABASE_NAME}
 
-seeddb: clean
+seeddb: cleandb
 	cp ./db/seeds.sql ./db/seeds.sql.bak
 	envsubst < ./db/seeds.sql.bak > ./db/seeds.sql
 	sed -i 's/COPY/\\copy/g' ./db/seeds.sql
@@ -73,7 +75,6 @@ seeddb: clean
 
 cleandb:
 	psql -a -f ./db/clean.sql ${DATABASE_URL}
-	$(MAKE) migrate 
 
 format:
 	buf format -w

@@ -15,21 +15,24 @@ type SeratListener interface {
 }
 
 type seratListener struct {
-	logger grpclog.LoggerV2
+	listener Listener
+	logger   grpclog.LoggerV2
 }
 
 func NewSeratListener(
 	logger grpclog.LoggerV2,
+	listener Listener,
 ) SeratListener {
 	return &seratListener{
-		logger: logger,
+		listener: listener,
+		logger:   logger,
 	}
 }
 
 func (s *seratListener) CreatedEventListener(m *nsq.Message) (err error) {
-	var createdSeratEventPayload *message.Serat
+	var createdSeratEventPayload message.Serat
 
-	err = Parse(m.Body, &createdSeratEventPayload)
+	err = s.listener.Parse(m.Body, &createdSeratEventPayload)
 	if err != nil {
 		return err
 	}
@@ -40,9 +43,9 @@ func (s *seratListener) CreatedEventListener(m *nsq.Message) (err error) {
 }
 
 func (s *seratListener) ListedEventListener(m *nsq.Message) (err error) {
-	var listedSeratEventPayload *message.Serats
+	var listedSeratEventPayload message.Serats
 
-	err = Parse(m.Body, &listedSeratEventPayload)
+	err = s.listener.Parse(m.Body, &listedSeratEventPayload)
 	if err != nil {
 		return err
 	}
@@ -53,9 +56,9 @@ func (s *seratListener) ListedEventListener(m *nsq.Message) (err error) {
 }
 
 func (s *seratListener) RetrievedEventListener(m *nsq.Message) (err error) {
-	var retrievedSeratEventPayload *message.Serat
+	var retrievedSeratEventPayload message.Serat
 
-	err = Parse(m.Body, &retrievedSeratEventPayload)
+	err = s.listener.Parse(m.Body, &retrievedSeratEventPayload)
 	if err != nil {
 		return err
 	}
@@ -66,9 +69,9 @@ func (s *seratListener) RetrievedEventListener(m *nsq.Message) (err error) {
 }
 
 func (s *seratListener) UpdatedEventListener(m *nsq.Message) (err error) {
-	var updatedSeratEventPayload *message.Serat
+	var updatedSeratEventPayload message.Serat
 
-	err = Parse(m.Body, &updatedSeratEventPayload)
+	err = s.listener.Parse(m.Body, &updatedSeratEventPayload)
 	if err != nil {
 		return err
 	}
@@ -79,9 +82,9 @@ func (s *seratListener) UpdatedEventListener(m *nsq.Message) (err error) {
 }
 
 func (s *seratListener) DeletedEventListener(m *nsq.Message) (err error) {
-	var deletedSeratEventPayload *message.Serat
+	var deletedSeratEventPayload message.Serat
 
-	err = Parse(m.Body, &deletedSeratEventPayload)
+	err = s.listener.Parse(m.Body, &deletedSeratEventPayload)
 	if err != nil {
 		return err
 	}

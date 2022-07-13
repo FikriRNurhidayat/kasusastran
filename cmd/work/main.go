@@ -22,7 +22,8 @@ func main() {
 	log := grpclog.NewLoggerV2(os.Stdout, ioutil.Discard, ioutil.Discard)
 	broker := nsq.NewConnection(config.GetNSQLookupAddress(), config.GetNSQAddress())
 
-	seratListener := listener.NewSeratListener(log)
+	lis := listener.NewListener()
+	seratListener := listener.NewSeratListener(log, lis)
 
 	// Set consumer listener
 	if *queue == event.SERAT_CREATED_TOPIC || *queue == "*" {
