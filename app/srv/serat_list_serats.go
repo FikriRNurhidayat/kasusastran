@@ -3,13 +3,13 @@ package srv
 import (
 	"context"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func (s *SeratsServer) ListSerats(ctx context.Context, req *api.ListSeratsRequest) (res *api.ListSeratsResponse, err error) {
+func (s *SeratsServer) ListSerats(ctx context.Context, req *proto.ListSeratsRequest) (res *proto.ListSeratsResponse, err error) {
 	result, err := s.listSeratsService.Call(ctx, &svc.ListSeratsParams{
 		Pagination: s.paginationManager.FromIncomingRequest(req.GetPagination()),
 	})
@@ -18,15 +18,15 @@ func (s *SeratsServer) ListSerats(ctx context.Context, req *api.ListSeratsReques
 		return res, status.Errorf(codes.Internal, "failed to retrieve list of svc: %v", err)
 	}
 
-	res = &api.ListSeratsResponse{
-		Meta: &api.ListSeratsResponse_MetaListSerats{
+	res = &proto.ListSeratsResponse{
+		Meta: &proto.ListSeratsResponse_MetaListSerats{
 			Pagination: s.paginationManager.NewOutgoingResponse(result.Pagination),
 		},
-		Serats: []*api.Serat{},
+		Serats: []*proto.Serat{},
 	}
 
 	for _, serat := range result.Serats {
-		pack := &api.Serat{
+		pack := &proto.Serat{
 			Id:                serat.ID.String(),
 			Title:             serat.Title,
 			Description:       serat.Description,

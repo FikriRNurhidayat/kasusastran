@@ -9,10 +9,10 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
-func (s *SeratsServer) DeleteSerat(ctx context.Context, req *api.DeleteSeratRequest) (*emptypb.Empty, error) {
+func (s *SeratsServer) DeleteSerat(ctx context.Context, req *proto.DeleteSeratRequest) (*emptypb.Empty, error) {
 	id, err := uuid.Parse(req.GetId())
 
 	if err != nil {

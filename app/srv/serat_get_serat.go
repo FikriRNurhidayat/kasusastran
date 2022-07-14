@@ -8,10 +8,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
-func (s *SeratsServer) GetSerat(ctx context.Context, req *api.GetSeratRequest) (*api.Serat, error) {
+func (s *SeratsServer) GetSerat(ctx context.Context, req *proto.GetSeratRequest) (*proto.Serat, error) {
 	id, err := uuid.Parse(req.GetId())
 
 	if err != nil {
@@ -24,7 +24,7 @@ func (s *SeratsServer) GetSerat(ctx context.Context, req *api.GetSeratRequest) (
 		return nil, status.Errorf(codes.NotFound, "serat not found: %v", req.GetId())
 	}
 
-	res := &api.Serat{
+	res := &proto.Serat{
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,

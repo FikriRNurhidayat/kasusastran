@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
@@ -20,11 +20,11 @@ import (
 func TestWulangansServer_GetWulangan(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.GetWulanganRequest
+		req *proto.GetWulanganRequest
 	}
 
 	type output struct {
-		res *api.Wulangan
+		res *proto.Wulangan
 		err error
 	}
 
@@ -40,7 +40,7 @@ func TestWulangansServer_GetWulangan(t *testing.T) {
 			name: "Invalid Request",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.GetWulanganRequest{
+				req: &proto.GetWulanganRequest{
 					Id: "I'm not an uuid",
 				},
 			},
@@ -53,7 +53,7 @@ func TestWulangansServer_GetWulangan(t *testing.T) {
 			name: "s.getWulanganService.Call() return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.GetWulanganRequest{
+				req: &proto.GetWulanganRequest{
 					Id: uuid.New().String(),
 				},
 			},
@@ -70,7 +70,7 @@ func TestWulangansServer_GetWulangan(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.GetWulanganRequest{
+				req: &proto.GetWulanganRequest{
 					Id: uuid.New().String(),
 				},
 			},
@@ -90,7 +90,7 @@ func TestWulangansServer_GetWulangan(t *testing.T) {
 					UpdatedAt:         time.Now(),
 				}
 
-				o.res = &api.Wulangan{
+				o.res = &proto.Wulangan{
 					Id:                result.ID.String(),
 					Title:             result.Title,
 					Description:       result.Description,

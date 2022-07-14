@@ -10,10 +10,10 @@ import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fikrirnurhidayat/kasusastran/api";
+option go_package = "github.com/fikrirnurhidayat/kasusastran/proto";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   info: {
-    title: "Wulangan";
+    title: "Serats";
     version: "1.0";
     contact: {
       name: "Fikri Rahmat Nurhidayat";
@@ -23,113 +23,101 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
   };
 };
 
-// Allow users to create and manage Wulangans
-service Wulangans {
-  rpc ListWulangans(ListWulangansRequest) returns (ListWulangansResponse) {
+// Allow users to create and manage Serats
+service Serats {
+  rpc ListSerats(ListSeratsRequest) returns (ListSeratsResponse) {
     option (google.api.http) = {
-      get: "/v1/wulangans"
+      get: "/v1/serats"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id: "ListWulangans"
-      summary: "List Wulangans"
-      description: "Retrieve list of wulangans"
-      tags: "Wulangans"
+      operation_id: "ListSerats"
+      summary: "List Serats"
+      description: "Retrieve list of serats"
+      tags: "Serats"
     };
   }
 
-  rpc GetWulangan(GetWulanganRequest) returns (Wulangan) {
+  rpc GetSerat(GetSeratRequest) returns (Serat) {
     option (google.api.http) = {
-      get: "/v1/wulangans/{id}"
+      get: "/v1/serats/{id}"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id: "GetWulangan"
-      summary: "Get Wulangan"
-      description: "Retrieve wulangan detail"
-      tags: "Wulangans"
+      operation_id: "GetSerat"
+      summary: "Get Serat"
+      description: "Retrieve serat detail"
+      tags: "Serats"
     };
   }
 
-  rpc DeleteWulangan(DeleteWulanganRequest) returns (google.protobuf.Empty) {
+  rpc DeleteSerat(DeleteSeratRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      delete: "/v1/wulangans/{id}"
+      delete: "/v1/serats/{id}"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id: "DeleteWulangan"
-      summary: "Delete Wulangan"
-      description: "Remove existing wulangan by id"
-      tags: "Wulangans"
+      operation_id: "DeleteSerat"
+      summary: "Delete Serat"
+      description: "Remove existing serat by id"
+      tags: "Serats"
     };
   }
 
-  rpc CreateWulangan(CreateWulanganRequest) returns (Wulangan) {
+  rpc CreateSerat(CreateSeratRequest) returns (Serat) {
     option (google.api.http) = {
-      post: "/v1/wulangans"
+      post: "/v1/serats"
       body: "*"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id: "CreateWulangan"
-      summary: "Create Wulangan"
-      description: "Add new wulangan on the database"
-      tags: "Wulangans"
+      operation_id: "CreateSerat"
+      summary: "Create Serat"
+      description: "Add new serat on the database"
+      tags: "Serats"
     };
   }
 
-  rpc UpdateWulangan(UpdateWulanganRequest) returns (Wulangan) {
+  rpc UpdateSerat(UpdateSeratRequest) returns (Serat) {
     option (google.api.http) = {
-      put: "/v1/wulangans/{id}"
+      put: "/v1/serats/{id}"
       body: "*"
     };
 
     option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      operation_id: "UpdateWulangan"
-      summary: "Update Wulangan"
-      description: "Change wulangan information"
-      tags: "Wulangans"
+      operation_id: "UpdateSerat"
+      summary: "Update Serat"
+      description: "Change serat information"
+      tags: "Serats"
     };
   }
 }
 
-message ListWulangansRequest {
+message ListSeratsRequest {
   RequestPagination pagination = 1;
 }
 
-message ListWulangansResponse {
-  message MetaListWulangans {
+message ListSeratsResponse {
+  message MetaListSerats {
     ResponsePagination pagination = 1;
   }
 
-  MetaListWulangans meta = 1;
-  repeated Wulangan wulangans = 2;
+  MetaListSerats meta = 1;
+  repeated Serat serats = 2;
 }
 
-message GetWulanganRequest {
-  string id = 1 [
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's ID"
-    },
-    (validate.rules).string.uuid = true,
-    (validate.rules).string.ignore_empty = false
-  ];
+message GetSeratRequest {
+  string id = 1;
 }
 
-message DeleteWulanganRequest {
-  string id = 1 [
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's ID"
-    },
-    (validate.rules).string.uuid = true,
-    (validate.rules).string.ignore_empty = false
-  ];
+message DeleteSeratRequest {
+  string id = 1;
 }
 
-message CreateWulanganRequest {
+message CreateSeratRequest {
   string title = 1 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's title"
+      description: "Serat's title"
     },
     (validate.rules).string.min_len = 2,
     (validate.rules).string.max_len = 255,
@@ -138,7 +126,7 @@ message CreateWulanganRequest {
 
   string description = 2 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's description"
+      description: "Serat's description"
     },
     (validate.rules).string.min_len = 2,
     (validate.rules).string.max_len = 255,
@@ -147,7 +135,7 @@ message CreateWulanganRequest {
 
   string cover_image_url = 3 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's cover image URL"
+      description: "Serat's cover image URL"
       format: "uri"
     },
     (validate.rules).string.uri = true,
@@ -156,7 +144,7 @@ message CreateWulanganRequest {
 
   string thumbnail_image_url = 4 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's thumbnail image URL"
+      description: "Serat's thumbnail image URL"
       format: "uri"
     },
     (validate.rules).string.uri = true,
@@ -164,17 +152,19 @@ message CreateWulanganRequest {
   ];
 }
 
-message UpdateWulanganRequest {
+message UpdateSeratRequest {
   string id = 1 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's ID"
+      description: "Serat's title"
+      format: "uuid"
     },
     (validate.rules).string.uuid = true,
     (validate.rules).string.ignore_empty = false
   ];
+
   string title = 2 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's title"
+      description: "Serat's title"
     },
     (validate.rules).string.min_len = 2,
     (validate.rules).string.max_len = 255,
@@ -183,7 +173,7 @@ message UpdateWulanganRequest {
 
   string description = 3 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's description"
+      description: "Serat's description"
     },
     (validate.rules).string.min_len = 2,
     (validate.rules).string.max_len = 255,
@@ -192,7 +182,7 @@ message UpdateWulanganRequest {
 
   string cover_image_url = 4 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's cover image URL"
+      description: "Serat's cover image URL"
       format: "uri"
     },
     (validate.rules).string.uri = true,
@@ -201,7 +191,7 @@ message UpdateWulanganRequest {
 
   string thumbnail_image_url = 5 [
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description: "Wulangan's thumbnail image URL"
+      description: "Serat's thumbnail image URL"
       format: "uri"
     },
     (validate.rules).string.uri = true,
@@ -209,12 +199,10 @@ message UpdateWulanganRequest {
   ];
 }
 
-message Wulangan {
+message Serat {
   string id = 1;
   string title = 2;
   string description = 3;
-  string cover_image_url = 4;
-  string thumbnail_image_url = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  string cover_image_url = 5;
+  string thumbnail_image_url = 6;
 }

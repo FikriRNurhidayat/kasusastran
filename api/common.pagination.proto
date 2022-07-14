@@ -5,7 +5,7 @@ package kasusastran;
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fikrirnurhidayat/kasusastran/api";
+option go_package = "github.com/fikrirnurhidayat/kasusastran/proto";
 
 message RequestPagination {
   uint32 page = 1 [

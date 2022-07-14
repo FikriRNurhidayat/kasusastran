@@ -1,13 +1,13 @@
 package srv
 
 import (
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"google.golang.org/grpc/grpclog"
 )
 
 type WulangansServer struct {
-	api.UnimplementedWulangansServer
+	proto.UnimplementedWulangansServer
 
 	logger                grpclog.LoggerV2
 	createWulanganService svc.CreateWulanganService

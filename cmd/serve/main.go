@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	nsq "github.com/fikrirnurhidayat/kasusastran/app/driver/nsq"
 	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
 	rds "github.com/fikrirnurhidayat/kasusastran/app/driver/redis"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 
@@ -158,25 +158,25 @@ func init() {
 }
 
 func runGRPCServer() error {
-	api.RegisterSeratsServer(server, seratsServer)
-	api.RegisterWulangansServer(server, wulangansServer)
-	api.RegisterAuthenticationServer(server, authenticationServer)
+	proto.RegisterSeratsServer(server, seratsServer)
+	proto.RegisterWulangansServer(server, wulangansServer)
+	proto.RegisterAuthenticationServer(server, authenticationServer)
 
 	return server.Serve(tcp)
 }
 
 func runGatewayServer(ctx context.Context) (err error) {
-	err = api.RegisterSeratsHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err = proto.RegisterSeratsHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
 		return err
 	}
 
-	err = api.RegisterWulangansHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err = proto.RegisterWulangansHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
 		return err
 	}
 
-	err = api.RegisterAuthenticationHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	err = proto.RegisterAuthenticationHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
 		return err
 	}

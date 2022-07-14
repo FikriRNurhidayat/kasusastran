@@ -3,14 +3,14 @@ package srv
 import (
 	"context"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func (s *WulangansServer) CreateWulangan(ctx context.Context, req *api.CreateWulanganRequest) (*api.Wulangan, error) {
+func (s *WulangansServer) CreateWulangan(ctx context.Context, req *proto.CreateWulanganRequest) (*proto.Wulangan, error) {
 	if err := req.ValidateAll(); err != nil {
 		return nil, status.Errorf(codes.OutOfRange, err.Error())
 	}
@@ -26,7 +26,7 @@ func (s *WulangansServer) CreateWulangan(ctx context.Context, req *api.CreateWul
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	res := &api.Wulangan{
+	res := &proto.Wulangan{
 		Id:                pack.ID.String(),
 		Title:             pack.Title,
 		Description:       pack.Description,

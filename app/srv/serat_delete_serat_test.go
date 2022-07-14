@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
 func TestSeratService_DeleteSerat(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.DeleteSeratRequest
+		req *proto.DeleteSeratRequest
 	}
 
 	type output struct {
@@ -37,7 +37,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 			name: "uuid.Parse return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.DeleteSeratRequest{
+				req: &proto.DeleteSeratRequest{
 					Id: "this-is-not-uuid",
 				},
 			},
@@ -51,7 +51,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 			name: "DeleteSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.DeleteSeratRequest{
+				req: &proto.DeleteSeratRequest{
 					Id: "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
 				},
 			},
@@ -67,7 +67,7 @@ func TestSeratService_DeleteSerat(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.DeleteSeratRequest{
+				req: &proto.DeleteSeratRequest{
 					Id: "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
 				},
 			},

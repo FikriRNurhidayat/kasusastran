@@ -4,12 +4,12 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"google.golang.org/grpc/grpclog"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
 type SeratsServer struct {
-	api.UnimplementedSeratsServer
+	proto.UnimplementedSeratsServer
 
 	logger             grpclog.LoggerV2
 	createSeratService svc.CreateSeratService

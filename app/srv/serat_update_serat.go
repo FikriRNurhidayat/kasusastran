@@ -9,10 +9,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
-func (s *SeratsServer) UpdateSerat(ctx context.Context, req *api.UpdateSeratRequest) (*api.Serat, error) {
+func (s *SeratsServer) UpdateSerat(ctx context.Context, req *proto.UpdateSeratRequest) (*proto.Serat, error) {
 	id, err := uuid.Parse(req.GetId())
 
 	if err != nil {
@@ -34,7 +34,7 @@ func (s *SeratsServer) UpdateSerat(ctx context.Context, req *api.UpdateSeratRequ
 		return nil, status.Errorf(codes.OutOfRange, "s.UpdateSeratUseCase.Call: %v", err.Error())
 	}
 
-	res := &api.Serat{
+	res := &proto.Serat{
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,

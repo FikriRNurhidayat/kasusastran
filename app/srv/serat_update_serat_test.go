@@ -11,18 +11,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
 func TestSeratsServer_UpdateSerat(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.UpdateSeratRequest
+		req *proto.UpdateSeratRequest
 	}
 
 	type output struct {
-		res *api.Serat
+		res *proto.Serat
 		err error
 	}
 
@@ -38,7 +38,7 @@ func TestSeratsServer_UpdateSerat(t *testing.T) {
 			name: "uuid.Parse return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.UpdateSeratRequest{
+				req: &proto.UpdateSeratRequest{
 					Id: "this-is-not-uuid",
 				},
 			},
@@ -52,7 +52,7 @@ func TestSeratsServer_UpdateSerat(t *testing.T) {
 			name: "UpdateSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.UpdateSeratRequest{},
+				req: &proto.UpdateSeratRequest{},
 			},
 			out: &output{
 				res: nil,
@@ -66,7 +66,7 @@ func TestSeratsServer_UpdateSerat(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.UpdateSeratRequest{
+				req: &proto.UpdateSeratRequest{
 					Id:                "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
 					Title:             "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",
@@ -75,7 +75,7 @@ func TestSeratsServer_UpdateSerat(t *testing.T) {
 				},
 			},
 			out: &output{
-				res: &api.Serat{
+				res: &proto.Serat{
 					Id:                uuid.New().String(),
 					Title:             "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",

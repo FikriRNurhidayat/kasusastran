@@ -11,18 +11,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
 func TestSeratService_CreateSerat(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.CreateSeratRequest
+		req *proto.CreateSeratRequest
 	}
 
 	type output struct {
-		res *api.Serat
+		res *proto.Serat
 		err error
 	}
 
@@ -38,7 +38,7 @@ func TestSeratService_CreateSerat(t *testing.T) {
 			name: "CreateSeratUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.CreateSeratRequest{},
+				req: &proto.CreateSeratRequest{},
 			},
 			out: &output{
 				res: nil,
@@ -52,7 +52,7 @@ func TestSeratService_CreateSerat(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.CreateSeratRequest{
+				req: &proto.CreateSeratRequest{
 					Title:             "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",
 					CoverImageUrl:     "https://placeimg.com/640/480/any",
@@ -60,7 +60,7 @@ func TestSeratService_CreateSerat(t *testing.T) {
 				},
 			},
 			out: &output{
-				res: &api.Serat{
+				res: &proto.Serat{
 					Id:                uuid.New().String(),
 					Title:             "Lorem ipsum",
 					Description:       "Lorem ipsum dolor sit amet",

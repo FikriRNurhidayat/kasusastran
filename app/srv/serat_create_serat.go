@@ -7,10 +7,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
-func (s *SeratsServer) CreateSerat(ctx context.Context, req *api.CreateSeratRequest) (*api.Serat, error) {
+func (s *SeratsServer) CreateSerat(ctx context.Context, req *proto.CreateSeratRequest) (*proto.Serat, error) {
 	if err := req.Validate(); err != nil {
 		return nil, status.Error(codes.OutOfRange, err.Error())
 	}
@@ -26,7 +26,7 @@ func (s *SeratsServer) CreateSerat(ctx context.Context, req *api.CreateSeratRequ
 		return nil, status.Errorf(codes.OutOfRange, "s.CreateSeratUseCase.Call: %v", err.Error())
 	}
 
-	res := &api.Serat{
+	res := &proto.Serat{
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,

@@ -13,19 +13,19 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	mockManager "github.com/fikrirnurhidayat/kasusastran/mocks/domain/manager"
 	mockService "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
 func TestSeratService_ListSerats(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.ListSeratsRequest
+		req *proto.ListSeratsRequest
 	}
 
 	type output struct {
-		res *api.ListSeratsResponse
+		res *proto.ListSeratsResponse
 		err error
 	}
 
@@ -41,7 +41,7 @@ func TestSeratService_ListSerats(t *testing.T) {
 			name: "ListSeratsUseCase.Call return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.ListSeratsRequest{},
+				req: &proto.ListSeratsRequest{},
 			},
 			out: &output{
 				err: fmt.Errorf("ListSeratsUseCase.Call: failed to execute svc"),
@@ -58,18 +58,18 @@ func TestSeratService_ListSerats(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.ListSeratsRequest{},
+				req: &proto.ListSeratsRequest{},
 			},
 			out: &output{
-				res: &api.ListSeratsResponse{
-					Meta: &api.ListSeratsResponse_MetaListSerats{
-						Pagination: &api.ResponsePagination{
+				res: &proto.ListSeratsResponse{
+					Meta: &proto.ListSeratsResponse_MetaListSerats{
+						Pagination: &proto.ResponsePagination{
 							Page:      1,
 							PageSize:  10,
 							PageCount: 1,
 						},
 					},
-					Serats: []*api.Serat{
+					Serats: []*proto.Serat{
 						{
 							Id:                "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
 							Title:             "Lorem ipsum dolor sit amet",
@@ -119,23 +119,23 @@ func TestSeratService_ListSerats(t *testing.T) {
 			name: "OK With Pagination",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.ListSeratsRequest{
-					Pagination: &api.RequestPagination{
+				req: &proto.ListSeratsRequest{
+					Pagination: &proto.RequestPagination{
 						Page:     2,
 						PageSize: 10,
 					},
 				},
 			},
 			out: &output{
-				res: &api.ListSeratsResponse{
-					Meta: &api.ListSeratsResponse_MetaListSerats{
-						Pagination: &api.ResponsePagination{
+				res: &proto.ListSeratsResponse{
+					Meta: &proto.ListSeratsResponse_MetaListSerats{
+						Pagination: &proto.ResponsePagination{
 							Page:      2,
 							PageSize:  10,
 							PageCount: 1,
 						},
 					},
-					Serats: []*api.Serat{
+					Serats: []*proto.Serat{
 						{
 							Id:                "f6834cdc-93a3-4d60-b975-d42e7aa26b81",
 							Title:             "Lorem ipsum dolor sit amet",

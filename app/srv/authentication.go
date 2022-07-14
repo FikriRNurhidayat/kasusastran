@@ -1,13 +1,13 @@
 package srv
 
 import (
-	api "github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"google.golang.org/grpc/grpclog"
 )
 
 type AuthenticationServer struct {
-	api.UnimplementedAuthenticationServer
+	proto.UnimplementedAuthenticationServer
 
 	logger          grpclog.LoggerV2
 	registerService svc.RegisterService

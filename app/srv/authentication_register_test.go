@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,11 +20,11 @@ import (
 func TestAuthentication_Register(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.RegisterRequest
+		req *proto.RegisterRequest
 	}
 
 	type output struct {
-		res *api.Session
+		res *proto.Session
 		err error
 	}
 
@@ -40,7 +40,7 @@ func TestAuthentication_Register(t *testing.T) {
 			name: "Invalid Request: Name",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.RegisterRequest{
+				req: &proto.RegisterRequest{
 					Name:     "",
 					Email:    "fikrirnurhidayat@gmail.com",
 					Password: "123456",
@@ -56,7 +56,7 @@ func TestAuthentication_Register(t *testing.T) {
 			name: "Invalid Request: Email",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.RegisterRequest{
+				req: &proto.RegisterRequest{
 					Name:     "Fikri",
 					Email:    "notanemail",
 					Password: "123456",
@@ -72,7 +72,7 @@ func TestAuthentication_Register(t *testing.T) {
 			name: "Invalid Request: Password",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.RegisterRequest{
+				req: &proto.RegisterRequest{
 					Name:     "Fikri",
 					Email:    "fikrirnurhidayat@gmail.com",
 					Password: "12345",
@@ -88,7 +88,7 @@ func TestAuthentication_Register(t *testing.T) {
 			name: "s.registerService.Call return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.RegisterRequest{
+				req: &proto.RegisterRequest{
 					Name:     "Fikri",
 					Email:    "fikrirnurhidayat@gmail.com",
 					Password: "123456",
@@ -112,14 +112,14 @@ func TestAuthentication_Register(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.RegisterRequest{
+				req: &proto.RegisterRequest{
 					Name:     "Fikri",
 					Email:    "fikrirnurhidayat@gmail.com",
 					Password: "123456",
 				},
 			},
 			out: &output{
-				res: &api.Session{
+				res: &proto.Session{
 					AccessToken:  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
 					RefreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKemRXSWlPaUl4TWpNME5UWTNPRGt3SWl3aWJtRnRaU0k2SWtwdmFHNGdSRzlsSWl3aWFXRjBJam94TlRFMk1qTTVNREl5ZlEuU2ZsS3h3UkpTTWVLS0YyUVQ0ZndwTWVKZjM2UE9rNnlKVl9hZFFzc3c1YyIsImlhdCI6MTUxNjIzOTAyMn0.K-071Np4GBVsd7utmK1dTyViLHXUAFjN2W5iVMDGbOs",
 					ExpiredAt:    timestamppb.New(time.Now().Add(5 * time.Minute)),

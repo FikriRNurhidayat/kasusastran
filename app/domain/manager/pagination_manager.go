@@ -3,13 +3,13 @@ package manager
 import (
 	"math"
 
-	"github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
 type PaginationManager interface {
-	FromIncomingRequest(*api.RequestPagination) *Pagination
-	NewOutgoingResponse(*Pagination) *api.ResponsePagination
+	FromIncomingRequest(*proto.RequestPagination) *Pagination
+	NewOutgoingResponse(*Pagination) *proto.ResponsePagination
 }
 
 type PaginationManagerImpl struct {
@@ -17,7 +17,7 @@ type PaginationManagerImpl struct {
 	defaultPage     uint32
 }
 
-func (pm *PaginationManagerImpl) FromIncomingRequest(req *api.RequestPagination) *Pagination {
+func (pm *PaginationManagerImpl) FromIncomingRequest(req *proto.RequestPagination) *Pagination {
 	page := req.GetPage()
 	pageSize := req.GetPageSize()
 
@@ -37,7 +37,7 @@ func (pm *PaginationManagerImpl) FromIncomingRequest(req *api.RequestPagination)
 	return res
 }
 
-func (pm *PaginationManagerImpl) NewOutgoingResponse(p *Pagination) (res *api.ResponsePagination) {
+func (pm *PaginationManagerImpl) NewOutgoingResponse(p *Pagination) (res *proto.ResponsePagination) {
 	page := p.Page
 	pageSize := p.PageSize
 
@@ -49,7 +49,7 @@ func (pm *PaginationManagerImpl) NewOutgoingResponse(p *Pagination) (res *api.Re
 		page = pm.defaultPageSize
 	}
 
-	return &api.ResponsePagination{
+	return &proto.ResponsePagination{
 		Page:      page,
 		PageSize:  pageSize,
 		PageCount: p.PageCount,

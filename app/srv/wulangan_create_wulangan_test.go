@@ -8,9 +8,9 @@ import (
 
 	mocks "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
 
-	"github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/proto"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -22,11 +22,11 @@ import (
 func TestWulangansServer_CreateWulangan(t *testing.T) {
 	type input struct {
 		ctx context.Context
-		req *api.CreateWulanganRequest
+		req *proto.CreateWulanganRequest
 	}
 
 	type output struct {
-		res *api.Wulangan
+		res *proto.Wulangan
 		err error
 	}
 
@@ -42,7 +42,7 @@ func TestWulangansServer_CreateWulangan(t *testing.T) {
 			name: "req.ValidateAll() return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.CreateWulanganRequest{
+				req: &proto.CreateWulanganRequest{
 					Title:             "",
 					Description:       "",
 					CoverImageUrl:     "nonuri",
@@ -58,7 +58,7 @@ func TestWulangansServer_CreateWulangan(t *testing.T) {
 			name: "s.createWulanganService.Call() return error",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.CreateWulanganRequest{
+				req: &proto.CreateWulanganRequest{
 					Title:             "Technological Society",
 					Description:       "Our society is degrading.",
 					CoverImageUrl:     "https://source.unsplash.com/617x598",
@@ -83,7 +83,7 @@ func TestWulangansServer_CreateWulangan(t *testing.T) {
 			name: "OK",
 			in: &input{
 				ctx: context.Background(),
-				req: &api.CreateWulanganRequest{
+				req: &proto.CreateWulanganRequest{
 					Title:             "Technological Society",
 					Description:       "Our society is degrading.",
 					CoverImageUrl:     "https://source.unsplash.com/617x598",
@@ -111,7 +111,7 @@ func TestWulangansServer_CreateWulangan(t *testing.T) {
 					UpdatedAt:         time.Now(),
 				}
 
-				o.res = &api.Wulangan{
+				o.res = &proto.Wulangan{
 					Id:                w.ID.String(),
 					Title:             w.Title,
 					Description:       w.Description,

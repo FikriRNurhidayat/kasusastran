@@ -2,7 +2,7 @@ version: v1beta1
 name: buf.build/fikrirnurhidayat/kasusastran
 build:
   roots:
-    - proto
+    - api
 lint:
   use:
     - DEFAULT
