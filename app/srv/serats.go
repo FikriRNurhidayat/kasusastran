@@ -2,21 +2,26 @@ package srv
 
 import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"google.golang.org/grpc/grpclog"
 
 	api "github.com/fikrirnurhidayat/kasusastran/api"
-	man "github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 )
 
 type SeratsServer struct {
 	api.UnimplementedSeratsServer
 
+	logger             grpclog.LoggerV2
 	createSeratService svc.CreateSeratService
 	updateSeratService svc.UpdateSeratService
 	getSeratService    svc.GetSeratService
 	deleteSeratService svc.DeleteSeratService
 	listSeratsService  svc.ListSeratsService
+	paginationManager  manager.PaginationManager
+}
 
-	paginationManager man.PaginationManager
+func (s *SeratsServer) setLogger(logger grpclog.LoggerV2) {
+	s.logger = logger
 }
 
 func NewSeratsServer(setters ...SeratsServerSetter) *SeratsServer {
@@ -31,7 +36,7 @@ func NewSeratsServer(setters ...SeratsServerSetter) *SeratsServer {
 
 type SeratsServerSetter func(*SeratsServer)
 
-func WithPaginationManager(paginationManager man.PaginationManager) SeratsServerSetter {
+func WithPaginationManager(paginationManager manager.PaginationManager) SeratsServerSetter {
 	return func(server *SeratsServer) {
 		server.paginationManager = paginationManager
 	}

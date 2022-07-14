@@ -11,6 +11,8 @@ import (
 	api "github.com/fikrirnurhidayat/kasusastran/api"
 	nsq "github.com/fikrirnurhidayat/kasusastran/app/driver/nsq"
 	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
+	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/config"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
@@ -34,6 +36,7 @@ var opts []grpc.DialOption
 var db query.Querier
 
 // Services
+var authenticationServer *srv.AuthenticationServer
 var seratsServer *srv.SeratsServer
 var wulangansServer *srv.WulangansServer
 
@@ -82,14 +85,32 @@ func init() {
 		log.Fatalf("nsqConn.NewEventProducer: cannot initialize to nsq connection: %v", err)
 	}
 
+	// Initialize Manager
+	paginationManager := manager.NewPaginationManager(
+		manager.WithDefaultPage(1),
+		manager.WithDefaultPageSize(10),
+	)
+	passwordManager := manager.NewPasswordManager(bcrypt.DefaultCost)
+	tokenManager := manager.NewTokenManager(
+		manager.WithSigningMethod(jwt.SigningMethodHS256),
+		manager.WithAccessTokenExpiresIn(config.GetAccessTokenExpirationTime()),
+		manager.WithAccessTokenSecretKey(config.GetAccessTokenSecretKey()),
+		manager.WithRefreshTokenExpiresIn(config.GetRefreshTokenExpirationTime()),
+		manager.WithRefreshTokenSecretKey(config.GetRefreshTokenSecretKey()),
+		manager.WithLogger(log),
+	)
+
 	// Initialize Repository
 	seratRepository := postgres.NewPostgresSeratRepository(db)
 	wulanganRepository := postgres.NewPostgresWulanganRepository(db)
+	userRepository := postgres.NewPostgresUserRepository(db)
 
 	// Initialize event emitter
 	eventEmitter := event.NewEventEmitter(producer)
 	seratEventEmitter := event.NewSeratEventEmitter(eventEmitter)
 	wulanganEventEmitter := event.NewWulanganEventEmitter(eventEmitter)
+	sessionEventEmitter := event.NewSessionEventEmitter(eventEmitter)
+	userEventEmitter := event.NewUserEventEmitter(eventEmitter)
 
 	// Initialize Service
 	createSeratService := svc.NewCreateSeratService(seratRepository, seratEventEmitter)
@@ -99,12 +120,8 @@ func init() {
 	deleteSeratService := svc.NewDeleteSeratService(seratRepository, seratEventEmitter)
 	createWulanganService := svc.NewCreateWulanganService(wulanganRepository, wulanganEventEmitter)
 	getWulanganService := svc.NewGetWulanganService(wulanganRepository, wulanganEventEmitter)
-
-	// Initialize Manager
-	paginationManager := manager.NewPaginationManager(
-		manager.WithDefaultPage(1),
-		manager.WithDefaultPageSize(10),
-	)
+	registerService := svc.NewRegisterService(userRepository, userEventEmitter, passwordManager, tokenManager)
+	loginService := svc.NewLoginService(userRepository, sessionEventEmitter, passwordManager, tokenManager)
 
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(
@@ -114,17 +131,26 @@ func init() {
 		srv.WithUpdateSeratService(updateSeratService),
 		srv.WithDeleteSeratService(deleteSeratService),
 		srv.WithPaginationManager(paginationManager),
+		srv.WithLogger[*srv.SeratsServer](log),
 	)
 
 	wulangansServer = srv.NewWulangansServer(
 		srv.WithCreateWulanganService(createWulanganService),
 		srv.WithGetWulanganService(getWulanganService),
+		srv.WithLogger[*srv.WulangansServer](log),
+	)
+
+	authenticationServer = srv.NewAuthenticationsServer(
+		srv.WithRegisterService(registerService),
+		srv.WithLoginService(loginService),
+		srv.WithLogger[*srv.AuthenticationServer](log),
 	)
 }
 
 func runGRPCServer() error {
 	api.RegisterSeratsServer(server, seratsServer)
 	api.RegisterWulangansServer(server, wulangansServer)
+	api.RegisterAuthenticationServer(server, authenticationServer)
 
 	return server.Serve(tcp)
 }
@@ -136,6 +162,11 @@ func runGatewayServer(ctx context.Context) (err error) {
 	}
 
 	err = api.RegisterWulangansHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	if err != nil {
+		return err
+	}
+
+	err = api.RegisterAuthenticationHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
 	if err != nil {
 		return err
 	}

@@ -33,6 +33,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createSeratStmt, err = db.PrepareContext(ctx, createSerat); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateSerat: %w", err)
 	}
+	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
+	}
 	if q.createWulanganStmt, err = db.PrepareContext(ctx, createWulangan); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateWulangan: %w", err)
 	}
@@ -42,8 +45,14 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteWulanganStmt, err = db.PrepareContext(ctx, deleteWulangan); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteWulangan: %w", err)
 	}
+	if q.doesUserEmailExistStmt, err = db.PrepareContext(ctx, doesUserEmailExist); err != nil {
+		return nil, fmt.Errorf("error preparing query DoesUserEmailExist: %w", err)
+	}
 	if q.getSeratStmt, err = db.PrepareContext(ctx, getSerat); err != nil {
 		return nil, fmt.Errorf("error preparing query GetSerat: %w", err)
+	}
+	if q.getUserByEmailStmt, err = db.PrepareContext(ctx, getUserByEmail); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserByEmail: %w", err)
 	}
 	if q.getWulanganStmt, err = db.PrepareContext(ctx, getWulangan); err != nil {
 		return nil, fmt.Errorf("error preparing query GetWulangan: %w", err)
@@ -80,6 +89,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing createSeratStmt: %w", cerr)
 		}
 	}
+	if q.createUserStmt != nil {
+		if cerr := q.createUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
 	if q.createWulanganStmt != nil {
 		if cerr := q.createWulanganStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createWulanganStmt: %w", cerr)
@@ -95,9 +109,19 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteWulanganStmt: %w", cerr)
 		}
 	}
+	if q.doesUserEmailExistStmt != nil {
+		if cerr := q.doesUserEmailExistStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing doesUserEmailExistStmt: %w", cerr)
+		}
+	}
 	if q.getSeratStmt != nil {
 		if cerr := q.getSeratStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getSeratStmt: %w", cerr)
+		}
+	}
+	if q.getUserByEmailStmt != nil {
+		if cerr := q.getUserByEmailStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserByEmailStmt: %w", cerr)
 		}
 	}
 	if q.getWulanganStmt != nil {
@@ -162,37 +186,43 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                 DBTX
-	tx                 *sql.Tx
-	countSeratsStmt    *sql.Stmt
-	countWulangansStmt *sql.Stmt
-	createSeratStmt    *sql.Stmt
-	createWulanganStmt *sql.Stmt
-	deleteSeratStmt    *sql.Stmt
-	deleteWulanganStmt *sql.Stmt
-	getSeratStmt       *sql.Stmt
-	getWulanganStmt    *sql.Stmt
-	listSeratsStmt     *sql.Stmt
-	listWulangansStmt  *sql.Stmt
-	updateSeratStmt    *sql.Stmt
-	updateWulanganStmt *sql.Stmt
+	db                     DBTX
+	tx                     *sql.Tx
+	countSeratsStmt        *sql.Stmt
+	countWulangansStmt     *sql.Stmt
+	createSeratStmt        *sql.Stmt
+	createUserStmt         *sql.Stmt
+	createWulanganStmt     *sql.Stmt
+	deleteSeratStmt        *sql.Stmt
+	deleteWulanganStmt     *sql.Stmt
+	doesUserEmailExistStmt *sql.Stmt
+	getSeratStmt           *sql.Stmt
+	getUserByEmailStmt     *sql.Stmt
+	getWulanganStmt        *sql.Stmt
+	listSeratsStmt         *sql.Stmt
+	listWulangansStmt      *sql.Stmt
+	updateSeratStmt        *sql.Stmt
+	updateWulanganStmt     *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                 tx,
-		tx:                 tx,
-		countSeratsStmt:    q.countSeratsStmt,
-		countWulangansStmt: q.countWulangansStmt,
-		createSeratStmt:    q.createSeratStmt,
-		createWulanganStmt: q.createWulanganStmt,
-		deleteSeratStmt:    q.deleteSeratStmt,
-		deleteWulanganStmt: q.deleteWulanganStmt,
-		getSeratStmt:       q.getSeratStmt,
-		getWulanganStmt:    q.getWulanganStmt,
-		listSeratsStmt:     q.listSeratsStmt,
-		listWulangansStmt:  q.listWulangansStmt,
-		updateSeratStmt:    q.updateSeratStmt,
-		updateWulanganStmt: q.updateWulanganStmt,
+		db:                     tx,
+		tx:                     tx,
+		countSeratsStmt:        q.countSeratsStmt,
+		countWulangansStmt:     q.countWulangansStmt,
+		createSeratStmt:        q.createSeratStmt,
+		createUserStmt:         q.createUserStmt,
+		createWulanganStmt:     q.createWulanganStmt,
+		deleteSeratStmt:        q.deleteSeratStmt,
+		deleteWulanganStmt:     q.deleteWulanganStmt,
+		doesUserEmailExistStmt: q.doesUserEmailExistStmt,
+		getSeratStmt:           q.getSeratStmt,
+		getUserByEmailStmt:     q.getUserByEmailStmt,
+		getWulanganStmt:        q.getWulanganStmt,
+		listSeratsStmt:         q.listSeratsStmt,
+		listWulangansStmt:      q.listWulangansStmt,
+		updateSeratStmt:        q.updateSeratStmt,
+		updateWulanganStmt:     q.updateWulanganStmt,
 	}
 }

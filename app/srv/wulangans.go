@@ -3,13 +3,19 @@ package srv
 import (
 	api "github.com/fikrirnurhidayat/kasusastran/api"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"google.golang.org/grpc/grpclog"
 )
 
 type WulangansServer struct {
 	api.UnimplementedWulangansServer
 
+	logger                grpclog.LoggerV2
 	createWulanganService svc.CreateWulanganService
 	getWulanganService    svc.GetWulanganService
+}
+
+func (s *WulangansServer) setLogger(logger grpclog.LoggerV2) {
+	s.logger = logger
 }
 
 func NewWulangansServer(setters ...WulangansServerSetter) *WulangansServer {
