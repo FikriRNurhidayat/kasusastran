@@ -11,6 +11,7 @@ import (
 	api "github.com/fikrirnurhidayat/kasusastran/api"
 	nsq "github.com/fikrirnurhidayat/kasusastran/app/driver/nsq"
 	pg "github.com/fikrirnurhidayat/kasusastran/app/driver/postgres"
+	rds "github.com/fikrirnurhidayat/kasusastran/app/driver/redis"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/query"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/postgres"
+	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository/redis"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -62,6 +64,11 @@ func init() {
 		log.Fatalf("net.Listen: cannot initialize to tcp connection: %v", err)
 	}
 
+	rc, err := rds.ConnectRedis(config.GetRedisConnectionString())
+	if err != nil {
+		log.Fatalf("rds.ConnectRedis: cannot initialize redis connection: %v", err)
+	}
+
 	mux = runtime.NewServeMux(
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 			MarshalOptions: protojson.MarshalOptions{
@@ -101,9 +108,11 @@ func init() {
 	)
 
 	// Initialize Repository
-	seratRepository := postgres.NewPostgresSeratRepository(db)
-	wulanganRepository := postgres.NewPostgresWulanganRepository(db)
-	userRepository := postgres.NewPostgresUserRepository(db)
+	postgresSeratRepository := postgres.NewPostgresSeratRepository(db)
+	postgresWulanganRepository := postgres.NewPostgresWulanganRepository(db)
+	postgresUserRepository := postgres.NewPostgresUserRepository(db)
+	redisRepository := redis.NewRedisRepository(rc, log)
+	redisSeratRepository := redis.NewRedisSeratRepository(redisRepository, postgresSeratRepository, log)
 
 	// Initialize event emitter
 	eventEmitter := event.NewEventEmitter(producer)
@@ -113,15 +122,16 @@ func init() {
 	userEventEmitter := event.NewUserEventEmitter(eventEmitter)
 
 	// Initialize Service
-	createSeratService := svc.NewCreateSeratService(seratRepository, seratEventEmitter)
-	updateSeratService := svc.NewUpdateSeratService(seratRepository, seratEventEmitter)
-	getSeratService := svc.NewGetSeratService(seratRepository, seratEventEmitter)
-	listSeratService := svc.NewListSeratsService(seratRepository, seratEventEmitter)
-	deleteSeratService := svc.NewDeleteSeratService(seratRepository, seratEventEmitter)
-	createWulanganService := svc.NewCreateWulanganService(wulanganRepository, wulanganEventEmitter)
-	getWulanganService := svc.NewGetWulanganService(wulanganRepository, wulanganEventEmitter)
-	registerService := svc.NewRegisterService(userRepository, userEventEmitter, passwordManager, tokenManager)
-	loginService := svc.NewLoginService(userRepository, sessionEventEmitter, passwordManager, tokenManager)
+	createSeratService := svc.NewCreateSeratService(redisSeratRepository, seratEventEmitter)
+	updateSeratService := svc.NewUpdateSeratService(redisSeratRepository, seratEventEmitter)
+	getSeratService := svc.NewGetSeratService(redisSeratRepository, seratEventEmitter)
+	listSeratService := svc.NewListSeratsService(redisSeratRepository, seratEventEmitter)
+	deleteSeratService := svc.NewDeleteSeratService(redisSeratRepository, seratEventEmitter)
+
+	createWulanganService := svc.NewCreateWulanganService(postgresWulanganRepository, wulanganEventEmitter)
+	getWulanganService := svc.NewGetWulanganService(postgresWulanganRepository, wulanganEventEmitter)
+	registerService := svc.NewRegisterService(postgresUserRepository, userEventEmitter, passwordManager, tokenManager)
+	loginService := svc.NewLoginService(postgresUserRepository, sessionEventEmitter, passwordManager, tokenManager)
 
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(
