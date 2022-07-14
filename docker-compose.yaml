@@ -14,7 +14,14 @@ services:
       - NSQD_HOST=nsqd
       - NSQD_PORT=4150
       - DATABASE_HOST=host.docker.internal
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     command: go run cmd/serve/main.go
+    depends_on:
+      - nsqd
+      - nsqlookupd
+      - cache
     volumes:
       - ${PWD}:/app
     ports:
@@ -38,6 +45,15 @@ services:
     command: go run cmd/work/main.go
     volumes:
       - ${PWD}:/app
+
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - cache:/redis/data
 
   nsqlookupd:
     container_name: kasusastran-nsqlookupd
@@ -64,3 +80,7 @@ services:
     ports:
       - "4171:4171"
     command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+
+volumes:
+  cache:
+    driver: local

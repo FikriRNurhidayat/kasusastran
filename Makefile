@@ -10,7 +10,7 @@ DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:$
 develop: format
 	docker-compose down &> /dev/null
 	docker-compose up -d &> /dev/null
-	docker-compose logs -f kasusastran-httpd kasusastran-workerd
+	docker-compose logs -f kasusastran-httpd
 
 start: build
 	./out/bin/kasusastran
