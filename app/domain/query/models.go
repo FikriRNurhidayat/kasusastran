@@ -28,6 +28,21 @@ type Serat struct {
 	DeletedAt         sql.NullTime `json:"deleted_at"`
 }
 
+// Store every users
+type User struct {
+	// The id of user
+	ID uuid.UUID `json:"id"`
+	// The name of user
+	Name string `json:"name"`
+	// The email of user
+	Email sql.NullString `json:"email"`
+	// The encrypted password of a user
+	EncryptedPassword sql.NullString `json:"encrypted_password"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         time.Time      `json:"updated_at"`
+	DeletedAt         sql.NullTime   `json:"deleted_at"`
+}
+
 // Store every wulangan (course) of kasusastran.io
 type Wulangan struct {
 	ID uuid.UUID `json:"id"`
@@ -58,6 +73,8 @@ type WulanganBab struct {
 	CreatedAt  time.Time    `json:"created_at"`
 	UpdatedAt  time.Time    `json:"updated_at"`
 	DeletedAt  sql.NullTime `json:"deleted_at"`
+	// The Bab order
+	Idx sql.NullInt32 `json:"idx"`
 }
 
 // Store every kaca of a bab of wulangan (course) on kasusastran.io
@@ -72,4 +89,8 @@ type WulanganBabKaca struct {
 	CreatedAt     time.Time    `json:"created_at"`
 	UpdatedAt     time.Time    `json:"updated_at"`
 	DeletedAt     sql.NullTime `json:"deleted_at"`
+	// The kaca order inside bab.
+	Idx sql.NullInt32 `json:"idx"`
+	// The kaca order on wulangan perspective
+	Gidx sql.NullInt32 `json:"gidx"`
 }

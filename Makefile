@@ -36,6 +36,10 @@ mocks: format
 	mockery --all --keeptree --dir app
 	mockery --all --output mocks/package --srcpkg google.golang.org/grpc/grpclog
 
+apis:
+	buf generate
+	$(MAKE) format
+
 query:
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest 1> /dev/null
 	rm -rf ./app/domain/query/*
@@ -51,7 +55,7 @@ rollbackdb:
 	echo "y" | docker run -v ${PWD}/db/migrations:/migrations \
 		--rm -i --network host migrate/migrate \
 		--path=/migrations/ \
-		--database ${DATABASE_URL} down 
+		--database ${DATABASE_URL} down "${step}"
 
 migratedb:
 	docker run -v ${PWD}/db/migrations:/migrations \
@@ -65,7 +69,7 @@ createdb:
 dropdb:
 	dropdb ${DATABASE_NAME}
 
-seeddb: cleandb
+seeddb:
 	cp ./db/seeds.sql ./db/seeds.sql.bak
 	envsubst < ./db/seeds.sql.bak > ./db/seeds.sql
 	sed -i 's/COPY/\\copy/g' ./db/seeds.sql

@@ -8,6 +8,8 @@ import (
 	query "github.com/fikrirnurhidayat/kasusastran/app/domain/query"
 	mock "github.com/stretchr/testify/mock"
 
+	sql "database/sql"
+
 	uuid "github.com/google/uuid"
 )
 
@@ -79,6 +81,27 @@ func (_m *Querier) CreateSerat(ctx context.Context, arg *query.CreateSeratParams
 	return r0, r1
 }
 
+// CreateUser provides a mock function with given fields: ctx, arg
+func (_m *Querier) CreateUser(ctx context.Context, arg *query.CreateUserParams) (query.CreateUserRow, error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 query.CreateUserRow
+	if rf, ok := ret.Get(0).(func(context.Context, *query.CreateUserParams) query.CreateUserRow); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Get(0).(query.CreateUserRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *query.CreateUserParams) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateWulangan provides a mock function with given fields: ctx, arg
 func (_m *Querier) CreateWulangan(ctx context.Context, arg *query.CreateWulanganParams) (query.CreateWulanganRow, error) {
 	ret := _m.Called(ctx, arg)
@@ -128,6 +151,27 @@ func (_m *Querier) DeleteWulangan(ctx context.Context, id uuid.UUID) error {
 	return r0
 }
 
+// DoesUserEmailExist provides a mock function with given fields: ctx, email
+func (_m *Querier) DoesUserEmailExist(ctx context.Context, email sql.NullString) (bool, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(context.Context, sql.NullString) bool); ok {
+		r0 = rf(ctx, email)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, sql.NullString) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetSerat provides a mock function with given fields: ctx, id
 func (_m *Querier) GetSerat(ctx context.Context, id uuid.UUID) (query.GetSeratRow, error) {
 	ret := _m.Called(ctx, id)
@@ -142,6 +186,27 @@ func (_m *Querier) GetSerat(ctx context.Context, id uuid.UUID) (query.GetSeratRo
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
 		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetUserByEmail provides a mock function with given fields: ctx, email
+func (_m *Querier) GetUserByEmail(ctx context.Context, email sql.NullString) (query.GetUserByEmailRow, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 query.GetUserByEmailRow
+	if rf, ok := ret.Get(0).(func(context.Context, sql.NullString) query.GetUserByEmailRow); ok {
+		r0 = rf(ctx, email)
+	} else {
+		r0 = ret.Get(0).(query.GetUserByEmailRow)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, sql.NullString) error); ok {
+		r1 = rf(ctx, email)
 	} else {
 		r1 = ret.Error(1)
 	}

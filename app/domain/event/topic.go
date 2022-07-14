@@ -1,6 +1,8 @@
 package event
 
 const (
+	USER_REGISTERED_TOPIC    = "users.registered"
+	SESSION_CREATED_TOPIC    = "sessions.created"
 	SERAT_CREATED_TOPIC      = "serats.created"
 	SERAT_LISTED_TOPIC       = "serats.listed"
 	SERAT_RETRIEVED_TOPIC    = "serats.retrieved"

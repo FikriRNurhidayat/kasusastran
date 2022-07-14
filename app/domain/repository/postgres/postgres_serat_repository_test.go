@@ -16,11 +16,11 @@ import (
 	mockQuery "github.com/fikrirnurhidayat/kasusastran/mocks/domain/query"
 )
 
-type MockSeratRepository struct {
+type MockPostgresSeratRepository struct {
 	db *mockQuery.Querier
 }
 
-func TestSeratRepository_Create(t *testing.T) {
+func TestPostgresSeratRepository_Create(t *testing.T) {
 	type input struct {
 		ctx    context.Context
 		iserat *entity.Serat
@@ -35,7 +35,7 @@ func TestSeratRepository_Create(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratRepository, *input, *output)
+		on   func(*MockPostgresSeratRepository, *input, *output)
 	}
 
 	tests := []scenario{
@@ -55,7 +55,7 @@ func TestSeratRepository_Create(t *testing.T) {
 				serat: nil,
 				err:   fmt.Errorf("CreateSerat: failed executing db query: Bababoey"),
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				m.db.On("CreateSerat", in.ctx, mock.AnythingOfType("*query.CreateSeratParams")).Return(query.CreateSeratRow{}, out.err)
 			},
 		},
@@ -81,7 +81,7 @@ func TestSeratRepository_Create(t *testing.T) {
 				},
 				err: nil,
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				row := query.CreateSeratRow{
 					ID:                out.serat.ID,
 					Title:             out.serat.Title,
@@ -96,7 +96,7 @@ func TestSeratRepository_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratRepository{
+			m := &MockPostgresSeratRepository{
 				db: new(mockQuery.Querier),
 			}
 
@@ -132,7 +132,7 @@ func TestSeratRepository_GetSerat(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratRepository, *input, *output)
+		on   func(*MockPostgresSeratRepository, *input, *output)
 	}
 
 	tests := []scenario{
@@ -146,7 +146,7 @@ func TestSeratRepository_GetSerat(t *testing.T) {
 				serat: nil,
 				err:   fmt.Errorf("GetSerat: failed executing db query: Bababoey"),
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				m.db.On("GetSerat", in.ctx, in.id).Return(query.GetSeratRow{}, out.err)
 			},
 		},
@@ -166,7 +166,7 @@ func TestSeratRepository_GetSerat(t *testing.T) {
 				},
 				err: nil,
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				row := query.GetSeratRow{
 					ID:                out.serat.ID,
 					Title:             out.serat.Title,
@@ -181,7 +181,7 @@ func TestSeratRepository_GetSerat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratRepository{
+			m := &MockPostgresSeratRepository{
 				db: new(mockQuery.Querier),
 			}
 
@@ -216,7 +216,7 @@ func TestSeratRepository_DeleteSerat(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratRepository, *input, *output)
+		on   func(*MockPostgresSeratRepository, *input, *output)
 	}
 
 	tests := []scenario{
@@ -229,7 +229,7 @@ func TestSeratRepository_DeleteSerat(t *testing.T) {
 			out: &output{
 				err: fmt.Errorf("DeleteSerat: failed executing db query: Bababoey"),
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				m.db.On("DeleteSerat", in.ctx, in.id).Return(out.err)
 			},
 		},
@@ -242,7 +242,7 @@ func TestSeratRepository_DeleteSerat(t *testing.T) {
 			out: &output{
 				err: nil,
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				m.db.On("DeleteSerat", in.ctx, in.id).Return(out.err)
 			},
 		},
@@ -250,7 +250,7 @@ func TestSeratRepository_DeleteSerat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratRepository{
+			m := &MockPostgresSeratRepository{
 				db: new(mockQuery.Querier),
 			}
 
@@ -285,7 +285,7 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratRepository, *input, *output)
+		on   func(*MockPostgresSeratRepository, *input, *output)
 	}
 
 	tests := []scenario{
@@ -302,7 +302,7 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				count: uint32(0),
 				err:   fmt.Errorf("ListSerats: failed executing db query: Bababoey"),
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				var rows []query.ListSeratsRow
 
 				params := &query.ListSeratsParams{
@@ -335,7 +335,7 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				count: uint32(0),
 				err:   fmt.Errorf("CountSerats: failed executing db query: Bababoey"),
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				rows := []query.ListSeratsRow{
 					{
 						ID:                out.serats[0].ID,
@@ -379,7 +379,7 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 				count: uint32(1),
 				err:   nil,
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				rows := []query.ListSeratsRow{
 					{
 						ID:                out.serats[0].ID,
@@ -405,7 +405,7 @@ func TestSeratRepository_ListSerats(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratRepository{
+			m := &MockPostgresSeratRepository{
 				db: new(mockQuery.Querier),
 			}
 
@@ -443,7 +443,7 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 		name string
 		in   *input
 		out  *output
-		on   func(*MockSeratRepository, *input, *output)
+		on   func(*MockPostgresSeratRepository, *input, *output)
 	}
 
 	tests := []scenario{
@@ -464,7 +464,7 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 				serat: nil,
 				err:   fmt.Errorf("UpdateSerat: failed executing db query: Bababoey"),
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				m.db.On("UpdateSerat", in.ctx, mock.AnythingOfType("*query.UpdateSeratParams")).Return(query.UpdateSeratRow{}, out.err)
 			},
 		},
@@ -490,7 +490,7 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 				},
 				err: nil,
 			},
-			on: func(m *MockSeratRepository, in *input, out *output) {
+			on: func(m *MockPostgresSeratRepository, in *input, out *output) {
 				row := query.UpdateSeratRow{
 					ID:                out.serat.ID,
 					Title:             out.serat.Title,
@@ -505,7 +505,7 @@ func TestSeratRepository_UpdateSerat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &MockSeratRepository{
+			m := &MockPostgresSeratRepository{
 				db: new(mockQuery.Querier),
 			}
 

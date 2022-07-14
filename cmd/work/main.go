@@ -26,7 +26,10 @@ func main() {
 	seratListener := listener.NewSeratListener(log, lis)
 	wulanganListener := listener.NewWulanganListener(log, lis)
 
-	// Set consumer listener
+	/*
+	  SERAT LISTENER
+	*/
+
 	if *queue == event.SERAT_CREATED_TOPIC || *queue == "*" {
 		onercc, err := broker.AddEventListener(event.SERAT_CREATED_TOPIC, listener.ECHO_CHANNEL, seratListener.CreatedEventListener)
 
@@ -76,6 +79,10 @@ func main() {
 
 		consumers = append(consumers, onercc)
 	}
+
+	/*
+	  WULANGAN LISTENER
+	*/
 
 	if *queue == event.WULANGAN_CREATED_TOPIC || *queue == "*" {
 		onercc, err := broker.AddEventListener(event.WULANGAN_CREATED_TOPIC, listener.ECHO_CHANNEL, wulanganListener.CreatedEventListener)
