@@ -2,16 +2,15 @@ package srv_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
+	"github.com/fikrirnurhidayat/kasusastran/lib/troublemaker"
 	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	mockService "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
@@ -48,9 +47,10 @@ func TestAuthentication_Register(t *testing.T) {
 			},
 			out: &output{
 				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "invalid RegisterRequest.Name: value length must be between 3 and 255 runes, inclusive"),
 			},
-			on: func(m *MockAuthenticationServer, i *input, o *output) {},
+			on: func(m *MockAuthenticationServer, i *input, o *output) {
+				o.err = troublemaker.FromValidationError(i.req.Validate())
+			},
 		},
 		{
 			name: "Invalid Request: Email",
@@ -62,11 +62,10 @@ func TestAuthentication_Register(t *testing.T) {
 					Password: "123456",
 				},
 			},
-			out: &output{
-				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "invalid RegisterRequest.Email: value must be a valid email address | caused by: mail: missing '@' or angle-addr"),
+			out: &output{},
+			on: func(m *MockAuthenticationServer, i *input, o *output) {
+				o.err = troublemaker.FromValidationError(i.req.Validate())
 			},
-			on: func(m *MockAuthenticationServer, i *input, o *output) {},
 		},
 		{
 			name: "Invalid Request: Password",
@@ -78,11 +77,10 @@ func TestAuthentication_Register(t *testing.T) {
 					Password: "12345",
 				},
 			},
-			out: &output{
-				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "invalid RegisterRequest.Password: value length must be between 6 and 255 runes, inclusive"),
+			out: &output{},
+			on: func(m *MockAuthenticationServer, i *input, o *output) {
+				o.err = troublemaker.FromValidationError(i.req.Validate())
 			},
-			on: func(m *MockAuthenticationServer, i *input, o *output) {},
 		},
 		{
 			name: "s.registerService.Call return error",
@@ -95,8 +93,7 @@ func TestAuthentication_Register(t *testing.T) {
 				},
 			},
 			out: &output{
-				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "something is error"),
+				err: trouble.EMAIL_ALREADY_EXIST,
 			},
 			on: func(m *MockAuthenticationServer, i *input, o *output) {
 				params := &svc.RegisterParams{
@@ -105,7 +102,7 @@ func TestAuthentication_Register(t *testing.T) {
 					Password: i.req.GetPassword(),
 				}
 
-				m.registerService.On("Call", i.ctx, params).Return(nil, errors.New("something is error"))
+				m.registerService.On("Call", i.ctx, params).Return(nil, trouble.EMAIL_ALREADY_EXIST)
 			},
 		},
 		{

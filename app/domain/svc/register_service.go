@@ -2,7 +2,6 @@ package svc
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
@@ -10,6 +9,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 )
 
@@ -36,18 +36,17 @@ func (s *registerService) Call(ctx context.Context, params *RegisterParams) (*Re
 	doesEmailExist, err := s.userRepository.EmailExist(ctx, params.Email)
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	if doesEmailExist {
-		// TODO: Better error
-		return nil, errors.New("Email already exists!")
+		return nil, trouble.EMAIL_ALREADY_EXIST
 	}
 
 	encryptedPassword, err := s.passwordManager.Encrypt(params.Password)
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	user, err := s.userRepository.Create(ctx, &entity.User{
@@ -57,7 +56,7 @@ func (s *registerService) Call(ctx context.Context, params *RegisterParams) (*Re
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	err = s.userEventEmitter.EmitRegisteredEvent(&message.User{
@@ -69,13 +68,13 @@ func (s *registerService) Call(ctx context.Context, params *RegisterParams) (*Re
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	session, err := s.tokenManager.NewSession(user.ID.String())
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	res := &RegisterResult{

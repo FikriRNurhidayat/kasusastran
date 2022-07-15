@@ -20,6 +20,7 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 		String: email,
 		Valid:  true,
 	})
+
 	if err != nil {
 		return nil, err
 	}

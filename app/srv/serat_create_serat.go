@@ -4,29 +4,27 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/fikrirnurhidayat/kasusastran/lib/troublemaker"
 
 	"github.com/fikrirnurhidayat/kasusastran/proto"
 )
 
-func (s *SeratsServer) CreateSerat(ctx context.Context, req *proto.CreateSeratRequest) (*proto.Serat, error) {
+func (s *SeratsServer) CreateSerat(ctx context.Context, req *proto.CreateSeratRequest) (res *proto.Serat, err error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Error(codes.OutOfRange, err.Error())
+		return nil, troublemaker.FromValidationError(err)
 	}
 
-	serat, err := s.createSeratService.Call(ctx, &svc.CreateSeratParams{
+	var serat *svc.CreateSeratResult
+	if serat, err = s.createSeratService.Call(ctx, &svc.CreateSeratParams{
 		Title:             req.GetTitle(),
 		Description:       req.GetDescription(),
 		CoverImageUrl:     req.GetCoverImageUrl(),
 		ThumbnailImageUrl: req.GetThumbnailImageUrl(),
-	})
-
-	if err != nil {
-		return nil, status.Errorf(codes.OutOfRange, "s.CreateSeratUseCase.Call: %v", err.Error())
+	}); err != nil {
+		return nil, err
 	}
 
-	res := &proto.Serat{
+	res = &proto.Serat{
 		Id:                serat.ID.String(),
 		Title:             serat.Title,
 		Description:       serat.Description,

@@ -8,7 +8,7 @@ endif
 DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?sslmode=${DATABASE_SSL_MODE}
 
 develop: format
-	docker-compose down &> /dev/null
+	docker-compose stop kasusastran-httpd kasusastran-workerd &> /dev/null
 	docker-compose up -d &> /dev/null
 	docker-compose logs -f kasusastran-httpd
 

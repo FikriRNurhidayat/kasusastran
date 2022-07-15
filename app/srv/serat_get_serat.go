@@ -3,7 +3,6 @@ package srv
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/errors"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,7 +14,7 @@ func (s *SeratsServer) GetSerat(ctx context.Context, req *proto.GetSeratRequest)
 	id, err := uuid.Parse(req.GetId())
 
 	if err != nil {
-		return nil, errors.ErrInvalidUUID
+		return nil, err
 	}
 
 	serat, err := s.getSeratService.Call(ctx, id)
