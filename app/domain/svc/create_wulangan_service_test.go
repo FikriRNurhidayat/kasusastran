@@ -2,11 +2,11 @@ package svc_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -40,7 +40,7 @@ func TestCreateWulanganService_Call(t *testing.T) {
 
 	tests := []scenario{
 		{
-			name: "s.WulanganRepository.Create return error",
+			name: "s.wulanganRepository.Create return error",
 			in: &input{
 				ctx: context.Background(),
 				params: &svc.CreateWulanganParams{
@@ -52,7 +52,7 @@ func TestCreateWulanganService_Call(t *testing.T) {
 			},
 			out: &output{
 				w:   nil,
-				err: errors.New("s.WulanganRepository.Create: failed to insert data"),
+				err: trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mcws *MockCreateWulanganService, i *input, o *output) {
 				w := &entity.Wulangan{
@@ -63,6 +63,41 @@ func TestCreateWulanganService_Call(t *testing.T) {
 				}
 
 				mcws.wulanganRepository.On("Create", i.ctx, w).Return(w, o.err)
+			},
+		},
+		{
+			name: "s.wulanganEventEmitter.EmitCreatedEvent return error",
+			in: &input{
+				ctx: context.Background(),
+				params: &svc.CreateWulanganParams{
+					Title:             "Technological Society",
+					Description:       "Our society is degrading.",
+					CoverImageUrl:     "https://source.unsplash.com/617x598",
+					ThumbnailImageUrl: "https://source.unsplash.com/617x598",
+				},
+			},
+			out: &output{
+				w:   nil,
+				err: trouble.INTERNAL_SERVER_ERROR,
+			},
+			on: func(mcws *MockCreateWulanganService, i *input, o *output) {
+				w := &entity.Wulangan{
+					Title:             i.params.Title,
+					Description:       i.params.Description,
+					CoverImageUrl:     i.params.CoverImageUrl,
+					ThumbnailImageUrl: i.params.ThumbnailImageUrl,
+				}
+
+				ow := &entity.Wulangan{
+					ID:                uuid.New(),
+					Title:             i.params.Title,
+					Description:       i.params.Description,
+					CoverImageUrl:     i.params.CoverImageUrl,
+					ThumbnailImageUrl: i.params.ThumbnailImageUrl,
+				}
+
+				mcws.wulanganRepository.On("Create", i.ctx, w).Return(ow, nil)
+				mcws.wulanganEventEmitter.On("EmitCreatedEvent", mock.AnythingOfType("*message.Wulangan")).Return(o.err)
 			},
 		},
 		{

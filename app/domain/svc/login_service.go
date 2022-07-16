@@ -10,6 +10,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/grpclog"
 )
 
 type LoginService interface {
@@ -24,6 +25,7 @@ type LoginParams struct {
 type LoginResult manager.Session
 
 type loginService struct {
+	logger              grpclog.LoggerV2
 	userRepository      repository.UserRepository
 	sessionEventEmitter event.SessionEventEmitter
 	passwordManager     manager.PasswordManager
@@ -56,11 +58,13 @@ func (s *loginService) Call(ctx context.Context, params *LoginParams) (*LoginRes
 		Payload: user,
 	})
 	if err != nil {
+		s.logger.Error(err)
 		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	session, err := s.tokenManager.NewSession(user.ID.String())
 	if err != nil {
+		s.logger.Error(err)
 		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
@@ -73,8 +77,9 @@ func (s *loginService) Call(ctx context.Context, params *LoginParams) (*LoginRes
 	return result, nil
 }
 
-func NewLoginService(userRepository repository.UserRepository, sessionEventEmitter event.SessionEventEmitter, passwordManager manager.PasswordManager, tokenManager manager.TokenManager) LoginService {
+func NewLoginService(logger grpclog.LoggerV2, userRepository repository.UserRepository, sessionEventEmitter event.SessionEventEmitter, passwordManager manager.PasswordManager, tokenManager manager.TokenManager) LoginService {
 	return &loginService{
+		logger:              logger,
 		userRepository:      userRepository,
 		sessionEventEmitter: sessionEventEmitter,
 		passwordManager:     passwordManager,

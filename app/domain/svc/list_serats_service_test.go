@@ -2,20 +2,23 @@ package svc_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
 	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
 	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	mockPackage "github.com/fikrirnurhidayat/kasusastran/mocks/package"
 )
 
 type MockListSeratsService struct {
+	logger            *mockPackage.LoggerV2
 	seratEventEmitter *mockEvent.SeratEventEmitter
 	seratRepository   *mockRepo.SeratRepository
 }
@@ -40,7 +43,7 @@ func TestListSeratsService_Call(t *testing.T) {
 
 	tests := []scenario{
 		{
-			name: "SeratRepository.ListSerats return error",
+			name: "s.seratRepository.List return error",
 			in: &input{
 				ctx: context.Background(),
 				params: &svc.ListSeratsParams{
@@ -51,10 +54,47 @@ func TestListSeratsService_Call(t *testing.T) {
 				},
 			},
 			out: &output{
-				err: fmt.Errorf("seratRepository.List: failed to run query: bababoey"),
+				err: trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(m *MockListSeratsService, i *input, o *output) {
 				m.seratRepository.On("List", i.ctx, i.params.Pagination.ToListQuery()).Return(nil, uint32(0), o.err)
+			},
+		},
+		{
+			name: "s.seratEventEmitter.EmitListedEvent return error",
+			in: &input{
+				ctx: context.Background(),
+				params: &svc.ListSeratsParams{
+					Pagination: &manager.Pagination{
+						Page:     1,
+						PageSize: 10,
+					},
+				},
+			},
+			out: &output{
+				result: nil,
+				err:    trouble.INTERNAL_SERVER_ERROR,
+			},
+			on: func(m *MockListSeratsService, i *input, o *output) {
+				result := &svc.ListSeratsResult{
+					Serats: []*entity.Serat{
+						{
+							ID:                uuid.New(),
+							Title:             "Lorem ipsum",
+							Description:       "Lorem ipsum",
+							CoverImageUrl:     "http://placekitten.com/192/108",
+							ThumbnailImageUrl: "http://placekitten.com/192/108",
+						},
+					},
+					Pagination: &manager.Pagination{
+						Page:      1,
+						PageSize:  10,
+						PageCount: 1,
+						Total:     1,
+					},
+				}
+				m.seratRepository.On("List", i.ctx, i.params.Pagination.ToListQuery()).Return(result.Serats, uint32(1), nil)
+				m.seratEventEmitter.On("EmitListedEvent", mock.AnythingOfType("*message.Serats")).Return(o.err)
 			},
 		},
 		{
@@ -76,7 +116,15 @@ func TestListSeratsService_Call(t *testing.T) {
 						PageCount: 1,
 						Total:     1,
 					},
-					Serats: []*entity.Serat{},
+					Serats: []*entity.Serat{
+						{
+							ID:                uuid.New(),
+							Title:             "Lorem ipsum",
+							Description:       "Lorem ipsum",
+							CoverImageUrl:     "http://placekitten.com/192/108",
+							ThumbnailImageUrl: "http://placekitten.com/192/108",
+						},
+					},
 				},
 				err: nil,
 			},
@@ -90,6 +138,7 @@ func TestListSeratsService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockListSeratsService{
+				logger:            new(mockPackage.LoggerV2),
 				seratRepository:   new(mockRepo.SeratRepository),
 				seratEventEmitter: new(mockEvent.SeratEventEmitter),
 			}
@@ -98,7 +147,9 @@ func TestListSeratsService_Call(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewListSeratsService(m.seratRepository, m.seratEventEmitter)
+			m.logger.On("Error", mock.AnythingOfType("*status.Error"))
+
+			subject := svc.NewListSeratsService(m.logger, m.seratRepository, m.seratEventEmitter)
 			got, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if tt.out.err != nil {

@@ -2,11 +2,11 @@ package svc_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -39,13 +39,26 @@ func TestDeleteSeratService_Call(t *testing.T) {
 
 	tests := []scenario{
 		{
-			name: "seratRepository.Delete return error",
+			name: "s.seratRepository.Get return error",
 			in: &input{
 				ctx: context.Background(),
 				id:  uuid.New(),
 			},
 			out: &output{
-				err: fmt.Errorf("seratRepository.Delete failed to retrieve: baboey"),
+				err: trouble.SERAT_NOT_FOUND,
+			},
+			on: func(m *MockDeleteSeratService, in *input, out *output) {
+				m.seratRepository.On("Get", in.ctx, in.id).Return(nil, out.err)
+			},
+		},
+		{
+			name: "s.seratRepository.Delete return error",
+			in: &input{
+				ctx: context.Background(),
+				id:  uuid.New(),
+			},
+			out: &output{
+				err: trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(m *MockDeleteSeratService, in *input, out *output) {
 				serat := &entity.Serat{
@@ -58,6 +71,29 @@ func TestDeleteSeratService_Call(t *testing.T) {
 				}
 				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, nil)
 				m.seratRepository.On("Delete", in.ctx, in.id).Return(out.err)
+			},
+		},
+		{
+			name: "s.seratEventEmitter.EmitDeletedEvent return error",
+			in: &input{
+				ctx: context.Background(),
+				id:  uuid.New(),
+			},
+			out: &output{
+				err: trouble.INTERNAL_SERVER_ERROR,
+			},
+			on: func(m *MockDeleteSeratService, in *input, out *output) {
+				serat := &entity.Serat{
+					ID:                uuid.New(),
+					Title:             "Industrial Society And Its Future",
+					Description:       "Lorem ipsum dolor sit amet",
+					Content:           "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "http://placekitten.com/192/108",
+					ThumbnailImageUrl: "http://placekitten.com/192/108",
+				}
+				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, nil)
+				m.seratRepository.On("Delete", in.ctx, in.id).Return(nil)
+				m.seratEventEmitter.On("EmitDeletedEvent", mock.AnythingOfType("*message.Serat")).Return(out.err)
 			},
 		},
 		{

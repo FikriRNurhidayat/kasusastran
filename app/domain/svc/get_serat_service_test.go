@@ -2,11 +2,11 @@ package svc_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -40,17 +40,40 @@ func TestGetSeratUseCase_Call(t *testing.T) {
 
 	tests := []scenario{
 		{
-			name: "SeratRepository.GetSerat return error",
+			name: "s.seratRepository.Get return error",
 			in: &input{
 				ctx: context.Background(),
 				id:  uuid.New(),
 			},
 			out: &output{
 				serat: nil,
-				err:   fmt.Errorf("seratRepository.Get: failed to retrieve: baboey"),
+				err:   trouble.SERAT_NOT_FOUND,
 			},
 			on: func(m *MockGetSeratService, in *input, out *output) {
 				m.seratRepository.On("Get", in.ctx, in.id).Return(nil, out.err)
+			},
+		},
+		{
+			name: "s.seratEventEmitter.EmitRetrievedEvent return error",
+			in: &input{
+				ctx: context.Background(),
+				id:  uuid.New(),
+			},
+			out: &output{
+				serat: nil,
+				err:   trouble.INTERNAL_SERVER_ERROR,
+			},
+			on: func(m *MockGetSeratService, in *input, out *output) {
+				serat := &entity.Serat{
+					ID:                uuid.New(),
+					Title:             "Jayabaya",
+					Description:       "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "https://placeimg.com/640/480/any",
+					ThumbnailImageUrl: "https://placeimg.com/640/480/any",
+				}
+
+				m.seratRepository.On("Get", in.ctx, in.id).Return(serat, nil)
+				m.seratEventEmitter.On("EmitRetrievedEvent", mock.AnythingOfType("*message.Serat")).Return(out.err)
 			},
 		},
 		{

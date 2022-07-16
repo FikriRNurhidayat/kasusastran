@@ -16,9 +16,11 @@ import (
 	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
 	mockManager "github.com/fikrirnurhidayat/kasusastran/mocks/domain/manager"
 	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	mockPackage "github.com/fikrirnurhidayat/kasusastran/mocks/package"
 )
 
 type MockLoginService struct {
+	logger              *mockPackage.LoggerV2
 	userRepository      *mockRepo.UserRepository
 	sessionEventEmitter *mockEvent.SessionEventEmitter
 	passwordManager     *mockManager.PasswordManager
@@ -189,6 +191,7 @@ func TestLoginService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockLoginService{
+				logger:              new(mockPackage.LoggerV2),
 				userRepository:      new(mockRepo.UserRepository),
 				sessionEventEmitter: new(mockEvent.SessionEventEmitter),
 				passwordManager:     new(mockManager.PasswordManager),
@@ -199,7 +202,9 @@ func TestLoginService_Call(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewLoginService(m.userRepository, m.sessionEventEmitter, m.passwordManager, m.tokenManager)
+			m.logger.On("Error", mock.AnythingOfType("*status.Error"))
+
+			subject := svc.NewLoginService(m.logger, m.userRepository, m.sessionEventEmitter, m.passwordManager, m.tokenManager)
 			result, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if tt.out.err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 )
 
@@ -47,7 +48,7 @@ func (s *createWulanganService) Call(ctx context.Context, params *CreateWulangan
 	wulangan, err := s.wulanganRepository.Create(ctx, wulangan)
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	res := &CreateWulanganResult{
@@ -60,13 +61,15 @@ func (s *createWulanganService) Call(ctx context.Context, params *CreateWulangan
 		UpdatedAt:         wulangan.UpdatedAt,
 	}
 
-	err = s.wulanganEventEmitter.EmitCreatedEvent(&message.Wulangan{
+	if err := s.wulanganEventEmitter.EmitCreatedEvent(&message.Wulangan{
 		ID:        uuid.New(),
 		Kind:      event.WULANGAN_CREATED_TOPIC,
 		CreatedAt: time.Now(),
 		Actor:     &message.Actor{},
 		Payload:   wulangan,
-	})
+	}); err != nil {
+		return nil, err
+	}
 
-	return res, err
+	return res, nil
 }

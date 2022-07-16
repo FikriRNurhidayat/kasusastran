@@ -20,6 +20,8 @@ var trouble = troublemaker.NewTroubleMaker(
 			REASON_REFRESH_TOKEN_INVALID:       codes.Unauthenticated,
 			REASON_REFRESH_TOKEN_MISMATCH:      codes.Unauthenticated,
 			REASON_REFRESH_TOKEN_EXPIRED:       codes.Unauthenticated,
+			REASON_SERAT_NOT_FOUND:             codes.NotFound,
+			REASON_WULANGAN_NOT_FOUND:          codes.NotFound,
 			REASON_INTERNAL_SERVER_ERROR:       codes.Internal,
 		},
 	),
@@ -34,6 +36,8 @@ var trouble = troublemaker.NewTroubleMaker(
 			REASON_REFRESH_TOKEN_INVALID:       "Refresh token not invalid. Please pass a valid refresh token.",
 			REASON_REFRESH_TOKEN_MISMATCH:      "Token pair is not valid. Please pass valid pair of access token and refresh token.",
 			REASON_REFRESH_TOKEN_EXPIRED:       "Refresh token is expired. Please relogin.",
+			REASON_SERAT_NOT_FOUND:             "Serat not found.",
+			REASON_WULANGAN_NOT_FOUND:          "Wulangan not found.",
 			REASON_INTERNAL_SERVER_ERROR:       "Internal server error has occured. Please report this to back-end developer.",
 		},
 	),
@@ -49,5 +53,7 @@ var (
 	REFRESH_TOKEN_MISMATCH      = trouble.New(REASON_REFRESH_TOKEN_MISMATCH)
 	REFRESH_TOKEN_EXPIRED       = trouble.New(REASON_REFRESH_TOKEN_EXPIRED)
 	GOOGLE_ACCESS_TOKEN_INVALID = trouble.New(REASON_GOOGLE_ACCESS_TOKEN_INVALID)
+	SERAT_NOT_FOUND             = trouble.New(REASON_SERAT_NOT_FOUND)
+	WULANGAN_NOT_FOUND          = trouble.New(REASON_WULANGAN_NOT_FOUND)
 	INTERNAL_SERVER_ERROR       = trouble.New(REASON_INTERNAL_SERVER_ERROR)
 )

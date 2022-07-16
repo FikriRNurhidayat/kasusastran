@@ -126,13 +126,13 @@ func init() {
 	createSeratService := svc.NewCreateSeratService(redisSeratRepository, seratEventEmitter)
 	updateSeratService := svc.NewUpdateSeratService(redisSeratRepository, seratEventEmitter)
 	getSeratService := svc.NewGetSeratService(redisSeratRepository, seratEventEmitter)
-	listSeratService := svc.NewListSeratsService(redisSeratRepository, seratEventEmitter)
+	listSeratService := svc.NewListSeratsService(log, redisSeratRepository, seratEventEmitter)
 	deleteSeratService := svc.NewDeleteSeratService(redisSeratRepository, seratEventEmitter)
 
 	createWulanganService := svc.NewCreateWulanganService(postgresWulanganRepository, wulanganEventEmitter)
 	getWulanganService := svc.NewGetWulanganService(postgresWulanganRepository, wulanganEventEmitter)
-	registerService := svc.NewRegisterService(postgresUserRepository, userEventEmitter, passwordManager, tokenManager)
-	loginService := svc.NewLoginService(postgresUserRepository, sessionEventEmitter, passwordManager, tokenManager)
+	registerService := svc.NewRegisterService(log, postgresUserRepository, userEventEmitter, passwordManager, tokenManager)
+	loginService := svc.NewLoginService(log, postgresUserRepository, sessionEventEmitter, passwordManager, tokenManager)
 
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(

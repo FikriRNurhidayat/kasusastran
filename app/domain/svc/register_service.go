@@ -11,6 +11,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
 	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/grpclog"
 )
 
 type RegisterService interface {
@@ -26,6 +27,7 @@ type RegisterParams struct {
 type RegisterResult manager.Session
 
 type registerService struct {
+	logger           grpclog.LoggerV2
 	userRepository   repository.UserRepository
 	userEventEmitter event.UserEventEmitter
 	passwordManager  manager.PasswordManager
@@ -86,8 +88,9 @@ func (s *registerService) Call(ctx context.Context, params *RegisterParams) (*Re
 	return res, nil
 }
 
-func NewRegisterService(userRepository repository.UserRepository, userEventEmitter event.UserEventEmitter, passwordManager manager.PasswordManager, tokenManager manager.TokenManager) RegisterService {
+func NewRegisterService(logger grpclog.LoggerV2, userRepository repository.UserRepository, userEventEmitter event.UserEventEmitter, passwordManager manager.PasswordManager, tokenManager manager.TokenManager) RegisterService {
 	return &registerService{
+		logger:           logger,
 		userRepository:   userRepository,
 		userEventEmitter: userEventEmitter,
 		passwordManager:  passwordManager,
