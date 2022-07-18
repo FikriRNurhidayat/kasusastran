@@ -80,7 +80,7 @@ func FromValidationError(err error) error {
 		trouble := &Trouble{
 			Code:    codes.InvalidArgument,
 			Reason:  "BAD_REQUEST",
-			Message: fmt.Sprintf("%s: %s. Please pass valid %s.", field, err.Reason(), field),
+			Message: fmt.Sprintf("Request parameter is invalid. Please pass valid %s.\n\t%s: %s", field, field, err.Reason()),
 		}
 
 		st := status.New(trouble.Code, trouble.Message)
@@ -106,7 +106,8 @@ func FromValidationError(err error) error {
 		for _, e := range err.AllErrors() {
 
 			if err, ok := e.(ValidationError); ok {
-				prefix = append(prefix, fmt.Sprintf("%s: %s", ToSnakeCase(err.Field()), err.Reason()))
+				// TODO: Too lazy to map the string
+				prefix = append(prefix, fmt.Sprintf("\t%s: %s\n", ToSnakeCase(err.Field()), err.Reason()))
 
 				fv = append(fv, &errdetails.BadRequest_FieldViolation{
 					Field:       ToSnakeCase(err.Field()),
@@ -115,7 +116,7 @@ func FromValidationError(err error) error {
 			}
 		}
 
-		trouble.Message = fmt.Sprintf("%s. Please pass valid request parameters.", strings.Join(prefix, " & "))
+		trouble.Message = fmt.Sprintf("Request parameter is invalid. Please pass valid request parameters.\n%s", strings.Join(prefix, "\n"))
 
 		// NOTE: Provide rich gRPC error message
 		st := status.New(trouble.Code, trouble.Message)
