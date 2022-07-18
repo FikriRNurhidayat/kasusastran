@@ -2,14 +2,15 @@ package svc
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/grpclog"
 )
 
 type LoginService interface {
@@ -24,6 +25,7 @@ type LoginParams struct {
 type LoginResult manager.Session
 
 type loginService struct {
+	logger              grpclog.LoggerV2
 	userRepository      repository.UserRepository
 	sessionEventEmitter event.SessionEventEmitter
 	passwordManager     manager.PasswordManager
@@ -31,21 +33,17 @@ type loginService struct {
 }
 
 // Call implements LoginService
-func (s *loginService) Call(ctx context.Context, params *LoginParams) (result *LoginResult, err error) {
+func (s *loginService) Call(ctx context.Context, params *LoginParams) (*LoginResult, error) {
 	// Find user by email
 	user, err := s.userRepository.GetByEmail(ctx, params.Email)
 	if err != nil {
-		return nil, err
-	}
-
-	if user == nil {
-		return nil, errors.New("email does not exist")
+		return nil, trouble.EMAIL_NOT_FOUND
 	}
 
 	// Compare password
 	err = s.passwordManager.Compare(user.EncryptedPassword, params.Password)
 	if err != nil {
-		return nil, err
+		return nil, trouble.PASSWORD_INCORRECT
 	}
 
 	// Emit sessions.created event
@@ -60,15 +58,17 @@ func (s *loginService) Call(ctx context.Context, params *LoginParams) (result *L
 		Payload: user,
 	})
 	if err != nil {
-		return nil, err
+		s.logger.Error(err)
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	session, err := s.tokenManager.NewSession(user.ID.String())
 	if err != nil {
-		return nil, err
+		s.logger.Error(err)
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
-	result = &LoginResult{
+	result := &LoginResult{
 		AccessToken:  session.AccessToken,
 		RefreshToken: session.RefreshToken,
 		ExpiredAt:    session.ExpiredAt,
@@ -77,8 +77,9 @@ func (s *loginService) Call(ctx context.Context, params *LoginParams) (result *L
 	return result, nil
 }
 
-func NewLoginService(userRepository repository.UserRepository, sessionEventEmitter event.SessionEventEmitter, passwordManager manager.PasswordManager, tokenManager manager.TokenManager) LoginService {
+func NewLoginService(logger grpclog.LoggerV2, userRepository repository.UserRepository, sessionEventEmitter event.SessionEventEmitter, passwordManager manager.PasswordManager, tokenManager manager.TokenManager) LoginService {
 	return &loginService{
+		logger:              logger,
 		userRepository:      userRepository,
 		sessionEventEmitter: sessionEventEmitter,
 		passwordManager:     passwordManager,

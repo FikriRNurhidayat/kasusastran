@@ -2,12 +2,12 @@ package svc_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -48,24 +48,35 @@ func TestGetWulanganService_Call(t *testing.T) {
 			},
 			out: &output{
 				w:   nil,
-				err: errors.New("s.wulanganRepository.Get: failed to retrieve a wulangan"),
+				err: trouble.WULANGAN_NOT_FOUND,
 			},
 			on: func(mgws *MockGetWulanganService, i *input, o *output) {
 				mgws.wulanganRepository.On("Get", i.ctx, i.id).Return(nil, o.err)
 			},
 		},
 		{
-			name: "Not Found",
+			name: "s.wulanganEventEmitter.EmitRetrievedEvent return error",
 			in: &input{
 				ctx: context.Background(),
 				id:  uuid.New(),
 			},
 			out: &output{
 				w:   nil,
-				err: errors.New("wulangan not found"),
+				err: trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mgws *MockGetWulanganService, i *input, o *output) {
-				mgws.wulanganRepository.On("Get", i.ctx, i.id).Return(nil, nil)
+				wulangan := &entity.Wulangan{
+					ID:                i.id,
+					Title:             "Industrial Society And Its Future",
+					Description:       "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "https://placekitten.com/192/108",
+					ThumbnailImageUrl: "https://placekitten.com/192/108",
+					CreatedAt:         time.Now(),
+					UpdatedAt:         time.Now(),
+				}
+
+				mgws.wulanganRepository.On("Get", i.ctx, i.id).Return(wulangan, nil)
+				mgws.wulanganEventEmitter.On("EmitRetrievedEvent", mock.AnythingOfType("*message.Wulangan")).Return(o.err)
 			},
 		},
 		{

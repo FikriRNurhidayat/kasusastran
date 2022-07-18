@@ -8,6 +8,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 )
 
@@ -33,7 +34,7 @@ func (s *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResu
 	serat, err := s.seratRepository.Get(ctx, id)
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.SERAT_NOT_FOUND
 	}
 
 	res := &GetSeratResult{
@@ -44,13 +45,15 @@ func (s *getSeratService) Call(ctx context.Context, id uuid.UUID) (*GetSeratResu
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	err = s.seratEventEmitter.EmitRetrievedEvent(&message.Serat{
+	if err := s.seratEventEmitter.EmitRetrievedEvent(&message.Serat{
 		ID:        uuid.New(),
 		Kind:      event.SERAT_RETRIEVED_TOPIC,
 		CreatedAt: time.Now(),
 		Actor:     &message.Actor{},
 		Payload:   serat,
-	})
+	}); err != nil {
+		return nil, trouble.INTERNAL_SERVER_ERROR
+	}
 
-	return res, err
+	return res, nil
 }

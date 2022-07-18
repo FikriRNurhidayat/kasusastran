@@ -8,6 +8,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 )
 
@@ -47,7 +48,7 @@ func (s *createSeratService) Call(ctx context.Context, params *CreateSeratParams
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	res := &CreateSeratResult{
@@ -59,13 +60,15 @@ func (s *createSeratService) Call(ctx context.Context, params *CreateSeratParams
 		ThumbnailImageUrl: serat.ThumbnailImageUrl,
 	}
 
-	err = s.seratEventEmitter.EmitCreatedEvent(&message.Serat{
+	if err := s.seratEventEmitter.EmitCreatedEvent(&message.Serat{
 		ID:        uuid.New(),
 		Kind:      event.SERAT_CREATED_TOPIC,
 		CreatedAt: time.Now(),
 		Actor:     &message.Actor{},
 		Payload:   serat,
-	})
+	}); err != nil {
+		return nil, trouble.INTERNAL_SERVER_ERROR
+	}
 
-	return res, err
+	return res, nil
 }

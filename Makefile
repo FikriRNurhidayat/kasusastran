@@ -8,7 +8,7 @@ endif
 DATABASE_URL=postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?sslmode=${DATABASE_SSL_MODE}
 
 develop: format
-	docker-compose down &> /dev/null
+	docker-compose stop kasusastran-httpd kasusastran-workerd &> /dev/null
 	docker-compose up -d &> /dev/null
 	docker-compose logs -f kasusastran-httpd
 
@@ -26,12 +26,12 @@ build:
 	go build -o out/bin/kasusastran-serve cmd/serve/main.go
 	go build -o out/bin/kasusastran-work cmd/work/main.go
 
-init:
+mod:
 	go mod tidy
 	go mod vendor
 
-mocks: format
-	go install github.com/vektra/mockery/v2@latest 1>/dev/null
+mock: format
+	which mockery &> /dev/null || go install github.com/vektra/mockery/v2@latest 1>/dev/null
 	rm -rf mocks
 	mockery --all --keeptree --dir app
 	mockery --all --output mocks/package --srcpkg google.golang.org/grpc/grpclog
@@ -41,7 +41,7 @@ apis:
 	$(MAKE) format
 
 query:
-	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest 1> /dev/null
+	which sqlc &> /dev/null || go install github.com/kyleconroy/sqlc/cmd/sqlc@latest 1> /dev/null
 	rm -rf ./app/domain/query/*
 	sqlc generate
 	$(MAKE) mocks 
@@ -85,9 +85,9 @@ format:
 	go fmt ./...
 
 test: format
-	go install gotest.tools/gotestsum@latest 1> /dev/null
-	go install github.com/boumenot/gocover-cobertura@latest 1> /dev/null
-	go install github.com/ggere/gototal-cobertura@latest 1> /dev/null
+	which gotestsum &> /dev/null || go install gotest.tools/gotestsum@latest 1> /dev/null
+	which gocover-cobertura &> /dev/null || go install github.com/boumenot/gocover-cobertura@latest 1> /dev/null
+	which gototal-cobertura &> /dev/null || go install github.com/ggere/gototal-cobertura@latest 1> /dev/null
 	gotestsum --format testname --junitfile junit.xml -- -coverprofile=coverage.lcov.info -covermode count ./... 
 	gocover-cobertura < coverage.lcov.info > coverage.xml
 	gototal-cobertura < coverage.xml

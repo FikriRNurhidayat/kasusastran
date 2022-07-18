@@ -2,22 +2,25 @@ package svc_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
-	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
-	mockManager "github.com/fikrirnurhidayat/kasusastran/mocks/domain/manager"
-	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	mockEvent "github.com/fikrirnurhidayat/kasusastran/mocks/domain/event"
+	mockManager "github.com/fikrirnurhidayat/kasusastran/mocks/domain/manager"
+	mockRepo "github.com/fikrirnurhidayat/kasusastran/mocks/domain/repository"
+	mockPackage "github.com/fikrirnurhidayat/kasusastran/mocks/package"
 )
 
 type MockRegisterService struct {
+	logger           *mockPackage.LoggerV2
 	userRepository   *mockRepo.UserRepository
 	userEventEmitter *mockEvent.UserEventEmitter
 	passwordManager  *mockManager.PasswordManager
@@ -55,7 +58,7 @@ func TestRegisterService_Call(t *testing.T) {
 			},
 			out: &output{
 				result: nil,
-				err:    errors.New("s.userRepository.EmailExist: failed to check whether email already exists or not"),
+				err:    trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mrs *MockRegisterService, i *input, o *output) {
 				mrs.userRepository.On("EmailExist", i.ctx, i.params.Email).Return(false, o.err)
@@ -73,7 +76,7 @@ func TestRegisterService_Call(t *testing.T) {
 			},
 			out: &output{
 				result: nil,
-				err:    errors.New("Email already exists!"),
+				err:    trouble.EMAIL_ALREADY_EXIST,
 			},
 			on: func(mrs *MockRegisterService, i *input, o *output) {
 				mrs.userRepository.On("EmailExist", i.ctx, i.params.Email).Return(true, nil)
@@ -91,7 +94,7 @@ func TestRegisterService_Call(t *testing.T) {
 			},
 			out: &output{
 				result: nil,
-				err:    errors.New("s.passwordManager.Encrypt: failed to encrypt password"),
+				err:    trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mrs *MockRegisterService, i *input, o *output) {
 				mrs.userRepository.On("EmailExist", i.ctx, i.params.Email).Return(false, nil)
@@ -110,7 +113,7 @@ func TestRegisterService_Call(t *testing.T) {
 			},
 			out: &output{
 				result: nil,
-				err:    errors.New("s.userRepository.Create: failed to insert user"),
+				err:    trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mrs *MockRegisterService, i *input, o *output) {
 				encryptedPassword := "$2a$10$O2pp2NvX/Y3OgBM66NUrjOtASWhg3rMhft4X0Ii4U8gX3AOJqcItK"
@@ -147,7 +150,7 @@ func TestRegisterService_Call(t *testing.T) {
 			},
 			out: &output{
 				result: nil,
-				err:    errors.New("s.userEventEmitter.EmitRegisteredEvent: failed to publish registered event"),
+				err:    trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mrs *MockRegisterService, i *input, o *output) {
 				encryptedPassword := "$2a$10$O2pp2NvX/Y3OgBM66NUrjOtASWhg3rMhft4X0Ii4U8gX3AOJqcItK"
@@ -185,7 +188,7 @@ func TestRegisterService_Call(t *testing.T) {
 			},
 			out: &output{
 				result: nil,
-				err:    errors.New("s.tokenManager.NewSession: failed to create JWT"),
+				err:    trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(mrs *MockRegisterService, i *input, o *output) {
 				encryptedPassword := "$2a$10$O2pp2NvX/Y3OgBM66NUrjOtASWhg3rMhft4X0Ii4U8gX3AOJqcItK"
@@ -266,6 +269,7 @@ func TestRegisterService_Call(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &MockRegisterService{
+				logger:           new(mockPackage.LoggerV2),
 				userEventEmitter: new(mockEvent.UserEventEmitter),
 				userRepository:   new(mockRepo.UserRepository),
 				passwordManager:  new(mockManager.PasswordManager),
@@ -276,7 +280,9 @@ func TestRegisterService_Call(t *testing.T) {
 				tt.on(m, tt.in, tt.out)
 			}
 
-			subject := svc.NewRegisterService(m.userRepository, m.userEventEmitter, m.passwordManager, m.tokenManager)
+			m.logger.On("Error", mock.AnythingOfType("*status.Error"))
+
+			subject := svc.NewRegisterService(m.logger, m.userRepository, m.userEventEmitter, m.passwordManager, m.tokenManager)
 			result, err := subject.Call(tt.in.ctx, tt.in.params)
 
 			if tt.out.err != nil {

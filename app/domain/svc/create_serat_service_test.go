@@ -2,11 +2,11 @@ package svc_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/entity"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -47,10 +47,33 @@ func TestCreateSeratService_Call(t *testing.T) {
 			},
 			out: &output{
 				serat: nil,
-				err:   fmt.Errorf("seratRepository.Create: failed to retrieve: baboey"),
+				err:   trouble.INTERNAL_SERVER_ERROR,
 			},
 			on: func(m *MockCreateSeratService, in *input, out *output) {
 				m.seratRepository.On("Create", in.ctx, mock.AnythingOfType("*entity.Serat")).Return(nil, out.err)
+			},
+		},
+		{
+			name: "s.seratEventEmitter.EmitCreatedEvent return error",
+			in: &input{
+				ctx:    context.Background(),
+				params: &svc.CreateSeratParams{},
+			},
+			out: &output{
+				serat: nil,
+				err:   trouble.INTERNAL_SERVER_ERROR,
+			},
+			on: func(m *MockCreateSeratService, in *input, out *output) {
+				serat := &entity.Serat{
+					ID:                uuid.New(),
+					Title:             "Lorem ipsum",
+					Description:       "Lorem ipsum dolor sit amet",
+					CoverImageUrl:     "http://placekitten.com/192/168",
+					ThumbnailImageUrl: "http://placekitten.com/192/168",
+				}
+
+				m.seratRepository.On("Create", in.ctx, mock.AnythingOfType("*entity.Serat")).Return(serat, nil)
+				m.seratEventEmitter.On("EmitCreatedEvent", mock.AnythingOfType("*message.Serat")).Return(out.err)
 			},
 		},
 		{

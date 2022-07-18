@@ -79,6 +79,7 @@ func init() {
 				DiscardUnknown: true,
 			},
 		}),
+		runtime.WithErrorHandler(srv.CustomErrorHandler),
 	)
 	opts = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
@@ -125,13 +126,13 @@ func init() {
 	createSeratService := svc.NewCreateSeratService(redisSeratRepository, seratEventEmitter)
 	updateSeratService := svc.NewUpdateSeratService(redisSeratRepository, seratEventEmitter)
 	getSeratService := svc.NewGetSeratService(redisSeratRepository, seratEventEmitter)
-	listSeratService := svc.NewListSeratsService(redisSeratRepository, seratEventEmitter)
+	listSeratService := svc.NewListSeratsService(log, redisSeratRepository, seratEventEmitter)
 	deleteSeratService := svc.NewDeleteSeratService(redisSeratRepository, seratEventEmitter)
 
 	createWulanganService := svc.NewCreateWulanganService(postgresWulanganRepository, wulanganEventEmitter)
 	getWulanganService := svc.NewGetWulanganService(postgresWulanganRepository, wulanganEventEmitter)
-	registerService := svc.NewRegisterService(postgresUserRepository, userEventEmitter, passwordManager, tokenManager)
-	loginService := svc.NewLoginService(postgresUserRepository, sessionEventEmitter, passwordManager, tokenManager)
+	registerService := svc.NewRegisterService(log, postgresUserRepository, userEventEmitter, passwordManager, tokenManager)
+	loginService := svc.NewLoginService(log, postgresUserRepository, sessionEventEmitter, passwordManager, tokenManager)
 
 	// Initialize Service
 	seratsServer = srv.NewSeratsServer(
@@ -183,24 +184,10 @@ func runGatewayServer(ctx context.Context) (err error) {
 
 	srv := &http.Server{
 		Addr:    ":8081",
-		Handler: cors(mux),
+		Handler: srv.Cors(mux),
 	}
 
 	return srv.ListenAndServe()
-}
-
-func cors(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, PUT")
-		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, ResponseType")
-
-		if r.Method == "OPTIONS" {
-			return
-		}
-
-		h.ServeHTTP(w, r)
-	})
 }
 
 func run() error {

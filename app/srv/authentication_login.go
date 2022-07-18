@@ -4,15 +4,14 @@ import (
 	"context"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
+	"github.com/fikrirnurhidayat/kasusastran/lib/troublemaker"
 	"github.com/fikrirnurhidayat/kasusastran/proto"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *AuthenticationServer) Login(ctx context.Context, req *proto.LoginRequest) (res *proto.Session, err error) {
 	if err := req.Validate(); err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		return nil, troublemaker.FromValidationError(err)
 	}
 
 	result, err := s.loginService.Call(ctx, &svc.LoginParams{
@@ -21,7 +20,7 @@ func (s *AuthenticationServer) Login(ctx context.Context, req *proto.LoginReques
 	})
 
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		return nil, err
 	}
 
 	res = &proto.Session{

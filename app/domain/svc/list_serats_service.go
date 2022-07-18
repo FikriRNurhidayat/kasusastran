@@ -9,7 +9,9 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/manager"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/grpclog"
 )
 
 type ListSeratsService interface {
@@ -26,12 +28,14 @@ type ListSeratsParams struct {
 }
 
 type listSeratsService struct {
+	logger            grpclog.LoggerV2
 	seratRepository   repository.SeratRepository
 	seratEventEmitter event.SeratEventEmitter
 }
 
-func NewListSeratsService(seratRepository repository.SeratRepository, seratEventEmitter event.SeratEventEmitter) ListSeratsService {
+func NewListSeratsService(logger grpclog.LoggerV2, seratRepository repository.SeratRepository, seratEventEmitter event.SeratEventEmitter) ListSeratsService {
 	return &listSeratsService{
+		logger:            logger,
 		seratRepository:   seratRepository,
 		seratEventEmitter: seratEventEmitter,
 	}
@@ -41,7 +45,8 @@ func (s *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) 
 	serats, count, err := s.seratRepository.List(ctx, params.Pagination.ToListQuery())
 
 	if err != nil {
-		return nil, err
+		s.logger.Error(err)
+		return nil, trouble.INTERNAL_SERVER_ERROR
 	}
 
 	res := &ListSeratsResult{
@@ -49,13 +54,16 @@ func (s *listSeratsService) Call(ctx context.Context, params *ListSeratsParams) 
 		Pagination: params.Pagination.WithTotal(count),
 	}
 
-	err = s.seratEventEmitter.EmitListedEvent(&message.Serats{
+	if err := s.seratEventEmitter.EmitListedEvent(&message.Serats{
 		ID:        uuid.New(),
 		Kind:      event.SERAT_LISTED_TOPIC,
 		CreatedAt: time.Now(),
 		Actor:     &message.Actor{},
 		Payload:   serats,
-	})
+	}); err != nil {
+		s.logger.Error(err)
+		return nil, trouble.INTERNAL_SERVER_ERROR
+	}
 
-	return res, err
+	return res, nil
 }

@@ -2,16 +2,15 @@ package srv_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/svc"
 	"github.com/fikrirnurhidayat/kasusastran/app/srv"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
+	"github.com/fikrirnurhidayat/kasusastran/lib/troublemaker"
 	"github.com/fikrirnurhidayat/kasusastran/proto"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	mockService "github.com/fikrirnurhidayat/kasusastran/mocks/domain/svc"
@@ -47,9 +46,10 @@ func TestAuthentication_Login(t *testing.T) {
 			},
 			out: &output{
 				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "invalid LoginRequest.Email: value must be a valid email address | caused by: mail: missing '@' or angle-addr"),
 			},
-			on: func(m *MockAuthenticationServer, i *input, o *output) {},
+			on: func(m *MockAuthenticationServer, i *input, o *output) {
+				o.err = troublemaker.FromValidationError(i.req.Validate())
+			},
 		},
 		{
 			name: "Invalid Request: Password",
@@ -62,9 +62,10 @@ func TestAuthentication_Login(t *testing.T) {
 			},
 			out: &output{
 				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "invalid LoginRequest.Password: value length must be between 6 and 255 runes, inclusive"),
 			},
-			on: func(m *MockAuthenticationServer, i *input, o *output) {},
+			on: func(m *MockAuthenticationServer, i *input, o *output) {
+				o.err = troublemaker.FromValidationError(i.req.Validate())
+			},
 		},
 		{
 			name: "s.loginService.Call return error",
@@ -77,7 +78,7 @@ func TestAuthentication_Login(t *testing.T) {
 			},
 			out: &output{
 				res: nil,
-				err: status.Errorf(codes.InvalidArgument, "something is error"),
+				err: trouble.EMAIL_ALREADY_EXIST,
 			},
 			on: func(m *MockAuthenticationServer, i *input, o *output) {
 				params := &svc.LoginParams{
@@ -85,7 +86,7 @@ func TestAuthentication_Login(t *testing.T) {
 					Password: i.req.GetPassword(),
 				}
 
-				m.loginService.On("Call", i.ctx, params).Return(nil, errors.New("something is error"))
+				m.loginService.On("Call", i.ctx, params).Return(nil, trouble.EMAIL_ALREADY_EXIST)
 			},
 		},
 		{

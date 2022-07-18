@@ -3,7 +3,6 @@ package srv
 import (
 	"context"
 
-	"github.com/fikrirnurhidayat/kasusastran/app/domain/errors"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,7 +15,7 @@ func (s *SeratsServer) DeleteSerat(ctx context.Context, req *proto.DeleteSeratRe
 	id, err := uuid.Parse(req.GetId())
 
 	if err != nil {
-		return nil, errors.ErrInvalidUUID
+		return nil, err
 	}
 
 	err = s.deleteSeratService.Call(ctx, id)

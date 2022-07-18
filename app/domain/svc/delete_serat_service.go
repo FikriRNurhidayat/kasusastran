@@ -7,6 +7,7 @@ import (
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/event"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/message"
 	"github.com/fikrirnurhidayat/kasusastran/app/domain/repository"
+	"github.com/fikrirnurhidayat/kasusastran/app/trouble"
 	"github.com/google/uuid"
 )
 
@@ -30,22 +31,24 @@ func (s *deleteSeratService) Call(ctx context.Context, id uuid.UUID) error {
 	serat, err := s.seratRepository.Get(ctx, id)
 
 	if err != nil {
-		return err
+		return trouble.SERAT_NOT_FOUND
 	}
 
 	err = s.seratRepository.Delete(ctx, id)
 
 	if err != nil {
-		return err
+		return trouble.INTERNAL_SERVER_ERROR
 	}
 
-	err = s.seratEventEmitter.EmitDeletedEvent(&message.Serat{
+	if err := s.seratEventEmitter.EmitDeletedEvent(&message.Serat{
 		ID:        uuid.New(),
 		Kind:      event.SERAT_DELETED_TOPIC,
 		CreatedAt: time.Now(),
 		Actor:     &message.Actor{},
 		Payload:   serat,
-	})
+	}); err != nil {
+		return trouble.INTERNAL_SERVER_ERROR
+	}
 
-	return err
+	return nil
 }
